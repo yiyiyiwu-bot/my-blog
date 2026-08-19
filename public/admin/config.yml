@@ -1,12 +1,8 @@
-# 後台設定檔
-# repo 跟 base_url 這兩個值,要等我們把 GitHub repo 建好、Cloudflare Worker 部署好之後才會填上正確的值。
-# 目前先放預留位置,還不能登入,等 Phase B 設定好會回來改這裡。
-
 backend:
   name: github
   repo: yiyiyiwu-bot/my-blog
   branch: main
-  base_url: REPLACE_WITH_WORKER_URL
+  base_url: https://sveltia-cms-auth.yiyiyiwu.workers.dev
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
