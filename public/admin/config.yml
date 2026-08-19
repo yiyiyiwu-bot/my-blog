@@ -4,7 +4,7 @@
 
 backend:
   name: github
-  repo: REPLACE_WITH_GITHUB_USERNAME/REPLACE_WITH_REPO_NAME
+  repo: yiyiyiwu-bot/my-blog
   branch: main
   base_url: REPLACE_WITH_WORKER_URL
 
