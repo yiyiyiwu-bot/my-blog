@@ -1,0 +1,19 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  category: string;
+  excerpt?: string;
+  coverImage?: string;
+  coverImageAlt?: string;
+}
+
+const { id, title, category, excerpt, coverImage, coverImageAlt } = Astro.props;
+---
+
+<a class="post-card" href={`/blog/${id}/`}>
+  {coverImage && <img class="post-card-image" src={coverImage} alt={coverImageAlt || title} />}
+  <p class="post-card-category">{category}</p>
+  <h3 class="post-card-title">{title}</h3>
+  {excerpt && <p class="post-card-excerpt">{excerpt}</p>}
+</a>
