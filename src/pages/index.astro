@@ -10,15 +10,25 @@ const heroPost = posts[0];
 
 const homeIntro = await getEntry('pages', 'home-intro');
 const homeBlocks = (await getCollection('home')).sort((a, b) => a.data.order - b.data.order);
+
+const hasHeroImages = siteConfig.heroImages && siteConfig.heroImages.length > 0;
+const hasCustomHero = !!siteConfig.heroVideo || hasHeroImages;
 ---
 
-<BaseLayout overlayHeader={!!siteConfig.heroVideo}>
+<BaseLayout overlayHeader={hasCustomHero}>
   <div
-    class={`hero ${siteConfig.heroVideo || heroPost?.data.coverImage ? '' : 'hero-placeholder'}`}
-    style={!siteConfig.heroVideo && heroPost?.data.coverImage ? `background-image: url(${heroPost.data.coverImage})` : ''}
+    class={`hero ${hasCustomHero || heroPost?.data.coverImage ? '' : 'hero-placeholder'}`}
+    style={!hasCustomHero && heroPost?.data.coverImage ? `background-image: url(${heroPost.data.coverImage})` : ''}
   >
     {siteConfig.heroVideo && (
       <video class="hero-video" src={siteConfig.heroVideo} autoplay muted loop playsinline />
+    )}
+    {!siteConfig.heroVideo && hasHeroImages && (
+      <div class="hero-slideshow">
+        {siteConfig.heroImages.map((src, i) => (
+          <img class={`hero-slide ${i === 0 ? 'is-active' : ''}`} src={src} alt="" />
+        ))}
+      </div>
     )}
     <div class="hero-overlay">
       <div class="wrap">
@@ -27,6 +37,18 @@ const homeBlocks = (await getCollection('home')).sort((a, b) => a.data.order - b
       </div>
     </div>
   </div>
+
+  {!siteConfig.heroVideo && hasHeroImages && siteConfig.heroImages.length > 1 && (
+    <script>
+      const slides = document.querySelectorAll('.hero-slide');
+      let current = 0;
+      setInterval(() => {
+        slides[current].classList.remove('is-active');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('is-active');
+      }, 5000);
+    </script>
+  )}
 
   {homeIntro && (homeIntro.data.title || homeIntro.data.intro) && (
     <div class="wrap home-intro">

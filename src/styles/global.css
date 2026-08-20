@@ -129,6 +129,26 @@ a {
   z-index: 0;
 }
 
+.hero-slideshow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+}
+
 .hero-placeholder {
   background: linear-gradient(160deg, #1c1c1c 0%, #3a3a3a 55%, #111 100%);
 }
