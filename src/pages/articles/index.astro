@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CategorySidebar from '../../components/CategorySidebar.astro';
+import { getEntry } from 'astro:content';
+
+const articlesPage = await getEntry('pages', 'articles');
+---
+
+<BaseLayout title={articlesPage?.data.title || '文章'}>
+  <div class="wrap articles-layout">
+    <CategorySidebar />
+    <div class="articles-main">
+      <h1 class="articles-title">{articlesPage?.data.title || '文章'}</h1>
+      {articlesPage?.data.intro && <p class="articles-intro">{articlesPage.data.intro}</p>}
+    </div>
+  </div>
+</BaseLayout>

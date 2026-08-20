@@ -15,4 +15,33 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+const categories = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/categories' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().default(''),
+  }),
+});
+
+const pages = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/pages' }),
+  schema: z.object({
+    title: z.string().default(''),
+    intro: z.string().default(''),
+  }),
+});
+
+const home = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/home' }),
+  schema: z.object({
+    title: z.string().default(''),
+    homeText: z.string().default(''),
+    image: z.string().optional(),
+    imagePosition: z.enum(['left', 'right']).default('left'),
+    pageIntro: z.string().default(''),
+    order: z.number().default(0),
+    linkUrl: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, categories, pages, home };

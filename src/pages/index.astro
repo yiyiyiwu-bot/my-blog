@@ -1,20 +1,25 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PostCard from '../components/PostCard.astro';
+import HomeBlock from '../components/HomeBlock.astro';
 import { siteConfig } from '../site.config';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 const posts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const heroPost = posts[0];
-const restPosts = posts.slice(1);
+
+const homeIntro = await getEntry('pages', 'home-intro');
+const homeBlocks = (await getCollection('home')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<BaseLayout>
+<BaseLayout overlayHeader={!!siteConfig.heroVideo}>
   <div
-    class={`hero ${heroPost?.data.coverImage ? '' : 'hero-placeholder'}`}
-    style={heroPost?.data.coverImage ? `background-image: url(${heroPost.data.coverImage})` : ''}
+    class={`hero ${siteConfig.heroVideo || heroPost?.data.coverImage ? '' : 'hero-placeholder'}`}
+    style={!siteConfig.heroVideo && heroPost?.data.coverImage ? `background-image: url(${heroPost.data.coverImage})` : ''}
   >
+    {siteConfig.heroVideo && (
+      <video class="hero-video" src={siteConfig.heroVideo} autoplay muted loop playsinline />
+    )}
     <div class="hero-overlay">
       <div class="wrap">
         <p class="hero-tagline">{siteConfig.tagline}</p>
@@ -23,26 +28,24 @@ const restPosts = posts.slice(1);
     </div>
   </div>
 
-  <div class="wrap">
-    <h2 class="section-title">最新文章</h2>
-
-    {posts.length === 0 && (
-      <p class="empty-state">
-        還沒有文章。登入 <a href="/admin/">後台</a> 開始寫第一篇吧。
-      </p>
-    )}
-
-    <div class="post-grid">
-      {restPosts.map((post) => (
-        <PostCard
-          id={post.id}
-          title={post.data.title}
-          category={post.data.category}
-          excerpt={post.data.excerpt}
-          coverImage={post.data.coverImage}
-          coverImageAlt={post.data.coverImageAlt}
-        />
-      ))}
+  {homeIntro && (homeIntro.data.title || homeIntro.data.intro) && (
+    <div class="wrap home-intro">
+      {homeIntro.data.title && <h2 class="home-intro-title">{homeIntro.data.title}</h2>}
+      {homeIntro.data.intro && <p class="home-intro-text">{homeIntro.data.intro}</p>}
     </div>
-  </div>
+  )}
+
+  {homeBlocks.map((block) => (
+    (block.data.title || block.data.homeText) && (
+      <div class="wrap">
+        <HomeBlock
+          title={block.data.title}
+          homeText={block.data.homeText}
+          image={block.data.image}
+          imagePosition={block.data.imagePosition}
+          href={block.data.linkUrl || `/about/${block.id}`}
+        />
+      </div>
+    )
+  ))}
 </BaseLayout>

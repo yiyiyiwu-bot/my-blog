@@ -17,12 +17,20 @@ const formattedDate = post.data.pubDate.toLocaleDateString('zh-TW', {
   month: 'long',
   day: 'numeric',
 });
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const chapters = allPosts
+  .filter((p) => p.data.category === post.data.category)
+  .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+const chapterIndex = chapters.findIndex((p) => p.id === post.id);
+const prevChapter = chapterIndex > 0 ? chapters[chapterIndex - 1] : null;
+const nextChapter = chapterIndex < chapters.length - 1 ? chapters[chapterIndex + 1] : null;
 ---
 
 <BaseLayout title={post.data.title} description={post.data.excerpt}>
   <div class="wrap post-header">
     <p class="post-category">
-      <a href={`/category/${encodeURIComponent(post.data.category)}`}>{post.data.category}</a>
+      <a href={`/articles/${encodeURIComponent(post.data.category)}`}>{post.data.category}</a>
     </p>
     <h1 class="post-title">{post.data.title}</h1>
     <p class="post-meta">{formattedDate}</p>
@@ -41,4 +49,27 @@ const formattedDate = post.data.pubDate.toLocaleDateString('zh-TW', {
       {post.data.tags.map((tag) => <span>{tag}</span>)}
     </div>
   )}
+
+  <nav class="chapter-nav wrap">
+    {prevChapter ? (
+      <a class="chapter-link chapter-prev" href={`/blog/${prevChapter.id}/`}>
+        <span class="chapter-label">← 上一章</span>
+        <span class="chapter-title">{prevChapter.data.title}</span>
+      </a>
+    ) : (
+      <span class="chapter-link chapter-prev is-disabled">
+        <span class="chapter-label">← 上一章</span>
+      </span>
+    )}
+    {nextChapter ? (
+      <a class="chapter-link chapter-next" href={`/blog/${nextChapter.id}/`}>
+        <span class="chapter-label">下一章 →</span>
+        <span class="chapter-title">{nextChapter.data.title}</span>
+      </a>
+    ) : (
+      <span class="chapter-link chapter-next is-disabled">
+        <span class="chapter-label">下一章 →</span>
+      </span>
+    )}
+  </nav>
 </BaseLayout>

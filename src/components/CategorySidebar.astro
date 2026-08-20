@@ -1,0 +1,24 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+  active?: string;
+}
+
+const { active } = Astro.props;
+const categories = (await getCollection('categories')).sort((a, b) =>
+  a.data.title.localeCompare(b.data.title, 'zh-Hant')
+);
+---
+
+<nav class="articles-sidebar">
+  <a href="/articles" class={`articles-sidebar-link ${!active ? 'is-active' : ''}`}>文章首頁</a>
+  {categories.map((cat) => (
+    <a
+      href={`/articles/${encodeURIComponent(cat.data.title)}`}
+      class={`articles-sidebar-link ${active === cat.data.title ? 'is-active' : ''}`}
+    >
+      {cat.data.title}
+    </a>
+  ))}
+</nav>

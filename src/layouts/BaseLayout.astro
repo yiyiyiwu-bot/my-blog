@@ -5,9 +5,10 @@ import { siteConfig } from '../site.config';
 interface Props {
   title?: string;
   description?: string;
+  overlayHeader?: boolean;
 }
 
-const { title, description = siteConfig.description } = Astro.props;
+const { title, description = siteConfig.description, overlayHeader = false } = Astro.props;
 const pageTitle = title ? `${title} — ${siteConfig.title}` : siteConfig.title;
 ---
 
@@ -17,16 +18,22 @@ const pageTitle = title ? `${title} — ${siteConfig.title}` : siteConfig.title;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><rect width=%2216%22 height=%2216%22 fill=%22black%22/></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <meta name="description" content={description} />
     <title>{pageTitle}</title>
   </head>
   <body>
-    <header class="site-header">
+    <header class={overlayHeader ? 'site-header site-header--overlay' : 'site-header'}>
       <div class="wrap">
         <a class="site-title" href="/">{siteConfig.title}</a>
         <nav class="site-nav">
-          {siteConfig.categories.map((cat) => (
-            <a href={`/category/${encodeURIComponent(cat)}`}>{cat}</a>
+          {siteConfig.nav.map((item) => (
+            <a href={item.href}>{item.label}</a>
           ))}
         </nav>
       </div>

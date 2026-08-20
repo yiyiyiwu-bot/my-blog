@@ -1,0 +1,27 @@
+---
+interface Props {
+  title?: string;
+  homeText?: string;
+  image?: string;
+  imagePosition?: 'left' | 'right';
+  href: string;
+}
+
+const { title, homeText, image, imagePosition = 'left', href } = Astro.props;
+---
+
+<div class={`home-block ${image ? `home-block--with-image home-block--${imagePosition}` : 'home-block--text-only'}`}>
+  {image && (
+    <div class="home-block-image">
+      <img src={image} alt={title || ''} />
+    </div>
+  )}
+  <div class="home-block-content">
+    {title && <h2 class="home-block-title">{title}</h2>}
+    {homeText && <p class="home-block-text">{homeText}</p>}
+    <a class="about-teaser-link" href={href}>
+      <span>VIEW MORE</span>
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</div>

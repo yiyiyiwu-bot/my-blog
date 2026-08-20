@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const contactPage = await getEntry('pages', 'contact');
+---
+
+<BaseLayout title={contactPage?.data.title || '聯絡我們'}>
+  <div class="wrap post-header">
+    <h1 class="post-title">{contactPage?.data.title || '聯絡我們'}</h1>
+    {contactPage?.data.intro && <p class="post-meta">{contactPage.data.intro}</p>}
+  </div>
+</BaseLayout>

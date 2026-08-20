@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const blocks = await getCollection('home');
+  return blocks.map((block) => ({
+    params: { id: block.id },
+    props: { block },
+  }));
+}
+
+const { block } = Astro.props;
+---
+
+<BaseLayout title={block.data.title || '關於我們'}>
+  <div class="wrap post-header">
+    <h1 class="post-title">{block.data.title || '關於我們'}</h1>
+    {block.data.pageIntro && <p class="post-meta">{block.data.pageIntro}</p>}
+  </div>
+</BaseLayout>

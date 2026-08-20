@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CategorySidebar from '../../components/CategorySidebar.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const categories = await getCollection('categories');
+  return categories.map((cat) => ({
+    params: { category: cat.data.title },
+    props: { categoryEntry: cat },
+  }));
+}
+
+const { category } = Astro.params;
+const { categoryEntry } = Astro.props;
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const posts = allPosts
+  .filter((post) => post.data.category === category)
+  .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+---
+
+<BaseLayout title={category}>
+  <div class="wrap articles-layout">
+    <CategorySidebar active={category} />
+    <div class="articles-main">
+      <h1 class="articles-title">{category}</h1>
+      {categoryEntry.data.description && <p class="articles-intro">{categoryEntry.data.description}</p>}
+
+      <div class="episode-list-header">
+        <h2 class="section-title">集數</h2>
+        <button type="button" id="sort-toggle" class="sort-toggle">舊 → 新</button>
+      </div>
+
+      {posts.length === 0 && <p class="empty-state">這個分類還沒有文章。</p>}
+
+      <ol class="episode-list" id="episode-list">
+        {posts.map((post) => (
+          <li><a href={`/blog/${post.id}/`}>{post.data.title}</a></li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const btn = document.getElementById('sort-toggle');
+  const list = document.getElementById('episode-list');
+  let reversed = false;
+  btn?.addEventListener('click', () => {
+    reversed = !reversed;
+    list?.classList.toggle('is-reversed', reversed);
+    if (btn) btn.textContent = reversed ? '新 → 舊' : '舊 → 新';
+  });
+</script>

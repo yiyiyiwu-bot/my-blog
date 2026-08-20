@@ -1,7 +1,11 @@
-// 網站基本設定 — 之後想改網站名稱、標語、分類選單,改這一個檔案就好。
+// 網站基本設定 — 之後想改網站名稱、標語,改這一個檔案就好。
 export const siteConfig = {
   title: '點滴在心頭',
-  tagline: '寫下值得記住的東西',
-  description: '一個記錄文字與想法的個人網站。',
-  categories: ['生活', '隨筆', '攝影', '其他'],
+  tagline: '祝福天下懂得愛的人：\n願你們離苦得樂',
+  description: '我們所能夠提供的，是在等待所求的心願時，應該有的心態，當水到渠成時，就能夠收成自己努力改變後，所有的好',
+  heroVideo: '/videos/hero-1.mp4',
+  nav: [
+    { label: '文章', href: '/articles' },
+    { label: '聯絡我們', href: '/contact' },
+  ],
 };
