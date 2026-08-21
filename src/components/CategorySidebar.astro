@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 
 interface Props {
   active?: string;
@@ -9,10 +9,12 @@ const { active } = Astro.props;
 const categories = (await getCollection('categories')).sort((a, b) =>
   a.data.title.localeCompare(b.data.title, 'zh-Hant')
 );
+const articlesPage = await getEntry('pages', 'articles');
+const homeLabel = articlesPage?.data.sidebarLabel || '文章首頁';
 ---
 
 <nav class="articles-sidebar">
-  <a href="/articles" class={`articles-sidebar-link ${!active ? 'is-active' : ''}`}>文章首頁</a>
+  <a href="/articles" class={`articles-sidebar-link ${!active ? 'is-active' : ''}`}>{homeLabel}</a>
   {categories.map((cat) => (
     <a
       href={`/articles/${encodeURIComponent(cat.data.title)}`}

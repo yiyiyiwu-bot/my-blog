@@ -36,40 +36,88 @@ const nextChapter = chapterIndex < chapters.length - 1 ? chapters[chapterIndex +
     <p class="post-meta">{formattedDate}</p>
   </div>
 
-  {post.data.coverImage && (
-    <img class="post-cover" src={post.data.coverImage} alt={post.data.coverImageAlt || post.data.title} />
-  )}
-
-  <article class="post-body wrap">
-    <Content />
-  </article>
-
-  {post.data.tags.length > 0 && (
-    <div class="post-tags wrap">
-      {post.data.tags.map((tag) => <span>{tag}</span>)}
+  {post.data.password && (
+    <div class="password-gate wrap" id="password-gate">
+      {post.data.passwordHint && <p class="password-hint">{post.data.passwordHint}</p>}
+      <div class="password-form">
+        <input type="password" id="password-input" placeholder="請輸入密碼" />
+        <button type="button" id="password-submit">確認</button>
+      </div>
+      <p class="password-error" id="password-error" hidden>密碼不對，再試一次</p>
     </div>
   )}
 
-  <nav class="chapter-nav wrap">
-    {prevChapter ? (
-      <a class="chapter-link chapter-prev" href={`/blog/${prevChapter.id}/`}>
-        <span class="chapter-label">← 上一章</span>
-        <span class="chapter-title">{prevChapter.data.title}</span>
-      </a>
-    ) : (
-      <span class="chapter-link chapter-prev is-disabled">
-        <span class="chapter-label">← 上一章</span>
-      </span>
+  <div id="protected-content" class={post.data.password ? 'is-locked' : ''}>
+    {post.data.coverImage && (
+      <img class="post-cover" src={post.data.coverImage} alt={post.data.coverImageAlt || post.data.title} />
     )}
-    {nextChapter ? (
-      <a class="chapter-link chapter-next" href={`/blog/${nextChapter.id}/`}>
-        <span class="chapter-label">下一章 →</span>
-        <span class="chapter-title">{nextChapter.data.title}</span>
-      </a>
-    ) : (
-      <span class="chapter-link chapter-next is-disabled">
-        <span class="chapter-label">下一章 →</span>
-      </span>
+
+    <article class="post-body wrap">
+      <Content />
+    </article>
+
+    {post.data.tags.length > 0 && (
+      <div class="post-tags wrap">
+        {post.data.tags.map((tag) => <span>{tag}</span>)}
+      </div>
     )}
-  </nav>
+
+    <nav class="chapter-nav wrap">
+      {prevChapter ? (
+        <a class="chapter-link chapter-prev" href={`/blog/${prevChapter.id}/`}>
+          <span class="chapter-label">← 上一章</span>
+          <span class="chapter-title">{prevChapter.data.title}</span>
+        </a>
+      ) : (
+        <span class="chapter-link chapter-prev is-disabled">
+          <span class="chapter-label">← 上一章</span>
+        </span>
+      )}
+      {nextChapter ? (
+        <a class="chapter-link chapter-next" href={`/blog/${nextChapter.id}/`}>
+          <span class="chapter-label">下一章 →</span>
+          <span class="chapter-title">{nextChapter.data.title}</span>
+        </a>
+      ) : (
+        <span class="chapter-link chapter-next is-disabled">
+          <span class="chapter-label">下一章 →</span>
+        </span>
+      )}
+    </nav>
+  </div>
+
+  {post.data.password && (
+    <script define:vars={{ postId: post.id, encodedPassword: Buffer.from(post.data.password).toString('base64') }}>
+      const KEY = `unlocked-${postId}`;
+      const gate = document.getElementById('password-gate');
+      const content = document.getElementById('protected-content');
+      const input = document.getElementById('password-input');
+      const submitBtn = document.getElementById('password-submit');
+      const error = document.getElementById('password-error');
+
+      function unlock() {
+        gate.style.display = 'none';
+        content.classList.remove('is-locked');
+      }
+
+      if (sessionStorage.getItem(KEY) === '1') {
+        unlock();
+      }
+
+      function tryUnlock() {
+        if (input.value === atob(encodedPassword)) {
+          sessionStorage.setItem(KEY, '1');
+          error.hidden = true;
+          unlock();
+        } else {
+          error.hidden = false;
+        }
+      }
+
+      submitBtn.addEventListener('click', tryUnlock);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') tryUnlock();
+      });
+    </script>
+  )}
 </BaseLayout>
