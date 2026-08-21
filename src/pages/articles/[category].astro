@@ -25,20 +25,34 @@ const posts = allPosts
     <CategorySidebar active={category} />
     <div class="articles-main">
       <h1 class="articles-title">{category}</h1>
-      {categoryEntry.data.description && <p class="articles-intro">{categoryEntry.data.description}</p>}
 
-      <div class="episode-list-header">
-        <h2 class="section-title">集數</h2>
-        <button type="button" id="sort-toggle" class="sort-toggle">舊 → 新</button>
+      {categoryEntry.data.password && (
+        <div class="password-gate" id="password-gate">
+          {categoryEntry.data.passwordHint && <p class="password-hint">{categoryEntry.data.passwordHint}</p>}
+          <div class="password-form">
+            <input type="password" id="password-input" placeholder="請輸入密碼" />
+            <button type="button" id="password-submit">確認</button>
+          </div>
+          <p class="password-error" id="password-error" hidden>密碼不對，再試一次</p>
+        </div>
+      )}
+
+      <div id="protected-content" class={categoryEntry.data.password ? 'is-locked' : ''}>
+        {categoryEntry.data.description && <p class="articles-intro">{categoryEntry.data.description}</p>}
+
+        <div class="episode-list-header">
+          <h2 class="section-title">集數</h2>
+          <button type="button" id="sort-toggle" class="sort-toggle">舊 → 新</button>
+        </div>
+
+        {posts.length === 0 && <p class="empty-state">這個分類還沒有文章。</p>}
+
+        <ol class="episode-list" id="episode-list">
+          {posts.map((post) => (
+            <li><a href={`/blog/${post.id}/`}>{post.data.title}</a></li>
+          ))}
+        </ol>
       </div>
-
-      {posts.length === 0 && <p class="empty-state">這個分類還沒有文章。</p>}
-
-      <ol class="episode-list" id="episode-list">
-        {posts.map((post) => (
-          <li><a href={`/blog/${post.id}/`}>{post.data.title}</a></li>
-        ))}
-      </ol>
     </div>
   </div>
 </BaseLayout>
@@ -53,3 +67,38 @@ const posts = allPosts
     if (btn) btn.textContent = reversed ? '新 → 舊' : '舊 → 新';
   });
 </script>
+
+{categoryEntry.data.password && (
+  <script define:vars={{ categoryId: categoryEntry.id, encodedPassword: Buffer.from(categoryEntry.data.password).toString('base64') }}>
+    const KEY = `unlocked-category-${categoryId}`;
+    const gate = document.getElementById('password-gate');
+    const content = document.getElementById('protected-content');
+    const input = document.getElementById('password-input');
+    const submitBtn = document.getElementById('password-submit');
+    const error = document.getElementById('password-error');
+
+    function unlock() {
+      gate.style.display = 'none';
+      content.classList.remove('is-locked');
+    }
+
+    if (sessionStorage.getItem(KEY) === '1') {
+      unlock();
+    }
+
+    function tryUnlock() {
+      if (input.value === atob(encodedPassword)) {
+        sessionStorage.setItem(KEY, '1');
+        error.hidden = true;
+        unlock();
+      } else {
+        error.hidden = false;
+      }
+    }
+
+    submitBtn.addEventListener('click', tryUnlock);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') tryUnlock();
+    });
+  </script>
+)}

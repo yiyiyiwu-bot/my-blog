@@ -34,8 +34,6 @@ collections:
       - { label: "封面圖說明", name: "coverImageAlt", widget: "string", required: false, hint: "給視障讀者跟搜尋引擎看的簡短描述" }
       - { label: "摘要", name: "excerpt", widget: "text", required: false, hint: "顯示在文章列表卡片上的一小段預覽文字" }
       - { label: "草稿", name: "draft", widget: "boolean", default: false, hint: "打勾的話,文章不會公開顯示在網站上" }
-      - { label: "密碼保護", name: "password", widget: "string", required: false, hint: "設定密碼後,訪客要輸入這組密碼才能看這篇文章。留空表示公開,誰都能看" }
-      - { label: "密碼提示文字", name: "passwordHint", widget: "text", required: false, hint: "顯示在密碼輸入框上方的說明文字,例如「這篇文章只給家人看喔」" }
       - { label: "內文", name: "body", widget: "markdown" }
 
   - name: "categories"
@@ -48,6 +46,8 @@ collections:
     fields:
       - { label: "分類名稱", name: "title", widget: "string" }
       - { label: "介紹文字", name: "description", widget: "text", required: false, hint: "介紹這個分類是在寫什麼" }
+      - { label: "密碼保護", name: "password", widget: "string", required: false, hint: "設定密碼後,訪客要輸入這組密碼才能看這個分類底下的文章列表。留空表示公開,誰都能看" }
+      - { label: "密碼提示文字", name: "passwordHint", widget: "text", required: false, hint: "顯示在密碼輸入框上方的說明文字" }
 
   - name: "pages"
     label: "頁面內容"
