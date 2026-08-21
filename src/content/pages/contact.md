@@ -1,4 +1,4 @@
 ---
 title: 聯絡我
-intro: 這裡之後會放聯絡方式與更多內容，你可以在後台「聯絡我們」自己修改。
+intro: LINE官方：https://line.me/R/nv/recommendOA/@948tpzsn
 ---
