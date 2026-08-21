@@ -25,8 +25,8 @@ const hasCustomHero = !!siteConfig.heroVideo || hasHeroImages;
     )}
     {!siteConfig.heroVideo && hasHeroImages && (
       <div class="hero-slideshow">
-        {siteConfig.heroImages.map((src, i) => (
-          <img class={`hero-slide ${i === 0 ? 'is-active' : ''}`} src={src} alt="" />
+        {siteConfig.heroImages.map((img) => (
+          <img class={`hero-slide hero-slide--${img.fit}`} src={img.src} alt="" />
         ))}
       </div>
     )}
@@ -38,15 +38,16 @@ const hasCustomHero = !!siteConfig.heroVideo || hasHeroImages;
     </div>
   </div>
 
-  {!siteConfig.heroVideo && hasHeroImages && siteConfig.heroImages.length > 1 && (
+  {!siteConfig.heroVideo && hasHeroImages && (
     <script>
+      const KEY = 'heroImgIdx';
       const slides = document.querySelectorAll('.hero-slide');
-      let current = 0;
-      setInterval(() => {
-        slides[current].classList.remove('is-active');
-        current = (current + 1) % slides.length;
-        slides[current].classList.add('is-active');
-      }, 5000);
+      if (slides.length > 0) {
+        let idx = parseInt(localStorage.getItem(KEY) || '0', 10);
+        if (Number.isNaN(idx) || idx < 0 || idx >= slides.length) idx = 0;
+        slides[idx].classList.add('is-active');
+        localStorage.setItem(KEY, String((idx + 1) % slides.length));
+      }
     </script>
   )}
 
@@ -57,17 +58,24 @@ const hasCustomHero = !!siteConfig.heroVideo || hasHeroImages;
     </div>
   )}
 
-  {homeBlocks.map((block) => (
+  {homeBlocks.map((block, i) => (
     (block.data.title || block.data.homeText) && (
-      <div class="wrap">
-        <HomeBlock
-          title={block.data.title}
-          homeText={block.data.homeText}
-          image={block.data.image}
-          imagePosition={block.data.imagePosition}
-          href={block.data.linkUrl || `/about/${block.id}`}
-        />
-      </div>
+      <>
+        {i > 0 && (
+          <div class="section-divider">
+            <span class="flow-rule"></span>
+          </div>
+        )}
+        <div class="wrap">
+          <HomeBlock
+            title={block.data.title}
+            homeText={block.data.homeText}
+            image={block.data.image}
+            imagePosition={block.data.imagePosition}
+            href={block.data.linkUrl || `/about/${block.id}`}
+          />
+        </div>
+      </>
     )
   ))}
 </BaseLayout>
