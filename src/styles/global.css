@@ -386,7 +386,7 @@ a {
 }
 
 .post-cover--full {
-  max-width: 480px;
+  max-width: 307px;
   max-height: none;
   height: auto;
   object-fit: contain;
