@@ -385,6 +385,14 @@ a {
   margin-bottom: 32px;
 }
 
+.post-cover--full {
+  max-width: 720px;
+  max-height: none;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto 80px;
+}
+
 #protected-content.is-locked {
   display: none;
 }
