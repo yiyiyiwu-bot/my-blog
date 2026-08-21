@@ -83,6 +83,13 @@ collections:
     create: true
     slug: "{{slug}}"
     identifier_field: title
+    sortable_fields:
+      default:
+        field: order
+        direction: ascending
+      fields:
+        - { label: "順序", name: "order" }
+        - { label: "標題", name: "title" }
     fields:
       - { label: "標題", name: "title", widget: "string", required: false }
       - { label: "首頁文案", name: "homeText", widget: "text", required: false, hint: "顯示在首頁下方那個區塊的一小段文字" }
