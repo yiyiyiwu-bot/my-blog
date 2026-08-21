@@ -26,7 +26,10 @@ const hasCustomHero = !!siteConfig.heroVideo || hasHeroImages;
     {!siteConfig.heroVideo && hasHeroImages && (
       <div class="hero-slideshow">
         {siteConfig.heroImages.map((img) => (
-          <img class={`hero-slide hero-slide--${img.fit}`} src={img.src} alt="" />
+          <picture>
+            {img.mobileSrc && <source media="(max-width: 640px)" srcset={img.mobileSrc} />}
+            <img class={`hero-slide hero-slide--${img.fit}`} src={img.src} alt="" />
+          </picture>
         ))}
       </div>
     )}
