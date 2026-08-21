@@ -148,6 +148,12 @@ a {
   object-fit: cover;
 }
 
+@media (max-width: 640px) {
+  .hero-slide--cover {
+    object-position: right center;
+  }
+}
+
 .hero-slide--contain {
   object-fit: contain;
 }
