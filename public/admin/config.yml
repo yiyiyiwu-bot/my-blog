@@ -18,6 +18,10 @@ collections:
     view_groups:
       - label: "依分類"
         field: category
+    sortable_fields:
+      - { label: "發布日期", name: "pubDate" }
+      - { label: "標題", name: "title" }
+      - { label: "分類", name: "category" }
     fields:
       - { label: "標題", name: "title", widget: "string" }
       - { label: "發布日期", name: "pubDate", widget: "datetime" }
@@ -56,9 +60,9 @@ collections:
         label: "文章首頁"
         file: "src/content/pages/articles.md"
         fields:
+          - { label: "側邊欄名稱", name: "sidebarLabel", widget: "string", required: false, hint: "顯示在分類側邊欄第一個項目的名稱,預設是「文章首頁」" }
           - { label: "標題", name: "title", widget: "string", required: false }
           - { label: "介紹文字", name: "intro", widget: "text", required: false, hint: "點「文章」進去、還沒選分類時看到的文字" }
-          - { label: "側邊欄名稱", name: "sidebarLabel", widget: "string", required: false, hint: "顯示在分類側邊欄第一個項目的名稱,預設是「文章首頁」" }
       - name: "contact"
         label: "聯絡我們"
         file: "src/content/pages/contact.md"
