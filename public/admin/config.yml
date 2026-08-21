@@ -102,6 +102,6 @@ collections:
           - { label: "圖片在右", value: "right" }
         default: "left"
         required: false
-      - { label: "VIEW MORE 頁面內容", name: "pageIntro", widget: "text", required: false, hint: "點 VIEW MORE 進去後看到的內容,細節之後可以再打磨" }
+      - { label: "內文", name: "pageIntro", widget: "text", required: false, hint: "點 VIEW MORE 進去後看到的內容,細節之後可以再打磨" }
       - { label: "順序", name: "order", widget: "number", default: 100, required: false, hint: "數字越小排越前面。新增的區塊預設是 100,會排在後面;想調整順序就直接改這個數字" }
       - { label: "VIEW MORE 連結", name: "linkUrl", widget: "string", required: false, hint: "留空的話,會連到自動產生的頁面。想改連去別的地方(例如某一篇文章),就把網址貼在這裡,例如 /blog/文章網址" }
