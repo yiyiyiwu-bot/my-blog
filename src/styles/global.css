@@ -489,30 +489,6 @@ a {
   margin-top: 0;
 }
 
-.post-body.font-pmingliu {
-  font-family: "PMingLiU", "新細明體", serif;
-}
-
-.post-body.font-biaukai {
-  font-family: "DFKai-SB", "BiauKai", "標楷體", serif;
-}
-
-.post-body.font-jhenghei {
-  font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
-}
-
-.post-body.size-small {
-  font-size: 0.9rem;
-}
-
-.post-body.size-large {
-  font-size: 1.25rem;
-}
-
-.post-body.size-xlarge {
-  font-size: 1.5rem;
-}
-
 .post-tags {
   max-width: 720px;
   margin: -40px auto 80px;
@@ -724,4 +700,31 @@ a {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+/* ---------- Text mode utilities (font family / size overrides) ---------- */
+/* Kept last in the file so they win over any component's own font-size/font-family. */
+
+.font-pmingliu {
+  font-family: "PMingLiU", "新細明體", serif;
+}
+
+.font-biaukai {
+  font-family: "DFKai-SB", "BiauKai", "標楷體", serif;
+}
+
+.font-jhenghei {
+  font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+}
+
+.size-small {
+  font-size: 0.9rem;
+}
+
+.size-large {
+  font-size: 1.25rem;
+}
+
+.size-xlarge {
+  font-size: 1.5rem;
 }

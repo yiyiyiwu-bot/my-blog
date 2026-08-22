@@ -15,7 +15,12 @@ const introHtml = articlesPage?.data.intro
     <CategorySidebar />
     <div class="articles-main">
       <h1 class="articles-title">{articlesPage?.data.title || '文章'}</h1>
-      {introHtml && <div class="articles-intro" set:html={introHtml} />}
+      {introHtml && (
+        <div
+          class={`articles-intro font-${articlesPage?.data.fontFamily || 'default'} size-${articlesPage?.data.fontSize || 'normal'}`}
+          set:html={introHtml}
+        />
+      )}
     </div>
   </div>
 </BaseLayout>
