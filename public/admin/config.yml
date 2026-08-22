@@ -18,10 +18,7 @@ collections:
     view_groups:
       - label: "依分類"
         field: category
-    sortable_fields:
-      - { label: "發布日期", name: "pubDate" }
-      - { label: "標題", name: "title" }
-      - { label: "分類", name: "category" }
+    sortable_fields: [pubDate, title, category]
     fields:
       - { label: "標題", name: "title", widget: "string" }
       - { label: "發布日期", name: "pubDate", widget: "datetime" }
@@ -127,12 +124,10 @@ collections:
     slug: "{{slug}}"
     identifier_field: title
     sortable_fields:
+      fields: [order, title]
       default:
         field: order
         direction: ascending
-      fields:
-        - { label: "順序", name: "order" }
-        - { label: "標題", name: "title" }
     fields:
       - { label: "標題", name: "title", widget: "string", required: false }
       - { label: "首頁文案", name: "homeText", widget: "text", required: false, hint: "顯示在首頁下方那個區塊的一小段文字" }
