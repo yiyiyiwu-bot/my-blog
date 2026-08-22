@@ -781,6 +781,14 @@ a {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.floating-nav.is-visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .floating-nav-btn {

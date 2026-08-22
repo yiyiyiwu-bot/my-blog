@@ -66,6 +66,13 @@ const pageTitle = title ? `${title} — ${siteConfig.title}` : siteConfig.title;
       document.getElementById('back-to-top')?.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
+
+      const floatingNav = document.querySelector('.floating-nav');
+      const toggleFloatingNav = () => {
+        floatingNav?.classList.toggle('is-visible', window.scrollY > 200);
+      };
+      toggleFloatingNav();
+      window.addEventListener('scroll', toggleFloatingNav, { passive: true });
     </script>
   </body>
 </html>
