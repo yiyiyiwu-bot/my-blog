@@ -124,7 +124,7 @@ collections:
     slug: "{{slug}}"
     identifier_field: title
     sortable_fields:
-      fields: [order, title]
+      fields: [order]
       default:
         field: order
         direction: ascending
