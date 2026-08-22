@@ -50,5 +50,22 @@ const pageTitle = title ? `${title} — ${siteConfig.title}` : siteConfig.title;
         <a href="/admin/">後台登入</a>
       </div>
     </footer>
+
+    <div class="floating-nav">
+      <button type="button" id="back-to-top" class="floating-nav-btn" aria-label="回到頂端">
+        <span class="floating-nav-icon">↑</span>
+        <span class="floating-nav-text">頂端</span>
+      </button>
+      <a href="/" class="floating-nav-btn" aria-label="回首頁">
+        <span class="floating-nav-icon">⌂</span>
+        <span class="floating-nav-text">首頁</span>
+      </a>
+    </div>
+
+    <script>
+      document.getElementById('back-to-top')?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    </script>
   </body>
 </html>
