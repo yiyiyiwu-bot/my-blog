@@ -217,9 +217,20 @@ a {
   color: var(--color-muted);
   font-size: 1rem;
   line-height: 1.9;
-  white-space: pre-line;
   max-width: 640px;
   margin: 0;
+}
+
+.home-intro-text p {
+  margin: 0 0 12px;
+}
+
+.home-intro-text p:last-child {
+  margin-bottom: 0;
+}
+
+.home-intro-text a {
+  text-decoration: underline;
 }
 
 .section-title {
@@ -358,7 +369,8 @@ a {
 /* ---------- Post detail ---------- */
 
 .post-header {
-  padding: 56px 0 24px;
+  padding-top: 56px;
+  padding-bottom: 24px;
 }
 
 .post-category {
@@ -378,6 +390,32 @@ a {
   font-size: 0.85rem;
   color: var(--color-muted);
   white-space: pre-line;
+}
+
+.contact-intro {
+  white-space: normal;
+  margin-top: 12px;
+}
+
+.contact-intro p {
+  margin: 0 0 12px;
+}
+
+.contact-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.contact-intro a {
+  text-decoration: underline;
+}
+
+.contact-qr {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  margin-top: 24px;
+  border: 1px solid var(--color-border);
+  padding: 8px;
 }
 
 .post-cover {
@@ -449,6 +487,30 @@ a {
 
 .post-body :first-child {
   margin-top: 0;
+}
+
+.post-body.font-pmingliu {
+  font-family: "PMingLiU", "新細明體", serif;
+}
+
+.post-body.font-biaukai {
+  font-family: "DFKai-SB", "BiauKai", "標楷體", serif;
+}
+
+.post-body.font-jhenghei {
+  font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+}
+
+.post-body.size-small {
+  font-size: 0.9rem;
+}
+
+.post-body.size-large {
+  font-size: 1.25rem;
+}
+
+.post-body.size-xlarge {
+  font-size: 1.5rem;
 }
 
 .post-tags {
@@ -559,9 +621,20 @@ a {
   color: var(--color-muted);
   font-size: 0.95rem;
   line-height: 1.9;
-  white-space: pre-line;
   max-width: 46em;
   margin: 0 0 40px;
+}
+
+.articles-intro p {
+  margin: 0 0 12px;
+}
+
+.articles-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.articles-intro a {
+  text-decoration: underline;
 }
 
 .episode-list-header {

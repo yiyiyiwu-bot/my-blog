@@ -38,6 +38,26 @@ collections:
       - { label: "封面圖說明", name: "coverImageAlt", widget: "string", required: false, hint: "給視障讀者跟搜尋引擎看的簡短描述" }
       - { label: "摘要", name: "excerpt", widget: "text", required: false, hint: "顯示在文章列表卡片上的一小段預覽文字" }
       - { label: "草稿", name: "draft", widget: "boolean", default: false, hint: "打勾的話,文章不會公開顯示在網站上" }
+      - label: "內文字體"
+        name: "fontFamily"
+        widget: "select"
+        default: "default"
+        hint: "整篇文章內文套用的字體(只在有安裝該字體的裝置上會正確顯示,例如 Windows 電腦)"
+        options:
+          - { label: "預設", value: "default" }
+          - { label: "新細明體", value: "pmingliu" }
+          - { label: "標楷體", value: "biaukai" }
+          - { label: "微軟正黑體", value: "jhenghei" }
+      - label: "內文字級"
+        name: "fontSize"
+        widget: "select"
+        default: "normal"
+        hint: "整篇文章內文的文字大小"
+        options:
+          - { label: "小", value: "small" }
+          - { label: "正常", value: "normal" }
+          - { label: "大", value: "large" }
+          - { label: "特大", value: "xlarge" }
       - { label: "內文", name: "body", widget: "markdown" }
 
   - name: "categories"
@@ -62,19 +82,20 @@ collections:
         fields:
           - { label: "側邊欄名稱", name: "sidebarLabel", widget: "string", required: false, hint: "顯示在分類側邊欄第一個項目的名稱,預設是「文章首頁」" }
           - { label: "標題", name: "title", widget: "string", required: false }
-          - { label: "介紹文字", name: "intro", widget: "text", required: false, hint: "點「文章」進去、還沒選分類時看到的文字" }
+          - { label: "介紹文字", name: "intro", widget: "markdown", required: false, hint: "點「文章」進去、還沒選分類時看到的文字。選取文字後可以用工具列的連結按鈕加超連結" }
       - name: "contact"
         label: "聯絡我們"
         file: "src/content/pages/contact.md"
         fields:
           - { label: "標題", name: "title", widget: "string", required: false }
-          - { label: "介紹文字", name: "intro", widget: "text", required: false, hint: "顯示在「聯絡我們」頁面上的文字" }
+          - { label: "介紹文字", name: "intro", widget: "markdown", required: false, hint: "顯示在「聯絡我們」頁面上的文字。選取文字後可以用工具列的連結按鈕加超連結" }
+          - { label: "QR Code 圖片", name: "qrImage", widget: "image", required: false, hint: "例如 LINE 的 QR Code,上傳後會用小尺寸顯示在頁面上,方便訪客掃描" }
       - name: "homeIntro"
         label: "首頁導覽"
         file: "src/content/pages/home-intro.md"
         fields:
           - { label: "標題", name: "title", widget: "string", required: false }
-          - { label: "內文", name: "intro", widget: "text", required: false, hint: "顯示在首頁中間的文字,標題可以留空" }
+          - { label: "內文", name: "intro", widget: "markdown", required: false, hint: "顯示在首頁中間的文字,標題可以留空。選取文字後可以用工具列的連結按鈕加超連結" }
 
   - name: "home"
     label: "首頁內容"

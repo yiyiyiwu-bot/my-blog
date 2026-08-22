@@ -10,7 +10,8 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^7.2.3"
+    "astro": "^7.2.3",
+    "marked": "^18.0.10"
   },
   "devDependencies": {
     "wrangler": "^4.124.0"

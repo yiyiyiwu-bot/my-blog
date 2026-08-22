@@ -36,7 +36,7 @@ const nextChapter = chapterIndex < chapters.length - 1 ? chapters[chapterIndex +
     <p class="post-meta">{formattedDate}</p>
   </div>
 
-  <article class="post-body wrap">
+  <article class={`post-body wrap font-${post.data.fontFamily} size-${post.data.fontSize}`}>
     <Content />
   </article>
 

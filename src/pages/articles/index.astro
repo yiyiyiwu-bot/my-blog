@@ -2,8 +2,12 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CategorySidebar from '../../components/CategorySidebar.astro';
 import { getEntry } from 'astro:content';
+import { marked } from 'marked';
 
 const articlesPage = await getEntry('pages', 'articles');
+const introHtml = articlesPage?.data.intro
+  ? marked.parse(articlesPage.data.intro, { breaks: true })
+  : '';
 ---
 
 <BaseLayout title={articlesPage?.data.title || '文章'}>
@@ -11,7 +15,7 @@ const articlesPage = await getEntry('pages', 'articles');
     <CategorySidebar />
     <div class="articles-main">
       <h1 class="articles-title">{articlesPage?.data.title || '文章'}</h1>
-      {articlesPage?.data.intro && <p class="articles-intro">{articlesPage.data.intro}</p>}
+      {introHtml && <div class="articles-intro" set:html={introHtml} />}
     </div>
   </div>
 </BaseLayout>

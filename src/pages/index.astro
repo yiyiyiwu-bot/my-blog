@@ -3,12 +3,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import HomeBlock from '../components/HomeBlock.astro';
 import { siteConfig } from '../site.config';
 import { getCollection, getEntry } from 'astro:content';
+import { marked } from 'marked';
 
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 const posts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const heroPost = posts[0];
 
 const homeIntro = await getEntry('pages', 'home-intro');
+const homeIntroHtml = homeIntro?.data.intro
+  ? marked.parse(homeIntro.data.intro, { breaks: true })
+  : '';
 const homeBlocks = (await getCollection('home')).sort((a, b) => a.data.order - b.data.order);
 
 const hasHeroImages = siteConfig.heroImages && siteConfig.heroImages.length > 0;
@@ -57,7 +61,7 @@ const hasCustomHero = !!siteConfig.heroVideo || hasHeroImages;
   {homeIntro && (homeIntro.data.title || homeIntro.data.intro) && (
     <div class="wrap home-intro">
       {homeIntro.data.title && <h2 class="home-intro-title">{homeIntro.data.title}</h2>}
-      {homeIntro.data.intro && <p class="home-intro-text">{homeIntro.data.intro}</p>}
+      {homeIntroHtml && <div class="home-intro-text" set:html={homeIntroHtml} />}
     </div>
   )}
 

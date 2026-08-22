@@ -12,6 +12,8 @@ const blog = defineCollection({
     coverImageAlt: z.string().default(''),
     excerpt: z.string().default(''),
     draft: z.boolean().default(false),
+    fontFamily: z.enum(['default', 'pmingliu', 'biaukai', 'jhenghei']).default('default'),
+    fontSize: z.enum(['small', 'normal', 'large', 'xlarge']).default('normal'),
   }),
 });
 
@@ -31,6 +33,7 @@ const pages = defineCollection({
     title: z.string().default(''),
     intro: z.string().default(''),
     sidebarLabel: z.string().default('文章首頁'),
+    qrImage: z.string().optional(),
   }),
 });
 
