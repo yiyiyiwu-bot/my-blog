@@ -450,10 +450,23 @@ a {
 
 .password-hint {
   color: var(--color-muted);
+  font-family: var(--font-serif);
   font-size: 0.95rem;
   line-height: 1.8;
-  white-space: pre-line;
+  white-space: normal;
   margin: 0 0 20px;
+}
+
+.password-hint p {
+  margin: 0 0 12px;
+}
+
+.password-hint p:last-child {
+  margin-bottom: 0;
+}
+
+.password-hint a {
+  text-decoration: underline;
 }
 
 .password-form {

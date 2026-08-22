@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CategorySidebar from '../../components/CategorySidebar.astro';
 import { getCollection } from 'astro:content';
+import { marked } from 'marked';
 
 export async function getStaticPaths() {
   const categories = await getCollection('categories');
@@ -28,7 +29,9 @@ const posts = allPosts
 
       {categoryEntry.data.password && (
         <div class="password-gate" id="password-gate">
-          {categoryEntry.data.passwordHint && <p class="password-hint">{categoryEntry.data.passwordHint}</p>}
+          {categoryEntry.data.passwordHint && (
+            <div class="password-hint" set:html={marked.parse(categoryEntry.data.passwordHint, { breaks: true })} />
+          )}
           <div class="password-form">
             <input type="password" id="password-input" placeholder="請輸入密碼" />
             <button type="button" id="password-submit">確認</button>
@@ -38,7 +41,9 @@ const posts = allPosts
       )}
 
       <div id="protected-content" class={categoryEntry.data.password ? 'is-locked' : ''}>
-        {categoryEntry.data.description && <p class="articles-intro">{categoryEntry.data.description}</p>}
+        {categoryEntry.data.description && (
+          <div class="articles-intro" set:html={marked.parse(categoryEntry.data.description, { breaks: true })} />
+        )}
 
         <div class="episode-list-header">
           <h2 class="section-title">集數</h2>
