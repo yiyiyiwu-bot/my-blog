@@ -485,10 +485,39 @@ a {
   margin: 12px 0 0;
 }
 
+.font-size-toolbar {
+  max-width: 720px;
+  margin: 0 auto 16px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.font-size-label {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.font-size-btn {
+  border: 1px solid var(--color-border);
+  background: none;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--color-fg);
+}
+
+.font-size-btn.is-active {
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border-color: var(--color-fg);
+}
+
 .post-body {
   max-width: 720px;
   margin: 0 auto 80px;
-  font-size: 1.05rem;
+  font-size: calc(1.05rem * var(--reader-font-scale, 1));
 }
 
 .post-body :first-child {
@@ -731,13 +760,13 @@ a {
 }
 
 .size-small {
-  font-size: 0.9rem;
+  font-size: calc(0.9rem * var(--reader-font-scale, 1));
 }
 
 .size-large {
-  font-size: 1.25rem;
+  font-size: calc(1.25rem * var(--reader-font-scale, 1));
 }
 
 .size-xlarge {
-  font-size: 1.5rem;
+  font-size: calc(1.5rem * var(--reader-font-scale, 1));
 }

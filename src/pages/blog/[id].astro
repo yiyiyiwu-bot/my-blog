@@ -36,9 +36,40 @@ const nextChapter = chapterIndex < chapters.length - 1 ? chapters[chapterIndex +
     <p class="post-meta">{formattedDate}</p>
   </div>
 
+  <div class="font-size-toolbar">
+    <span class="font-size-label">字級：</span>
+    <button type="button" class="font-size-btn" data-scale="0.85">小</button>
+    <button type="button" class="font-size-btn" data-scale="1">中</button>
+    <button type="button" class="font-size-btn" data-scale="1.2">大</button>
+  </div>
+
   <article class={`post-body wrap font-${post.data.fontFamily} size-${post.data.fontSize}`}>
     <Content />
   </article>
+
+  <script>
+    const STORAGE_KEY = 'readerFontScale';
+    const article = document.querySelector('.post-body');
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.font-size-btn');
+
+    function applyScale(scale: string) {
+      article?.setAttribute('style', `--reader-font-scale: ${scale}`);
+      buttons.forEach((btn) => {
+        btn.classList.toggle('is-active', btn.dataset.scale === scale);
+      });
+    }
+
+    const saved = localStorage.getItem(STORAGE_KEY) || '1';
+    applyScale(saved);
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const scale = btn.dataset.scale || '1';
+        localStorage.setItem(STORAGE_KEY, scale);
+        applyScale(scale);
+      });
+    });
+  </script>
 
   {post.data.coverImage && (
     <img class="post-cover post-cover--full" src={post.data.coverImage} alt={post.data.coverImageAlt || post.data.title} />
