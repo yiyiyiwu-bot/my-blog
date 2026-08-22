@@ -12,7 +12,7 @@ const blog = defineCollection({
     coverImageAlt: z.string().default(''),
     excerpt: z.string().default(''),
     draft: z.boolean().default(false),
-    fontFamily: z.enum(['default', 'pmingliu', 'biaukai', 'jhenghei']).default('default'),
+    fontFamily: z.enum(['default', 'pmingliu', 'biaukai', 'jhenghei', 'notoserif']).default('default'),
     fontSize: z.enum(['small', 'normal', 'large', 'xlarge']).default('normal'),
   }),
 });

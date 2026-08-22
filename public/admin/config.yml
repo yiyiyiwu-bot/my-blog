@@ -39,12 +39,13 @@ collections:
         name: "fontFamily"
         widget: "select"
         default: "default"
-        hint: "整篇文章內文套用的字體(只在有安裝該字體的裝置上會正確顯示,例如 Windows 電腦)"
+        hint: "整篇文章內文套用的字體(新細明體/標楷體/微軟正黑體只在 Windows 裝置上會正確顯示,思源宋體則不管什麼裝置都看得到)"
         options:
           - { label: "預設", value: "default" }
           - { label: "新細明體", value: "pmingliu" }
           - { label: "標楷體", value: "biaukai" }
           - { label: "微軟正黑體", value: "jhenghei" }
+          - { label: "思源宋體", value: "notoserif" }
       - label: "內文字級"
         name: "fontSize"
         widget: "select"

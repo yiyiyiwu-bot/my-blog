@@ -214,9 +214,12 @@ a {
 }
 
 .home-intro-text {
-  color: var(--color-muted);
+  color: var(--color-fg);
+  font-family: var(--font-serif);
   font-size: 1rem;
-  line-height: 1.9;
+  font-weight: 400;
+  line-height: 1.95;
+  letter-spacing: 0.05em;
   max-width: 640px;
   margin: 0;
 }
@@ -289,9 +292,12 @@ a {
 }
 
 .home-block-text {
-  color: var(--color-muted);
+  color: var(--color-fg);
+  font-family: var(--font-serif);
   font-size: 1rem;
-  line-height: 1.8;
+  font-weight: 400;
+  line-height: 1.95;
+  letter-spacing: 0.05em;
   white-space: pre-line;
   margin: 0 0 32px;
 }
@@ -594,9 +600,12 @@ a {
 }
 
 .articles-intro {
-  color: var(--color-muted);
-  font-size: 0.95rem;
-  line-height: 1.9;
+  color: var(--color-fg);
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.95;
+  letter-spacing: 0.05em;
   max-width: 46em;
   margin: 0 0 40px;
 }
@@ -715,6 +724,10 @@ a {
 
 .font-jhenghei {
   font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+}
+
+.font-notoserif {
+  font-family: "Noto Serif TC", serif;
 }
 
 .size-small {
