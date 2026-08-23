@@ -48,6 +48,7 @@ const home = defineCollection({
     image: z.string().optional(),
     imagePosition: z.enum(['left', 'right']).default('left'),
     pageIntro: z.string().default(''),
+    detailImage: z.string().optional(),
     order: z.number().default(0),
     linkUrl: z.string().optional(),
   }),
