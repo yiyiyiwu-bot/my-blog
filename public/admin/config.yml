@@ -32,6 +32,7 @@ collections:
         hint: "從「分類管理」裡已經建立好的分類挑選"
       - { label: "標籤", name: "tags", widget: "list", default: [], required: false }
       - { label: "封面圖", name: "coverImage", widget: "image", required: false }
+      - { label: "第二張封面圖", name: "coverImage2", widget: "image", required: false, hint: "選填,只有在一篇文章對應兩個月份的卡片時才需要用到" }
       - { label: "封面圖說明", name: "coverImageAlt", widget: "string", required: false, hint: "給視障讀者跟搜尋引擎看的簡短描述" }
       - { label: "摘要", name: "excerpt", widget: "text", required: false, hint: "顯示在文章列表卡片上的一小段預覽文字" }
       - { label: "草稿", name: "draft", widget: "boolean", default: false, hint: "打勾的話,文章不會公開顯示在網站上" }

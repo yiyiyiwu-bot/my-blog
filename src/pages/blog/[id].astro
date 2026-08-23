@@ -76,6 +76,10 @@ const nextChapter = chapterIndex < chapters.length - 1 ? chapters[chapterIndex +
     <img class="post-cover post-cover--full" src={post.data.coverImage} alt={post.data.coverImageAlt || post.data.title} />
   )}
 
+  {post.data.coverImage2 && (
+    <img class="post-cover post-cover--full" src={post.data.coverImage2} alt={post.data.coverImageAlt || post.data.title} />
+  )}
+
   {post.data.tags.length > 0 && (
     <div class="post-tags wrap">
       {post.data.tags.map((tag) => <span>{tag}</span>)}
