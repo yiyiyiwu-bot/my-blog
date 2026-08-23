@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { marked } from 'marked';
 
 export async function getStaticPaths() {
   const blocks = await getCollection('home');
@@ -16,7 +17,9 @@ const { block } = Astro.props;
 <BaseLayout title={block.data.title || '關於我們'}>
   <div class="wrap post-header">
     <h1 class="post-title">{block.data.title || '關於我們'}</h1>
-    {block.data.pageIntro && <p class="home-block-text">{block.data.pageIntro}</p>}
+    {block.data.pageIntro && (
+      <div class="home-block-text home-block-text--markdown" set:html={marked.parse(block.data.pageIntro, { breaks: true })} />
+    )}
   </div>
 
   {block.data.detailImage && (

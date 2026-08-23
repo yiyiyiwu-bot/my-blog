@@ -142,7 +142,7 @@ collections:
           - { label: "圖片在右", value: "right" }
         default: "left"
         required: false
-      - { label: "內文", name: "pageIntro", widget: "text", required: false, hint: "點 VIEW MORE 進去後看到的內容,細節之後可以再打磨" }
+      - { label: "內文", name: "pageIntro", widget: "markdown", required: false, hint: "點 VIEW MORE 進去後看到的內容。選取文字後可以用工具列的連結按鈕加超連結" }
       - { label: "內頁圖片", name: "detailImage", widget: "image", required: false, hint: "點 VIEW MORE 進去後的頁面上顯示的圖片,跟首頁縮圖是分開的,可以放不同張" }
       - { label: "順序", name: "order", widget: "number", default: 100, required: false, hint: "數字越小排越前面。新增的區塊預設是 100,會排在後面;想調整順序就直接改這個數字" }
       - { label: "VIEW MORE 連結", name: "linkUrl", widget: "string", required: false, hint: "留空的話,會連到自動產生的頁面。想改連去別的地方(例如某一篇文章),就把網址貼在這裡,例如 /blog/文章網址" }

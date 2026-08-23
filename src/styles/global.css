@@ -302,6 +302,22 @@ a {
   margin: 0 0 32px;
 }
 
+.home-block-text--markdown {
+  white-space: normal;
+}
+
+.home-block-text--markdown p {
+  margin: 0 0 12px;
+}
+
+.home-block-text--markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.home-block-text--markdown a {
+  text-decoration: underline;
+}
+
 @media (max-width: 720px) {
   .home-block--with-image {
     grid-template-columns: 1fr;
