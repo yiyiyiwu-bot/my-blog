@@ -118,6 +118,20 @@ collections:
           - { label: "標題", name: "title", widget: "string", required: false }
           - { label: "內文", name: "intro", widget: "markdown", required: false, hint: "顯示在首頁中間的文字,標題可以留空。選取文字後可以用工具列的連結按鈕加超連結" }
 
+  - name: "news"
+    label: "最新資訊公告"
+    label_singular: "公告"
+    folder: "src/content/news"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: title
+    sortable_fields: [pubDate, title]
+    fields:
+      - { label: "標題", name: "title", widget: "string" }
+      - { label: "發布日期", name: "pubDate", widget: "datetime" }
+      - { label: "置頂", name: "pinned", widget: "boolean", default: false, hint: "打勾的話,這篇公告會固定顯示在列表最前面" }
+      - { label: "內文", name: "body", widget: "markdown" }
+
   - name: "home"
     label: "首頁內容"
     label_singular: "首頁下方區塊"

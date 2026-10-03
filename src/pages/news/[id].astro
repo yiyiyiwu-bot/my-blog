@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const news = await getCollection('news');
+  return news.map((item) => ({
+    params: { id: item.id },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+const { Content } = await render(item);
+const formattedDate = item.data.pubDate.toLocaleDateString('zh-TW', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={item.data.title}>
+  <div class="wrap post-header">
+    <h1 class="post-title">{item.data.title}</h1>
+    <p class="post-meta">{formattedDate}</p>
+  </div>
+
+  <article class="post-body wrap">
+    <Content />
+  </article>
+
+  <nav class="chapter-nav wrap">
+    <a class="chapter-link chapter-prev" href="/news/">
+      <span class="chapter-label">← 回最新資訊列表</span>
+    </a>
+  </nav>
+</BaseLayout>

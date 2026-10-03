@@ -54,4 +54,13 @@ const home = defineCollection({
   }),
 });
 
-export const collections = { blog, categories, pages, home };
+const news = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/news' }),
+  schema: z.object({
+    title: z.string(),
+    pubDate: z.coerce.date(),
+    pinned: z.boolean().default(false),
+  }),
+});
+
+export const collections = { blog, categories, pages, home, news };
