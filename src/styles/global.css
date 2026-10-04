@@ -565,6 +565,163 @@ a {
   padding-top: 24px;
 }
 
+.post-comments {
+  max-width: 720px;
+  margin: 0 auto 80px;
+}
+
+.post-comments .section-title {
+  margin: 0 0 24px;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.comment-input,
+.comment-textarea {
+  border: 1px solid var(--color-border);
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  width: 100%;
+}
+
+.comment-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.comment-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.comment-submit {
+  align-self: flex-start;
+  border: 1px solid var(--color-fg);
+  background: var(--color-fg);
+  color: var(--color-bg);
+  padding: 10px 24px;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.comment-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.comment-status {
+  color: #c0392b;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.comment-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.comment-item,
+.moderate-item {
+  border-top: 1px solid var(--color-border);
+  padding: 20px 0;
+}
+
+.comment-empty {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  padding: 20px 0;
+}
+
+.comment-name {
+  font-weight: 600;
+  margin: 0 0 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.comment-date {
+  font-weight: 400;
+  font-size: 0.78rem;
+  color: var(--color-muted);
+}
+
+.comment-body-text {
+  margin: 0;
+  white-space: pre-line;
+  line-height: 1.7;
+}
+
+/* ---------- Comment moderation page ---------- */
+
+.moderate-panel {
+  max-width: 720px;
+  margin: 0 auto 80px;
+}
+
+.moderate-login {
+  display: flex;
+  gap: 10px;
+}
+
+.moderate-login input {
+  flex: 1;
+  border: 1px solid var(--color-border);
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.moderate-login button {
+  border: 1px solid var(--color-fg);
+  background: var(--color-fg);
+  color: var(--color-bg);
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.moderate-error {
+  color: #c0392b;
+  font-size: 0.85rem;
+  margin: 12px 0 0;
+  width: 100%;
+}
+
+.moderate-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.moderate-delete-btn {
+  border: 1px solid var(--color-border);
+  background: none;
+  padding: 4px 14px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #c0392b;
+  margin-top: 10px;
+}
+
+.moderate-delete-btn:hover {
+  background: #c0392b;
+  color: var(--color-bg);
+  border-color: #c0392b;
+}
+
 .chapter-link {
   display: flex;
   flex-direction: column;

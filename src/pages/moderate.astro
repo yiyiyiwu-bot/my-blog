@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="留言管理">
+  <div class="wrap post-header">
+    <h1 class="post-title">留言管理</h1>
+    <p class="post-meta">輸入審核密碼查看、刪除留言</p>
+  </div>
+
+  <div class="wrap moderate-panel">
+    <div class="moderate-login" id="moderate-login">
+      <input type="password" id="moderate-token" placeholder="請輸入審核密碼" />
+      <button type="button" id="moderate-login-btn">登入</button>
+      <p class="moderate-error" id="moderate-error" hidden>密碼不對，再試一次</p>
+    </div>
+
+    <div class="moderate-content" id="moderate-content" hidden>
+      <ol class="moderate-list" id="moderate-list"></ol>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const TOKEN_KEY = 'moderateToken';
+  const loginBox = document.getElementById('moderate-login');
+  const content = document.getElementById('moderate-content');
+  const list = document.getElementById('moderate-list');
+  const error = document.getElementById('moderate-error');
+  const tokenInput = document.getElementById('moderate-token') as HTMLInputElement;
+  const loginBtn = document.getElementById('moderate-login-btn');
+
+  interface Comment {
+    id: number;
+    post_id: string;
+    name: string;
+    body: string;
+    created_at: number;
+  }
+
+  function renderList(comments: Comment[], token: string) {
+    if (!list) return;
+    list.innerHTML = '';
+
+    if (!comments.length) {
+      const empty = document.createElement('li');
+      empty.className = 'comment-empty';
+      empty.textContent = '目前沒有留言。';
+      list.appendChild(empty);
+      return;
+    }
+
+    comments.forEach((c) => {
+      const li = document.createElement('li');
+      li.className = 'moderate-item';
+
+      const meta = document.createElement('p');
+      meta.className = 'comment-name';
+      meta.textContent = `${c.name}（文章：${c.post_id}）`;
+
+      const date = document.createElement('span');
+      date.className = 'comment-date';
+      date.textContent = new Date(c.created_at).toLocaleString('zh-TW');
+      meta.appendChild(date);
+
+      const body = document.createElement('p');
+      body.className = 'comment-body-text';
+      body.textContent = c.body;
+
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'moderate-delete-btn';
+      delBtn.textContent = '刪除';
+      delBtn.addEventListener('click', async () => {
+        if (!confirm('確定要刪除這則留言嗎？')) return;
+        const res = await fetch('/api/moderate/delete', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ token, id: c.id }),
+        });
+        if (res.ok) {
+          li.remove();
+        } else {
+          alert('刪除失敗');
+        }
+      });
+
+      li.appendChild(meta);
+      li.appendChild(body);
+      li.appendChild(delBtn);
+      list.appendChild(li);
+    });
+  }
+
+  async function loadComments(token: string) {
+    const res = await fetch(`/api/moderate/comments?token=${encodeURIComponent(token)}`);
+    if (!res.ok) {
+      error?.removeAttribute('hidden');
+      sessionStorage.removeItem(TOKEN_KEY);
+      return;
+    }
+    const data = await res.json();
+    loginBox?.setAttribute('hidden', '');
+    content?.removeAttribute('hidden');
+    renderList(data.comments || [], token);
+  }
+
+  const savedToken = sessionStorage.getItem(TOKEN_KEY);
+  if (savedToken) {
+    loadComments(savedToken);
+  }
+
+  loginBtn?.addEventListener('click', async () => {
+    const token = tokenInput.value.trim();
+    if (!token) return;
+    error?.setAttribute('hidden', '');
+    sessionStorage.setItem(TOKEN_KEY, token);
+    await loadComments(token);
+  });
+
+  tokenInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') loginBtn?.dispatchEvent(new MouseEvent('click'));
+  });
+</script>

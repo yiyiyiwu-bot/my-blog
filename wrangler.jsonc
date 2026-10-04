@@ -1,8 +1,17 @@
 {
   "name": "my-blog",
   "compatibility_date": "2026-08-19",
+  "main": "src/worker/index.ts",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "404-page"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "my-blog-comments",
+      "database_id": "07fa9255-4705-4d81-b96e-553de439198a"
+    }
+  ]
 }

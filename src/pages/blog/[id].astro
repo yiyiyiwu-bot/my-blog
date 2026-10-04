@@ -76,4 +76,103 @@ const nextChapter = chapterIndex < chapters.length - 1 ? chapters[chapterIndex +
       </span>
     )}
   </nav>
+
+  <div class="wrap post-comments">
+    <h2 class="section-title">留言</h2>
+
+    <form id="comment-form" class="comment-form">
+      <input type="text" id="comment-name" name="name" class="comment-input" placeholder="你的名字" maxlength="50" required />
+      <textarea id="comment-body" name="body" class="comment-textarea" placeholder="留言內容" maxlength="2000" required></textarea>
+      <input type="text" id="comment-website" name="website" class="comment-honeypot" tabindex="-1" autocomplete="off" />
+      <button type="submit" class="comment-submit">送出留言</button>
+      <p class="comment-status" id="comment-status" hidden></p>
+    </form>
+
+    <ol class="comment-list" id="comment-list"></ol>
+  </div>
+
+  <script define:vars={{ postId: post.id }}>
+    const form = document.getElementById('comment-form');
+    const list = document.getElementById('comment-list');
+    const status = document.getElementById('comment-status');
+
+    function renderComment(c) {
+      const li = document.createElement('li');
+      li.className = 'comment-item';
+
+      const meta = document.createElement('p');
+      meta.className = 'comment-name';
+      meta.textContent = c.name;
+
+      const date = document.createElement('span');
+      date.className = 'comment-date';
+      date.textContent = new Date(c.created_at).toLocaleDateString('zh-TW', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      meta.appendChild(date);
+
+      const body = document.createElement('p');
+      body.className = 'comment-body-text';
+      body.textContent = c.body;
+
+      li.appendChild(meta);
+      li.appendChild(body);
+      return li;
+    }
+
+    async function loadComments() {
+      try {
+        const res = await fetch(`/api/comments?postId=${encodeURIComponent(postId)}`);
+        const data = await res.json();
+        list.innerHTML = '';
+        if (!data.comments || data.comments.length === 0) {
+          const empty = document.createElement('li');
+          empty.className = 'comment-empty';
+          empty.textContent = '目前還沒有留言，當第一個留言的人吧！';
+          list.appendChild(empty);
+          return;
+        }
+        data.comments.forEach((c) => list.appendChild(renderComment(c)));
+      } catch {
+        list.innerHTML = '<li class="comment-empty">留言載入失敗，請稍後再試。</li>';
+      }
+    }
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('comment-name').value.trim();
+      const body = document.getElementById('comment-body').value.trim();
+      const website = document.getElementById('comment-website').value.trim();
+      if (!name || !body) return;
+
+      status.hidden = true;
+      const submitBtn = form.querySelector('.comment-submit');
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch('/api/comments', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ postId, name, body, website }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          status.textContent = data.error || '送出失敗，請再試一次';
+          status.hidden = false;
+        } else {
+          form.reset();
+          await loadComments();
+        }
+      } catch {
+        status.textContent = '送出失敗，請確認網路連線後再試一次';
+        status.hidden = false;
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    loadComments();
+  </script>
 </BaseLayout>
