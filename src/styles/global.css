@@ -651,15 +651,16 @@ a {
   gap: 10px;
 }
 
-.comment-floor {
-  font-weight: 400;
-  color: var(--color-muted);
-}
-
 .comment-date {
   font-weight: 400;
   font-size: 0.78rem;
   color: var(--color-muted);
+}
+
+.comment-meta-line {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  margin: 8px 0 0;
 }
 
 .comment-body-text {
