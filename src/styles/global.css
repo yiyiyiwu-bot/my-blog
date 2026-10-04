@@ -931,6 +931,10 @@ a {
   gap: 8px;
 }
 
+.site-footer span a {
+  text-decoration: none;
+}
+
 /* ---------- Text mode utilities (font family / size overrides) ---------- */
 /* Kept last in the file so they win over any component's own font-size/font-family. */
 
