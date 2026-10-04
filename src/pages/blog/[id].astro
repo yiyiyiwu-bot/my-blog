@@ -96,13 +96,18 @@ const nextChapter = chapterIndex < chapters.length - 1 ? chapters[chapterIndex +
     const list = document.getElementById('comment-list');
     const status = document.getElementById('comment-status');
 
-    function renderComment(c) {
+    function renderComment(c, index) {
       const li = document.createElement('li');
       li.className = 'comment-item';
 
       const meta = document.createElement('p');
       meta.className = 'comment-name';
-      meta.textContent = c.name;
+
+      const floor = document.createElement('span');
+      floor.className = 'comment-floor';
+      floor.textContent = `${index + 1}F`;
+      meta.appendChild(floor);
+      meta.appendChild(document.createTextNode(c.name));
 
       const date = document.createElement('span');
       date.className = 'comment-date';
@@ -134,7 +139,7 @@ const nextChapter = chapterIndex < chapters.length - 1 ? chapters[chapterIndex +
           list.appendChild(empty);
           return;
         }
-        data.comments.forEach((c) => list.appendChild(renderComment(c)));
+        data.comments.forEach((c, i) => list.appendChild(renderComment(c, i)));
       } catch {
         list.innerHTML = '<li class="comment-empty">留言載入失敗，請稍後再試。</li>';
       }
