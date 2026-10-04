@@ -737,11 +737,11 @@ a {
 }
 
 .news-list .news-date {
-  display: block;
-  font-size: 0.8rem;
+  display: inline-block;
+  font-size: 0.85rem;
   color: var(--color-muted);
   font-family: var(--font-sans);
-  margin-bottom: 4px;
+  margin-right: 14px;
 }
 
 .news-pinned {
