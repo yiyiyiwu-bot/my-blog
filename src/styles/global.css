@@ -6,6 +6,7 @@
   --max-width: 1100px;
   --font-serif: "Georgia", "Noto Serif TC", serif;
   --font-sans: -apple-system, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+  --global-font-scale: 1;
 }
 
 * {
@@ -16,6 +17,18 @@ html,
 body {
   margin: 0;
   padding: 0;
+}
+
+html {
+  /* Reader-adjustable site-wide text size (see .font-scale-nav):
+     --global-font-scale is set via inline style by BaseLayout's script. */
+  font-size: calc(16px * var(--global-font-scale, 1));
+}
+
+@media (max-width: 640px) {
+  html {
+    font-size: calc(18px * var(--global-font-scale, 1));
+  }
 }
 
 body {
@@ -515,39 +528,10 @@ a {
   margin: 12px 0 0;
 }
 
-.font-size-toolbar {
-  max-width: 720px;
-  margin: 0 auto 16px;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.font-size-label {
-  font-size: 0.8rem;
-  color: var(--color-muted);
-}
-
-.font-size-btn {
-  border: 1px solid var(--color-border);
-  background: none;
-  padding: 4px 12px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  color: var(--color-fg);
-}
-
-.font-size-btn.is-active {
-  background: var(--color-fg);
-  color: var(--color-bg);
-  border-color: var(--color-fg);
-}
-
 .post-body {
   max-width: 720px;
   margin: 0 auto 80px;
-  font-size: calc(1.05rem * var(--reader-font-scale, 1));
+  font-size: 1.05rem;
 }
 
 .post-body :first-child {
@@ -810,15 +794,15 @@ a {
 }
 
 .size-small {
-  font-size: calc(0.9rem * var(--reader-font-scale, 1));
+  font-size: 0.9rem;
 }
 
 .size-large {
-  font-size: calc(1.25rem * var(--reader-font-scale, 1));
+  font-size: 1.25rem;
 }
 
 .size-xlarge {
-  font-size: calc(1.5rem * var(--reader-font-scale, 1));
+  font-size: 1.5rem;
 }
 
 /* ---------- Floating back-to-top / back-to-home nav ---------- */
@@ -866,6 +850,50 @@ a {
 .floating-nav-icon {
   font-size: 1.1rem;
   line-height: 1;
+}
+
+/* ---------- Floating site-wide font-size control ---------- */
+
+.font-scale-nav {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 100;
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.font-scale-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.font-scale-btn:hover {
+  background: var(--color-border);
+}
+
+.font-scale-btn.is-active {
+  background: var(--color-fg);
+  color: var(--color-bg);
+}
+
+@media (max-width: 640px) {
+  .font-scale-nav {
+    left: 12px;
+    bottom: 12px;
+  }
 }
 
 .floating-nav-text {
