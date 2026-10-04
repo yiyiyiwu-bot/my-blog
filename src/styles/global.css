@@ -623,7 +623,8 @@ a {
   display: grid;
   grid-template-columns: 160px 1fr;
   gap: 56px;
-  padding: 56px 0 80px;
+  padding-top: 56px;
+  padding-bottom: 80px;
 }
 
 .articles-sidebar {
