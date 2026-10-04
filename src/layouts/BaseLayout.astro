@@ -79,11 +79,20 @@ const pageTitle = title ? `${title} — ${siteConfig.title}` : siteConfig.title;
       });
 
       const floatingNav = document.querySelector('.floating-nav');
-      const toggleFloatingNav = () => {
-        floatingNav?.classList.toggle('is-visible', window.scrollY > 200);
+      let floatingNavIdleTimer: ReturnType<typeof setTimeout> | undefined;
+      const updateFloatingNav = () => {
+        clearTimeout(floatingNavIdleTimer);
+        if (window.scrollY > 200) {
+          floatingNav?.classList.add('is-visible');
+          floatingNavIdleTimer = setTimeout(() => {
+            floatingNav?.classList.remove('is-visible');
+          }, 5000);
+        } else {
+          floatingNav?.classList.remove('is-visible');
+        }
       };
-      toggleFloatingNav();
-      window.addEventListener('scroll', toggleFloatingNav, { passive: true });
+      updateFloatingNav();
+      window.addEventListener('scroll', updateFloatingNav, { passive: true });
 
       const SCALE_KEY = 'globalFontScale';
       const scaleButtons = document.querySelectorAll<HTMLButtonElement>('.font-scale-btn');
