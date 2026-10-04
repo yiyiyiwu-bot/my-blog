@@ -18,7 +18,7 @@ const { categoryEntry } = Astro.props;
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 const posts = allPosts
   .filter((post) => post.data.category === category)
-  .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <BaseLayout title={category}>
@@ -47,7 +47,7 @@ const posts = allPosts
 
         <div class="episode-list-header">
           <h2 class="section-title">集數</h2>
-          <button type="button" id="sort-toggle" class="sort-toggle">舊 → 新</button>
+          <button type="button" id="sort-toggle" class="sort-toggle">新 → 舊</button>
         </div>
 
         {posts.length === 0 && <p class="empty-state">這個分類還沒有文章。</p>}
@@ -69,7 +69,7 @@ const posts = allPosts
   btn?.addEventListener('click', () => {
     reversed = !reversed;
     list?.classList.toggle('is-reversed', reversed);
-    if (btn) btn.textContent = reversed ? '新 → 舊' : '舊 → 新';
+    if (btn) btn.textContent = reversed ? '舊 → 新' : '新 → 舊';
   });
 </script>
 

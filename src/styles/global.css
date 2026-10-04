@@ -538,6 +538,14 @@ a {
   margin-top: 0;
 }
 
+.post-body p {
+  margin: 0 0 1.4em;
+}
+
+.post-body p:last-child {
+  margin-bottom: 0;
+}
+
 .post-tags {
   max-width: 720px;
   margin: -40px auto 80px;
