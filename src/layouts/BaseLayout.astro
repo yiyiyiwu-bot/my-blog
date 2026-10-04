@@ -52,6 +52,18 @@ const pageTitle = title ? `${title} — ${siteConfig.title}` : siteConfig.title;
     </footer>
 
     <div class="floating-nav">
+      <div class="font-scale-control">
+        <button type="button" id="font-scale-toggle" class="floating-nav-btn" aria-label="調整文字大小" aria-expanded="false">
+          <span class="floating-nav-icon">Aa</span>
+          <span class="floating-nav-text">文字大小</span>
+        </button>
+        <div class="font-scale-options" id="font-scale-options" hidden>
+          <button type="button" class="font-scale-btn" data-scale="0.85">小</button>
+          <button type="button" class="font-scale-btn" data-scale="1">中</button>
+          <button type="button" class="font-scale-btn" data-scale="1.2">大</button>
+          <button type="button" class="font-scale-btn" data-scale="1.4">巨</button>
+        </div>
+      </div>
       <button type="button" id="back-to-top" class="floating-nav-btn" aria-label="回到頂端">
         <span class="floating-nav-icon">↑</span>
         <span class="floating-nav-text">頂端</span>
@@ -60,13 +72,6 @@ const pageTitle = title ? `${title} — ${siteConfig.title}` : siteConfig.title;
         <span class="floating-nav-icon">⌂</span>
         <span class="floating-nav-text">首頁</span>
       </a>
-    </div>
-
-    <div class="font-scale-nav" aria-label="調整全站文字大小">
-      <button type="button" class="font-scale-btn" data-scale="0.85">小</button>
-      <button type="button" class="font-scale-btn" data-scale="1">中</button>
-      <button type="button" class="font-scale-btn" data-scale="1.2">大</button>
-      <button type="button" class="font-scale-btn" data-scale="1.4">特大</button>
     </div>
 
     <script>
@@ -83,6 +88,8 @@ const pageTitle = title ? `${title} — ${siteConfig.title}` : siteConfig.title;
 
       const SCALE_KEY = 'globalFontScale';
       const scaleButtons = document.querySelectorAll<HTMLButtonElement>('.font-scale-btn');
+      const scaleToggle = document.getElementById('font-scale-toggle');
+      const scaleOptions = document.getElementById('font-scale-options');
 
       function applyGlobalScale(scale: string) {
         document.documentElement.style.setProperty('--global-font-scale', scale);
@@ -93,12 +100,28 @@ const pageTitle = title ? `${title} — ${siteConfig.title}` : siteConfig.title;
 
       applyGlobalScale(localStorage.getItem(SCALE_KEY) || '1');
 
+      scaleToggle?.addEventListener('click', () => {
+        const isOpen = !scaleOptions?.hidden;
+        if (scaleOptions) scaleOptions.hidden = isOpen;
+        scaleToggle.setAttribute('aria-expanded', String(!isOpen));
+      });
+
       scaleButtons.forEach((btn) => {
         btn.addEventListener('click', () => {
           const scale = btn.dataset.scale || '1';
           localStorage.setItem(SCALE_KEY, scale);
           applyGlobalScale(scale);
+          if (scaleOptions) scaleOptions.hidden = true;
+          scaleToggle?.setAttribute('aria-expanded', 'false');
         });
+      });
+
+      document.addEventListener('click', (e) => {
+        const target = e.target as Node;
+        if (scaleOptions && !scaleOptions.hidden && !scaleOptions.contains(target) && target !== scaleToggle && !scaleToggle?.contains(target)) {
+          scaleOptions.hidden = true;
+          scaleToggle?.setAttribute('aria-expanded', 'false');
+        }
       });
     </script>
   </body>

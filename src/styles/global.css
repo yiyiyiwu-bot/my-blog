@@ -20,7 +20,7 @@ body {
 }
 
 html {
-  /* Reader-adjustable site-wide text size (see .font-scale-nav):
+  /* Reader-adjustable site-wide text size (see .font-scale-control):
      --global-font-scale is set via inline style by BaseLayout's script. */
   font-size: calc(16px * var(--global-font-scale, 1));
 }
@@ -854,11 +854,15 @@ a {
 
 /* ---------- Floating site-wide font-size control ---------- */
 
-.font-scale-nav {
-  position: fixed;
-  left: 20px;
-  bottom: 20px;
-  z-index: 100;
+.font-scale-control {
+  position: relative;
+}
+
+.font-scale-options {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   gap: 6px;
   padding: 6px;
@@ -866,6 +870,10 @@ a {
   border: 1px solid var(--color-border);
   border-radius: 999px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.font-scale-options[hidden] {
+  display: none;
 }
 
 .font-scale-btn {
@@ -887,13 +895,6 @@ a {
 .font-scale-btn.is-active {
   background: var(--color-fg);
   color: var(--color-bg);
-}
-
-@media (max-width: 640px) {
-  .font-scale-nav {
-    left: 12px;
-    bottom: 12px;
-  }
 }
 
 .floating-nav-text {
