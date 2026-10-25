@@ -865,7 +865,7 @@ export const humanRealm: GoodRealm = {
 // 人生三個階段：照順序走，每個階段從自己的故事裡隨機抽回數。
 // 不管從哪個起點開始，一生都玩 LIFE_ROUNDS 回，各階段分幾回看 lifePlans。
 // 每一回的年紀，是把該階段的年紀範圍（startAge～endAge）平均分給那幾回。
-// 玩家在開始畫面選起點；輪迴重新投胎一律從學生時期開始。
+// 玩家在開始畫面選起點；輪迴重新投胎後也回到開始畫面重新選。
 // 大惡的選擇會折壽，直接抽掉後面的回數（可能整個跳過下一個階段）。
 export type StageId = 'student' | 'adult' | 'senior';
 

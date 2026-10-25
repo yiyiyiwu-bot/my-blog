@@ -106,7 +106,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       'title',
       `<h1 class="game-title">生命模擬器</h1>
        <p class="game-lead">導師「愛、光和良知」看著你說：<br />「去人間好好體驗吧。記得，每一個選擇都算數。」</p>
-       <p class="game-meta game-center">你想從哪裡開始投胎？</p>
+       <p class="game-meta game-center">${life > 1 ? `第 ${life} 世，` : ''}你想從哪裡開始投胎？</p>
        <div class="game-starts">
          ${stages
            .map(
@@ -253,8 +253,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     life++;
     // 惡業已經在惡道受完了，陰德從零開始
     merit = 0;
-    // 重新投胎是從嬰兒開始，所以一律從學生時期走起
-    startLife('student');
+    // 回到開始畫面，重新選這一世的起點
+    titleScreen();
   }
 
   function bardoIntro() {
@@ -339,16 +339,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     life++;
     // 好的陰德留一半到下一世，惡業則全部跟著你
     merit = merit > 0 ? Math.floor(merit / 2) : merit;
-    // 重新投胎是從嬰兒開始，所以一律從學生時期走起
-    startLife('student');
+    // 回到開始畫面，重新選這一世的起點
+    titleScreen();
   }
 
   function heavenFall() {
     life++;
     // 福報在天上享盡了
     merit = 0;
-    // 重新投胎是從嬰兒開始，所以一律從學生時期走起
-    startLife('student');
+    // 回到開始畫面，重新選這一世的起點
+    titleScreen();
   }
 
   function liberationScreen() {
