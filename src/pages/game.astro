@@ -21,7 +21,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     MERIT_NEEDED,
     MERIT_COST,
     START_AGE,
-    DEATH_AGE,
+    LIFE_ROUNDS,
     type Chapter,
   } from '../game/data';
 
@@ -37,6 +37,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   let deck: Chapter[] = [];
   let pendingKarma: string | null = null;
   let badCount = 0; // 這一世做了幾次有惡報的事
+  let round = 0; // 這一世玩到第幾回
+  let lostRounds = 0; // 這一世因折壽少掉的回數
   let trialIndex = 0;
 
   const rand = (min: number, max: number) => min + Math.floor(Math.random() * (max - min + 1));
@@ -99,20 +101,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   function startLife() {
     age = START_AGE;
     hand = [];
-    deck = shuffle(chapters);
+    deck = shuffle(chapters).slice(0, LIFE_ROUNDS);
     pendingKarma = null;
     badCount = 0;
+    round = 0;
+    lostRounds = 0;
     nextChapter();
   }
 
   function nextChapter() {
     const chapter = deck.shift();
-    if (!chapter || age >= DEATH_AGE) return deathScreen();
+    if (!chapter) return deathScreen();
+    round++;
     const karma = pendingKarma;
     pendingKarma = null;
     show(
       'life',
-      `<p class="game-meta">第 ${life} 世 · ${age} 歲</p>
+      `<p class="game-meta">第 ${life} 世 · ${age} 歲 · 第 ${round} 回</p>
        ${karma ? `<div class="game-karma"><strong>因果</strong>${karma}</div>` : ''}
        <h2 class="game-heading">${chapter.title}</h2>
        ${paras(chapter.text)}
@@ -132,10 +137,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       pendingKarma = choice.karma;
       badCount++;
     }
-    age += rand(8, 12);
+    age += rand(6, 8);
+    // 大惡折壽：直接抽掉後面的回數
+    const cut = choice.shorten ? deck.splice(0, choice.shorten).length : 0;
+    lostRounds += cut;
     show(
       'life',
       `${paras(choice.result)}
+       ${cut ? `<p class="game-shorten">⏳ 惡業折壽：這一生少了 ${cut} 回。</p>` : ''}
        ${gained.length ? `<p class="game-meta">你得到了卡片</p><div class="game-cards">${gained.map(cardFigure).join('')}</div>` : ''}
        ${button('繼續', 'next-chapter')}`,
       true,
@@ -143,7 +152,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   function deathScreen() {
-    age = Math.max(age, DEATH_AGE) + rand(0, 8);
     const karma = pendingKarma;
     pendingKarma = null;
     const forced = badCount >= EVIL_THRESHOLD;
@@ -151,7 +159,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       'death',
       `${karma ? `<div class="game-karma"><strong>因果</strong>${karma}</div>` : ''}
        <h2 class="game-heading">人生落幕</h2>
-       <p class="game-text">${age} 歲那年，你慢慢閉上了眼睛。這一生的點點滴滴，像電影一樣在眼前播放……</p>
+       <p class="game-text">${
+         lostRounds
+           ? `${age} 歲那年，你的人生提早落幕了。原本還能再走好長一段路，卻被自己的惡業折去了。`
+           : `${age} 歲那年，你慢慢閉上了眼睛。`
+       }這一生的點點滴滴，像電影一樣在眼前播放……</p>
        ${
          forced
            ? `<p class="game-text">你還來不及看清楚四周，一股又沉又冷的力量就把你往下拉——這一生的惡業太重了，手上的卡片一張也拿不出來。</p>
@@ -394,6 +406,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     padding: 12px 16px;
     line-height: 1.8;
     border-radius: 4px;
+  }
+  .game-shorten {
+    color: #ffb3b3;
+    font-weight: 600;
+    margin: 0;
   }
   .game-karma strong {
     display: block;
