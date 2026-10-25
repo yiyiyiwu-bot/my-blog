@@ -21,6 +21,7 @@ export interface Choice {
 
 export interface Chapter {
   id: string;
+  hint: { quote: string; source: string }; // 「停看聽」求救鈕顯示的筆記句子
   title: string;
   text: string;
   choices: Choice[];
@@ -113,6 +114,7 @@ export const cards: Record<string, Card> = {
 export const chapters: Chapter[] = [
   {
     id: 'deepfake-boss',
+    hint: { quote: '凡走過必留下痕跡，萬物之道皆有徵兆。透徹之人知初始，微觀之人知避禍，昏沈之人順因緣。', source: '戴戴筆記第八回（對應徵兆）' },
     title: '老闆的視訊電話',
     text:
       '星期五下午四點五十八分，你正準備關電腦下班，手機突然跳出視訊通話——是老闆。\n\n' +
@@ -163,6 +165,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'crosswalk',
+    hint: { quote: '念頭就賜予了情緒權力。逆轉是在變中取止，在止中觀看，那麼這個轉就由你掌控了。', source: '戴戴筆記第三十八回（對應逆轉）' },
     title: '斑馬線上的阿伯',
     text:
       '你上班快遲到了，一路狂飆，終於在路口趕上綠燈，準備右轉。\n\n' +
@@ -213,6 +216,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'diet-jelly',
+    hint: { quote: '敏銳能觀照需求，降低貪念的影響，進而減輕負擔的發生。', source: '戴戴筆記第五回（對應敏銳）' },
     title: '神奇瘦身果凍',
     text:
       '你的朋友小美是個有十萬粉絲的網紅。她興奮地打電話來：「我接到一個超讚的業配！『吃了躺著就會瘦』的神奇果凍，我們一起直播賣，一場抽成十萬！」\n\n' +
@@ -262,6 +266,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'ai-report',
+    hint: { quote: '對和錯往往是最後的結果，但我們卻忘記了在未成為答案之前的過程是如何，那才是決定答案的關鍵。', source: '戴戴筆記第一回（對應平衡）' },
     title: 'AI 寫的期末報告',
     text:
       '你在進修班上課，期末報告明天就要交，題目是「我心目中的理想城市」，至少三千字。你一個字都還沒寫。\n\n' +
@@ -311,6 +316,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'lemon-water',
+    hint: { quote: '人會花時間去證明表象的真，卻不想用心去沉思內心深處的世界。', source: '戴戴筆記第六回（對應沉思）' },
     title: '熱檸檬水救命？',
     text:
       '家族群組裡，阿姨轉傳了一張閃閃發亮的長輩圖：「醫生不會告訴你的秘密！每天喝熱檸檬水，癌細胞全部殺光！」下面還有十朵玫瑰花，跟一句「不轉不是台灣人」。\n\n' +
@@ -361,6 +367,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'delivery',
+    hint: { quote: '如果明白，白天之後會是黑夜，風雨過後即會平靜……那麼，套用在自己身上，也就沒什麼好計較的了！', source: '戴戴筆記第七回（對應智慧）' },
     title: '颱風天的外送',
     text:
       '颱風天，你窩在家裡點了一碗牛肉麵外送。\n\n' +
@@ -410,6 +417,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'short-videos',
+    hint: { quote: '習慣和時間互為健康關係，就像因果循環一般。', source: '戴戴筆記第三十四回（對應健康）' },
     title: '凌晨三點的短影音',
     text:
       '你每天晚上十一點準時躺上床，打算「滑一下就睡」。\n\n' +
@@ -459,6 +467,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'stock-guru',
+    hint: { quote: '比較是幸福的殺手，幸與不幸，一體兩面，眼界放開了處處是幸福。', source: '戴戴筆記第十八回（對應幸福）' },
     title: '飆股老師的群組',
     text:
       '爸爸最近每天笑咪咪地盯著手機。原來他被拉進一個投資群組，群組裡的「老師」每天報明牌，底下一堆人在曬賺錢的截圖。\n\n' +
@@ -509,6 +518,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'heatwave',
+    hint: { quote: '唯有停下腳步覺察，才能看見那習以為常的日常。', source: '戴戴筆記第四十回（對應世界）' },
     title: '熱浪裡的王伯伯',
     text:
       '今年夏天熱到破紀錄，氣象局連發十天高溫警報，柏油路熱到可以煎蛋。\n\n' +
@@ -559,6 +569,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'drunk-ride',
+    hint: { quote: '萬物都是有限的，學習量力而為之是控制的初始。', source: '戴戴筆記第四十四回（對應控制）' },
     title: '尾牙後的「我沒醉」',
     text:
       '公司尾牙結束，同事阿強喝得滿臉通紅，搖搖晃晃地走向他的機車：「我沒醉！我還可以走直線！」\n\n' +
@@ -609,6 +620,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'cyberbully',
+    hint: { quote: '習性就像自動導航，看似選擇的方向無誤，卻常常發生意外。', source: '戴戴筆記第三十三回（對應方向）' },
     title: '網路上的「惡女」',
     text:
       '一支影片在網路上瘋傳：一個女生在捷運上對一位老伯伯大吼大叫，表情很兇。標題寫著：「現在的年輕人沒救了！」\n\n' +
@@ -659,6 +671,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'typhoon-wedding',
+    hint: { quote: '山不轉路轉，路不轉人轉。當事與願違時，這個方法最舒心。', source: '戴戴筆記第十六回（對應轉機）' },
     title: '颱風天的婚禮',
     text:
       '你籌備了一整年的婚禮，挑的是算命師說「百年難得一見」的好日子。\n\n' +
