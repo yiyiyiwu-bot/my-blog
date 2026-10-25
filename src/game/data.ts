@@ -941,11 +941,16 @@ export interface Stage {
   startAge: number;
   endAge: number;
   background?: string; // 這個階段的故事畫面背景圖
+  // 這一組玩完之後的結局頁（有寫的話就不進入死亡，改出現結局頁）；text 留空字串就是先留白
+  ending?: { title: string; text: string };
   blurb: string; // 開始畫面上的一句介紹
 }
 
 export const stages: Stage[] = [
-  { id: 'student', name: '學生時期', startAge: 15, endAge: 22, blurb: '從青春期開始，體驗校園生活。', background: '/game/stages/student.jpg' },
+  { id: 'student', name: '學生時期', startAge: 15, endAge: 22, blurb: '從青春期開始，體驗校園生活。',
+    background: '/game/stages/student.jpg',
+    ending: { title: '學生時期・結局', text: '' }, // 結局內容之後再寫
+  },
   { id: 'adult', name: '社會組', startAge: 23, endAge: 60, blurb: '直接出社會，面對職場和家庭。' },
   { id: 'senior', name: '樂齡組', startAge: 61, endAge: 92, blurb: '從退休開始，體驗人生的下半場。' },
 ];

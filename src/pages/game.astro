@@ -174,7 +174,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   function nextChapter() {
     const next = deck[0];
-    if (!next) return deathScreen();
+    if (!next) return currentStage?.ending ? endingScreen(currentStage) : deathScreen();
     // 進入有角色可以選的階段時，先選這輩子的工作
     if (!rolePicked && roles.some((r) => r.stage === next.stage.id)) return roleScreen(next.stage);
     playSlot(deck.shift()!);
@@ -274,6 +274,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       slot.chapter = own.pop()!;
     }
     nextChapter();
+  }
+
+  // 這一組玩完的結局頁（還沒寫內容時先留白）
+  function endingScreen(s: Stage) {
+    const ending = s.ending!;
+    const karma = pendingKarma;
+    pendingKarma = null;
+    show(
+      'life',
+      `${karma ? `<div class="game-karma"><strong>因果</strong>${karma}</div>` : ''}
+       <h2 class="game-heading">${ending.title}</h2>
+       ${ending.text ? paras(ending.text) : '<div class="game-ending-blank"></div>'}
+       ${button('回到開始', 'title')}`,
+      true,
+      s.background,
+    );
   }
 
   function deathScreen() {
@@ -623,6 +639,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex;
     flex-direction: column;
     gap: 8px;
+  }
+  .game-ending-blank {
+    min-height: 220px;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
   }
   .game-epilogue {
     display: flex;
