@@ -879,14 +879,17 @@ export interface Stage {
 export const stages: Stage[] = [
   { id: 'student', name: '學生時期', startAge: 15, step: 4, rounds: 2, blurb: '從青春期開始，走完一整個人生。' },
   { id: 'adult', name: '社會組', startAge: 23, step: 9, rounds: 4, blurb: '直接出社會，面對職場和家庭。' },
-  { id: 'senior', name: '樂齡組', startAge: 61, step: 8, rounds: 2, blurb: '從退休開始，回數最少，挑戰最大。' },
+  { id: 'senior', name: '樂齡組', startAge: 61, step: 8, rounds: 2, blurb: '從退休開始，體驗人生的下半場。' },
 ];
 
-// 玩法介紹（開始畫面的「玩法介紹」按鈕）
+// 玩法介紹：選好起點之後的第二頁
+// 玩法介紹頁最下面的一行小字
+export const DISCLAIMER = '內容純屬杜撰，僅供參考。';
+
 export const howToPlay: { title: string; text: string }[] = [
   {
     title: '一、選一個起點',
-    text: '你可以從學生時期、社會組或樂齡組開始。越早開始，人生的回數越多，能收集的卡片也越多。',
+    text: '你可以從學生時期、社會組或樂齡組開始，體驗不同階段的人生。',
   },
   {
     title: '二、人生的每一回',

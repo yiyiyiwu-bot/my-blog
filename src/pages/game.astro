@@ -25,6 +25,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     MERIT_COST,
     stages,
     howToPlay,
+    DISCLAIMER,
     type Chapter,
     type RealmId,
     type Stage,
@@ -107,22 +108,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
        <div class="game-starts">
          ${stages
            .map(
-             (s) => `<button type="button" class="game-btn game-start" data-action="start" data-stage="${s.id}">
+             (s) => `<button type="button" class="game-btn game-start" data-action="pick-stage" data-stage="${s.id}">
                <strong>${s.name}</strong><span>${s.startAge} 歲起 · ${s.blurb}</span>
              </button>`,
            )
            .join('')}
-       </div>
-       ${button('玩法介紹', 'how-to-play', 'data-variant="link"')}`,
+       </div>`,
     );
   }
 
-  function howToPlayScreen() {
+  // 選好起點之後的第二頁：玩法介紹，看完再開始
+  function howToPlayScreen(from: StageId) {
+    const s = stages.find((x) => x.id === from)!;
     show(
       'title',
       `<h2 class="game-heading">玩法介紹</h2>
+       <p class="game-meta">你選擇從「${s.name}」開始投胎。</p>
        ${howToPlay.map((h) => `<section class="game-rule"><h3>${h.title}</h3>${paras(h.text)}</section>`).join('')}
-       ${button('回到開始', 'title')}`,
+       <p class="game-disclaimer">${DISCLAIMER}</p>
+       ${button('開始投胎', 'start', `data-stage="${s.id}"`)}
+       ${button('重新選起點', 'title', 'data-variant="link"')}`,
     );
   }
 
@@ -352,8 +357,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     switch (btn.dataset.action) {
       case 'start':
         return startLife(btn.dataset.stage as StageId);
-      case 'how-to-play':
-        return howToPlayScreen();
+      case 'pick-stage':
+        return howToPlayScreen(btn.dataset.stage as StageId);
       case 'title':
         return titleScreen();
       case 'choose':
@@ -510,6 +515,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     letter-spacing: 0.4em;
     font-size: 0.95rem;
     animation: game-glow 0.8s ease-out;
+  }
+  .game-disclaimer {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.75;
+    text-align: center;
   }
   .game-rule h3 {
     font-size: 1.1rem;
