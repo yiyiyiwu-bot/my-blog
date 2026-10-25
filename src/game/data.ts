@@ -22,6 +22,8 @@ export interface Choice {
 export interface Chapter {
   id: string;
   stage: StageId; // 屬於人生哪個階段
+  roles?: string[]; // 只有選了這些職業才會遇到（world.ts 的 roles id）；不寫就是大家都會遇到
+  image?: string; // 故事的插圖，例如 '/game/stories/deepfake-boss.jpg'；不寫就只有文字
   hint: { quote: string; source: string }; // 「停看聽」求救鈕顯示的筆記句子
   title: string;
   text: string;
@@ -116,6 +118,7 @@ export const chapters: Chapter[] = [
   {
     id: 'deepfake-boss',
     stage: 'adult',
+    roles: ['office'],
     hint: { quote: '凡走過必留下痕跡，萬物之道皆有徵兆。透徹之人知初始，微觀之人知避禍，昏沈之人順因緣。', source: '戴戴筆記第八回（對應徵兆）' },
     title: '老闆的視訊電話',
     text:
@@ -899,7 +902,7 @@ export const DISCLAIMER = '內容純屬杜撰，僅供參考。';
 export const howToPlay: { title: string; text: string }[] = [
   {
     title: '一、選一個起點',
-    text: '你可以從學生時期、社會組或樂齡組開始，體驗不同階段的人生。\n\n進入社會組時，可以選這輩子的工作（目前開放「上班族」）。選好之後會進到一張地圖，點地面就能讓小人物走過去，走到發光的地方就會發生故事。',
+    text: '你可以從學生時期、社會組或樂齡組開始，體驗不同階段的人生。\n\n進入社會組時，可以選這輩子的工作（目前開放「上班族」）。不同的工作，會遇到不同的故事。',
   },
   {
     title: '二、人生的每一回',
