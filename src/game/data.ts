@@ -491,8 +491,22 @@ export const stages: Stage[] = [
     background: '/game/stages/student.jpg',
     ending: { title: '學生時期・結局', text: '' }, // 結局內容之後再寫
   },
-  { id: 'adult', name: '社會組', startAge: 23, endAge: 60, blurb: '直接出社會，面對職場和家庭。' },
-  { id: 'senior', name: '樂齡組', startAge: 61, endAge: 92, blurb: '從退休開始，體驗人生的下半場。' },
+  {
+    id: 'adult',
+    name: '社會組',
+    startAge: 23,
+    endAge: 60,
+    blurb: '直接出社會，面對職場和家庭。',
+    ending: { title: '社會組・結局', text: '' }, // 結局內容之後再寫；拿掉 ending 就會改回進入中陰身
+  },
+  {
+    id: 'senior',
+    name: '樂齡組',
+    startAge: 61,
+    endAge: 92,
+    blurb: '從退休開始，體驗人生的下半場。',
+    ending: { title: '樂齡組・結局', text: '' }, // 結局內容之後再寫；拿掉 ending 就會改回進入中陰身
+  },
 ];
 
 export const LIFE_ROUNDS = 8;
