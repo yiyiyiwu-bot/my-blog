@@ -21,6 +21,7 @@ export interface Choice {
 
 export interface Chapter {
   id: string;
+  stage: StageId; // 屬於人生哪個階段
   hint: { quote: string; source: string }; // 「停看聽」求救鈕顯示的筆記句子
   title: string;
   text: string;
@@ -114,6 +115,7 @@ export const cards: Record<string, Card> = {
 export const chapters: Chapter[] = [
   {
     id: 'deepfake-boss',
+    stage: 'adult',
     hint: { quote: '凡走過必留下痕跡，萬物之道皆有徵兆。透徹之人知初始，微觀之人知避禍，昏沈之人順因緣。', source: '戴戴筆記第八回（對應徵兆）' },
     title: '老闆的視訊電話',
     text:
@@ -165,6 +167,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'crosswalk',
+    stage: 'adult',
     hint: { quote: '念頭就賜予了情緒權力。逆轉是在變中取止，在止中觀看，那麼這個轉就由你掌控了。', source: '戴戴筆記第三十八回（對應逆轉）' },
     title: '斑馬線上的阿伯',
     text:
@@ -216,6 +219,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'diet-jelly',
+    stage: 'adult',
     hint: { quote: '敏銳能觀照需求，降低貪念的影響，進而減輕負擔的發生。', source: '戴戴筆記第五回（對應敏銳）' },
     title: '神奇瘦身果凍',
     text:
@@ -266,6 +270,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'ai-report',
+    stage: 'student',
     hint: { quote: '對和錯往往是最後的結果，但我們卻忘記了在未成為答案之前的過程是如何，那才是決定答案的關鍵。', source: '戴戴筆記第一回（對應平衡）' },
     title: 'AI 寫的期末報告',
     text:
@@ -316,6 +321,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'lemon-water',
+    stage: 'senior',
     hint: { quote: '人會花時間去證明表象的真，卻不想用心去沉思內心深處的世界。', source: '戴戴筆記第六回（對應沉思）' },
     title: '熱檸檬水救命？',
     text:
@@ -367,6 +373,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'delivery',
+    stage: 'adult',
     hint: { quote: '如果明白，白天之後會是黑夜，風雨過後即會平靜……那麼，套用在自己身上，也就沒什麼好計較的了！', source: '戴戴筆記第七回（對應智慧）' },
     title: '颱風天的外送',
     text:
@@ -417,6 +424,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'short-videos',
+    stage: 'student',
     hint: { quote: '習慣和時間互為健康關係，就像因果循環一般。', source: '戴戴筆記第三十四回（對應健康）' },
     title: '凌晨三點的短影音',
     text:
@@ -467,6 +475,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'stock-guru',
+    stage: 'senior',
     hint: { quote: '比較是幸福的殺手，幸與不幸，一體兩面，眼界放開了處處是幸福。', source: '戴戴筆記第十八回（對應幸福）' },
     title: '飆股老師的群組',
     text:
@@ -518,6 +527,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'heatwave',
+    stage: 'senior',
     hint: { quote: '唯有停下腳步覺察，才能看見那習以為常的日常。', source: '戴戴筆記第四十回（對應世界）' },
     title: '熱浪裡的王伯伯',
     text:
@@ -569,6 +579,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'drunk-ride',
+    stage: 'adult',
     hint: { quote: '萬物都是有限的，學習量力而為之是控制的初始。', source: '戴戴筆記第四十四回（對應控制）' },
     title: '尾牙後的「我沒醉」',
     text:
@@ -620,6 +631,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'cyberbully',
+    stage: 'student',
     hint: { quote: '習性就像自動導航，看似選擇的方向無誤，卻常常發生意外。', source: '戴戴筆記第三十三回（對應方向）' },
     title: '網路上的「惡女」',
     text:
@@ -671,6 +683,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'typhoon-wedding',
+    stage: 'adult',
     hint: { quote: '山不轉路轉，路不轉人轉。當事與願違時，這個方法最舒心。', source: '戴戴筆記第十六回（對應轉機）' },
     title: '颱風天的婚禮',
     text:
@@ -849,9 +862,53 @@ export const humanRealm: GoodRealm = {
   button: '再活一次',
 };
 
-// 一生能玩幾回（從所有章節裡隨機抽）；大惡的選擇會折壽，減少剩下的回數。
-export const LIFE_ROUNDS = 8;
-export const START_AGE = 18;
+// 人生三個階段：照順序走，每個階段從自己的故事裡隨機抽 rounds 回。
+// 玩家在開始畫面選起點；輪迴重新投胎一律從學生時期開始。
+// 大惡的選擇會折壽，直接抽掉後面的回數（可能整個跳過下一個階段）。
+export type StageId = 'student' | 'adult' | 'senior';
+
+export interface Stage {
+  id: StageId;
+  name: string;
+  startAge: number;
+  step: number; // 每一回過幾年
+  rounds: number;
+  blurb: string; // 開始畫面上的一句介紹
+}
+
+export const stages: Stage[] = [
+  { id: 'student', name: '學生時期', startAge: 15, step: 4, rounds: 2, blurb: '從青春期開始，走完一整個人生。' },
+  { id: 'adult', name: '社會組', startAge: 23, step: 9, rounds: 4, blurb: '直接出社會，面對職場和家庭。' },
+  { id: 'senior', name: '樂齡組', startAge: 61, step: 8, rounds: 2, blurb: '從退休開始，回數最少，挑戰最大。' },
+];
+
+// 玩法介紹（開始畫面的「玩法介紹」按鈕）
+export const howToPlay: { title: string; text: string }[] = [
+  {
+    title: '一、選一個起點',
+    text: '你可以從學生時期、社會組或樂齡組開始。越早開始，人生的回數越多，能收集的卡片也越多。',
+  },
+  {
+    title: '二、人生的每一回',
+    text: '每一回會遇到一件事，從幾個選項裡選一個。選項沒有標準答案：不同的好心做法，會拿到不同的卡片。\n\n壞的選項會帶來「因果」；太惡的事還會「折壽」，讓這一生少玩幾回。',
+  },
+  {
+    title: '三、卡住了就按「停看聽」',
+    text: '每個故事的標題旁邊都有「停看聽」，按下去會出現一句導師的話，幫你想一想。想按幾次都可以。',
+  },
+  {
+    title: '四、看不見的陰德',
+    text: '你做的每一個選擇，都會偷偷累積「陰德」。畫面上看不到，但它一直都在記。',
+  },
+  {
+    title: '五、死後的去處',
+    text: '壞事做太多，死後會直接被拉去惡道。做了哪一種壞事，就去哪一道：貪心去餓鬼道、傷人去地獄道、糊塗盲從去畜生道、好鬥嫉妒去阿修羅道。\n\n沒有的話，就會進入「中陰身」，遇到四個考驗。用對的卡片才擋得住；沒有對的卡片，只能靠陰德硬撐。',
+  },
+  {
+    title: '六、結局',
+    text: '四個考驗全部通過，就能「解脫」。沒通過的話，陰德夠多會去天道享福——但福報用完還是會掉回人間；陰德不夠就回到人道，再活一次。',
+  },
+];
 
 // 不用卡片（或用錯卡片）時，要有多少陰德才撐得過去；撐過去會消耗陰德。
 export const MERIT_NEEDED = 8;
