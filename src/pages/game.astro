@@ -57,7 +57,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   let trialIndex = 0;
   type Slot = { chapter: Chapter; stage: Stage; age: number; step: number };
   let rolePicked: Role | null = null; // 這一世選的職業
-
   function shuffle<T>(list: T[]): T[] {
     const a = [...list];
     for (let i = a.length - 1; i > 0; i--) {
@@ -67,8 +66,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return a;
   }
 
-  function show(scene: string, html: string, showHand = false) {
+  function show(scene: string, html: string, showHand = false, bg?: string) {
     game.dataset.scene = scene;
+    // 這個階段有背景圖的話，放進遊戲框的背景
+    if (bg) {
+      game.style.setProperty('--stage-bg', `url("${bg}")`);
+      game.dataset.bg = '';
+    } else {
+      game.style.removeProperty('--stage-bg');
+      delete game.dataset.bg;
+    }
     stage.innerHTML = html;
     handEl.hidden = !showHand;
     if (showHand) renderHand();
@@ -201,6 +208,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
          ${shuffle(chapter.choices.map((c, i) => button(c.text, 'choose', `data-chapter="${chapter.id}" data-index="${i}"`))).join('')}
        </div>`,
       true,
+      next.stage.background,
     );
   }
 
@@ -221,6 +229,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
        ${gained.length ? `<p class="game-meta">你得到了卡片</p><div class="game-cards">${gained.map(cardFigure).join('')}</div>` : ''}
        ${button('繼續', 'next-chapter')}`,
       true,
+      currentStage?.background,
     );
   }
 
@@ -497,6 +506,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
   .game[data-scene='life'] {
     background: linear-gradient(160deg, #6b5338, #3a2c1e);
+  }
+  .game[data-scene='life'][data-bg] {
+    /* 靠下對齊：露出校園和街景，避開海報上方的大標題 */
+    background: #2b2620 var(--stage-bg) center bottom / cover no-repeat;
+  }
+  .game[data-scene='life'][data-bg]::before {
+    background: rgba(20, 16, 10, 0.76);
   }
   .game[data-scene='death'] {
     background: linear-gradient(160deg, #3d3a38, #1c1a19);
