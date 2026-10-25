@@ -24,6 +24,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     MERIT_NEEDED,
     MERIT_COST,
     stages,
+    lifePlans,
     howToPlay,
     DISCLAIMER,
     type Chapter,
@@ -42,8 +43,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   let age = 0;
   let hand: string[] = [];
   // 這一世接下來的每一回：故事、屬於哪個階段、那時幾歲
-  let deck: { chapter: Chapter; stage: Stage; age: number }[] = [];
+  let deck: { chapter: Chapter; stage: Stage; age: number; step: number }[] = [];
   let currentStage: Stage | null = null;
+  let lastStep = 0; // 最後一回之後再過幾年才走
   let pendingKarma: string | null = null;
   // 這一世在各道累積的分數（小壞 1 分、會折壽的大惡 2 分）
   const emptyScore = (): Record<RealmId, number> => ({ hell: 0, ghost: 0, animal: 0, asura: 0 });
@@ -131,14 +133,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     );
   }
 
-  // 從 from 這個階段開始，往後每個階段各抽幾回，排成這一世的人生
+  // 照 lifePlans 從 from 這個起點排出這一世的每一回
   function startLife(from: StageId) {
     hand = [];
     deck = [];
-    const startIndex = stages.findIndex((s) => s.id === from);
-    for (const s of stages.slice(startIndex)) {
-      const pool = shuffle(chapters.filter((c) => c.stage === s.id)).slice(0, s.rounds);
-      pool.forEach((chapter, i) => deck.push({ chapter, stage: s, age: s.startAge + i * s.step }));
+    const used = new Set<Chapter>();
+    for (const [stageId, rounds] of lifePlans[from]) {
+      const s = stages.find((x) => x.id === stageId)!;
+      const step = Math.floor((s.endAge - s.startAge + 1) / rounds);
+      const pool = shuffle(chapters.filter((c) => c.stage === stageId && !used.has(c))).slice(0, rounds);
+      // 這個階段的故事還不夠時，暫時借用其他階段的故事補滿
+      const extra = shuffle(chapters.filter((c) => c.stage !== stageId && !used.has(c) && !pool.includes(c)));
+      while (pool.length < rounds && extra.length) pool.push(extra.pop()!);
+      pool.forEach((chapter, i) => {
+        used.add(chapter);
+        deck.push({ chapter, stage: s, age: s.startAge + i * step, step });
+      });
     }
     currentStage = null;
     pendingKarma = null;
@@ -155,6 +165,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const newStage = next.stage !== currentStage;
     currentStage = next.stage;
     age = next.age;
+    lastStep = next.step;
     round++;
     const karma = pendingKarma;
     pendingKarma = null;
@@ -201,8 +212,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   function deathScreen() {
-    // 最後一回之後再過一段日子才走
-    age += currentStage?.step ?? 0;
+    age += lastStep;
     const karma = pendingKarma;
     pendingKarma = null;
     const total = Object.values(realmScore).reduce((a, b) => a + b, 0);

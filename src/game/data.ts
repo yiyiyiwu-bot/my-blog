@@ -862,7 +862,9 @@ export const humanRealm: GoodRealm = {
   button: '再活一次',
 };
 
-// 人生三個階段：照順序走，每個階段從自己的故事裡隨機抽 rounds 回。
+// 人生三個階段：照順序走，每個階段從自己的故事裡隨機抽回數。
+// 不管從哪個起點開始，一生都玩 LIFE_ROUNDS 回，各階段分幾回看 lifePlans。
+// 每一回的年紀，是把該階段的年紀範圍（startAge～endAge）平均分給那幾回。
 // 玩家在開始畫面選起點；輪迴重新投胎一律從學生時期開始。
 // 大惡的選擇會折壽，直接抽掉後面的回數（可能整個跳過下一個階段）。
 export type StageId = 'student' | 'adult' | 'senior';
@@ -871,16 +873,24 @@ export interface Stage {
   id: StageId;
   name: string;
   startAge: number;
-  step: number; // 每一回過幾年
-  rounds: number;
+  endAge: number;
   blurb: string; // 開始畫面上的一句介紹
 }
 
 export const stages: Stage[] = [
-  { id: 'student', name: '學生時期', startAge: 15, step: 4, rounds: 2, blurb: '從青春期開始，走完一整個人生。' },
-  { id: 'adult', name: '社會組', startAge: 23, step: 9, rounds: 4, blurb: '直接出社會，面對職場和家庭。' },
-  { id: 'senior', name: '樂齡組', startAge: 61, step: 8, rounds: 2, blurb: '從退休開始，體驗人生的下半場。' },
+  { id: 'student', name: '學生時期', startAge: 15, endAge: 22, blurb: '從青春期開始，走完一整個人生。' },
+  { id: 'adult', name: '社會組', startAge: 23, endAge: 60, blurb: '直接出社會，面對職場和家庭。' },
+  { id: 'senior', name: '樂齡組', startAge: 61, endAge: 92, blurb: '從退休開始，體驗人生的下半場。' },
 ];
+
+export const LIFE_ROUNDS = 8;
+
+// 從每個起點開始，各階段玩幾回（加起來都是 LIFE_ROUNDS）
+export const lifePlans: Record<StageId, [StageId, number][]> = {
+  student: [['student', 2], ['adult', 4], ['senior', 2]],
+  adult: [['adult', 6], ['senior', 2]],
+  senior: [['senior', 8]],
+};
 
 // 玩法介紹：選好起點之後的第二頁
 // 玩法介紹頁最下面的一行小字
