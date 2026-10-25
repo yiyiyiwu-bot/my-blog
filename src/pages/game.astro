@@ -213,7 +213,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   function choose(chapterId: string, index: number) {
-    const choice = chapters.find((c) => c.id === chapterId)!.choices[index];
+    const chapter = chapters.find((c) => c.id === chapterId)!;
+    const choice = chapter.choices[index];
     merit += choice.merit;
     const gained = choice.cards ?? [];
     hand.push(...gained);
@@ -227,6 +228,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       `${paras(choice.result)}
        ${cut ? `<p class="game-shorten">⏳ 惡業折壽：這一生少了 ${cut} 回。</p>` : ''}
        ${gained.length ? `<p class="game-meta">你得到了卡片</p><div class="game-cards">${gained.map(cardFigure).join('')}</div>` : ''}
+       ${chapter.epilogue ? `<div class="game-epilogue"><p class="game-meta">後來……</p>${paras(chapter.epilogue)}</div>` : ''}
        ${button('繼續', 'next-chapter')}`,
       true,
       currentStage?.background,
@@ -612,6 +614,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex;
     flex-direction: column;
     gap: 8px;
+  }
+  .game-epilogue {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border-left: 4px solid rgba(255, 255, 255, 0.55);
+    border-radius: 4px;
+    padding: 14px 18px;
+  }
+  .game-epilogue .game-text {
+    font-size: 1rem;
   }
   .game-story-img {
     width: 100%;
