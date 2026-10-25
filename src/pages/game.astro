@@ -16,6 +16,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     cards,
     chapters,
     trials,
+    evilRealms,
+    EVIL_THRESHOLD,
     MERIT_NEEDED,
     MERIT_COST,
     START_AGE,
@@ -34,6 +36,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   let hand: string[] = [];
   let deck: Chapter[] = [];
   let pendingKarma: string | null = null;
+  let badCount = 0; // 這一世做了幾次有惡報的事
   let trialIndex = 0;
 
   const rand = (min: number, max: number) => min + Math.floor(Math.random() * (max - min + 1));
@@ -98,6 +101,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     hand = [];
     deck = shuffle(chapters);
     pendingKarma = null;
+    badCount = 0;
     nextChapter();
   }
 
@@ -124,7 +128,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     merit += choice.merit;
     const gained = choice.cards ?? [];
     hand.push(...gained);
-    if (choice.karma) pendingKarma = choice.karma;
+    if (choice.karma) {
+      pendingKarma = choice.karma;
+      badCount++;
+    }
     age += rand(8, 12);
     show(
       'life',
@@ -139,14 +146,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     age = Math.max(age, DEATH_AGE) + rand(0, 8);
     const karma = pendingKarma;
     pendingKarma = null;
+    const forced = badCount >= EVIL_THRESHOLD;
     show(
       'death',
       `${karma ? `<div class="game-karma"><strong>因果</strong>${karma}</div>` : ''}
        <h2 class="game-heading">人生落幕</h2>
        <p class="game-text">${age} 歲那年，你慢慢閉上了眼睛。這一生的點點滴滴，像電影一樣在眼前播放……</p>
-       ${button('進入中陰身', 'bardo')}`,
+       ${
+         forced
+           ? `<p class="game-text">你還來不及看清楚四周，一股又沉又冷的力量就把你往下拉——這一生的惡業太重了，手上的卡片一張也拿不出來。</p>
+              ${button('……', 'evil')}`
+           : button('進入中陰身', 'bardo')
+       }`,
       true,
     );
+  }
+
+  function evilScreen() {
+    const realm = evilRealms.find((r) => badCount >= r.minBad)!;
+    show(
+      'evil',
+      `<p class="game-meta">強制投胎</p>
+       <h2 class="game-heading">${realm.name}</h2>
+       ${paras(realm.text)}
+       <p class="game-meta">受報期滿，你又得到了一次做人的機會。</p>
+       ${button('重新做人', 'evil-rebirth')}`,
+    );
+  }
+
+  function evilRebirth() {
+    life++;
+    // 惡業已經在惡道受完了，陰德從零開始
+    merit = 0;
+    startLife();
   }
 
   function bardoIntro() {
@@ -249,6 +281,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         return nextChapter();
       case 'bardo':
         return bardoIntro();
+      case 'evil':
+        return evilScreen();
+      case 'evil-rebirth':
+        return evilRebirth();
       case 'trial':
         return trialScreen();
       case 'use-card':
@@ -305,6 +341,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
   .game[data-scene='death'] {
     background: linear-gradient(160deg, #3d3a38, #1c1a19);
+  }
+  .game[data-scene='evil'] {
+    background: radial-gradient(circle at 50% 80%, #6e1a12, #1a0806);
   }
   .game[data-scene='bardo'] {
     background: radial-gradient(circle at 50% 30%, #3b3f52, #101118);

@@ -302,6 +302,44 @@ export const trials: Trial[] = [
   },
 ];
 
+// 三惡道：一輩子做壞事（有惡報的選擇）達到 minBad 次，死後不進中陰身，直接被拉去受報。
+// 由重到輕排列，取第一個符合的。
+export interface EvilRealm {
+  id: string;
+  name: string;
+  minBad: number;
+  text: string;
+}
+
+export const EVIL_THRESHOLD = 3;
+
+export const evilRealms: EvilRealm[] = [
+  {
+    id: 'hell',
+    name: '地獄道',
+    minBad: 5,
+    text:
+      '四周一片火紅，耳邊全是哭喊的聲音。你這一生傷過的人、做過的壞事，一件一件變成刑罰，落回自己身上。你想求饒，卻想不起自己曾經對誰手下留情。\n\n' +
+      '漫長得像永遠一樣的時間過去了，業火才慢慢熄滅。',
+  },
+  {
+    id: 'hungry-ghost',
+    name: '餓鬼道',
+    minBad: 4,
+    text:
+      '你來到一片乾裂的荒地。肚子餓得發疼，喉嚨乾得像火在燒。遠處明明有水、有食物，可是每次一靠近，水就變成火，食物就化成灰。\n\n' +
+      '那些你曾經從別人手上拿走的東西，現在一樣也抓不住。不知道過了多久，飢餓才終於停了下來。',
+  },
+  {
+    id: 'animal',
+    name: '畜生道',
+    minBad: 3,
+    text:
+      '你睜開眼睛，發現自己四隻腳著地，渾身是毛——你成了一隻流浪狗。你在大街小巷裡翻垃圾、躲雨、被人拿掃把追著跑。你想開口說話，卻只能發出嗚嗚的叫聲。\n\n' +
+      '不知道熬過了多少個寒冬，你終於在一個下雨的夜裡，閉上了眼睛。',
+  },
+];
+
 // 不用卡片（或用錯卡片）時，要有多少陰德才撐得過去；撐過去會消耗陰德。
 export const MERIT_NEEDED = 5;
 export const MERIT_COST = 3;
