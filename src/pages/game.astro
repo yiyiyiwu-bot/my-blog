@@ -198,7 +198,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     show(
       'bardo',
       `<h2 class="game-heading">中陰身</h2>
-       <p class="game-text">你離開了身體。四周灰濛濛的，分不清白天還是黑夜。手上的卡片發著微微的光。<br />接下來的路，要靠你自己。</p>
+       <p class="game-text">你離開了身體，整個人輕飄飄的，比減肥成功還要輕。四周灰濛濛的，分不清白天還是黑夜，而且——沒有網路。</p>
+       <p class="game-text">手上的卡片發著微微的光。接下來的路，要靠你自己。</p>
        ${button('往前走', 'trial')}`,
       true,
     );
@@ -211,7 +212,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       'bardo',
       `<p class="game-meta">考驗 ${trialIndex + 1} / ${trials.length}</p>
        <h2 class="game-heading">${trial.title}</h2>
-       <p class="game-text">${trial.text}</p>
+       ${paras(trial.text)}
        ${unique.length ? `<p class="game-meta">要用哪一張卡片面對它？</p>` : ''}
        <div class="game-pick">
          ${unique
@@ -249,7 +250,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     show(
       'bardo',
       `${note ? `<p class="game-meta">${note}</p>` : ''}
-       <p class="game-text">${passed ? trial.pass : trial.fail}</p>
+       ${paras(passed ? trial.pass : trial.fail)}
        ${passed ? button(last ? '繼續' : '繼續往前走', last ? 'liberate' : 'trial') : button('……', 'reincarnate')}`,
       true,
     );
@@ -259,7 +260,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     show(
       'reborn',
       `<h2 class="game-heading">輪迴</h2>
-       <p class="game-text">眼前一黑。再睜開眼時，你聽見嬰兒的哭聲——那是你自己。<br />新的一生，又開始了。</p>
+       <p class="game-text">眼前一黑。再睜開眼時，你聽見嬰兒的哭聲——那是你自己。</p>
+       <p class="game-text">醫生笑著說：「恭喜，是個健康的寶寶！」你心裡只有一個念頭：「不會吧……九九乘法表又要重背一次？」</p>
        ${button('再活一次', 'rebirth')}`,
     );
   }
