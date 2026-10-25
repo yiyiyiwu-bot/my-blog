@@ -18,6 +18,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     trials,
     evilRealms,
     EVIL_THRESHOLD,
+    heavenRealm,
+    humanRealm,
+    HEAVEN_MERIT,
     MERIT_NEEDED,
     MERIT_COST,
     START_AGE,
@@ -39,6 +42,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   let badCount = 0; // 這一世做了幾次有惡報的事
   let round = 0; // 這一世玩到第幾回
   let lostRounds = 0; // 這一世因折壽少掉的回數
+  let deathMerit = 0; // 死的時候的陰德，決定沒過關時去天道還是人道
   let trialIndex = 0;
 
   const rand = (min: number, max: number) => min + Math.floor(Math.random() * (max - min + 1));
@@ -195,6 +199,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   function bardoIntro() {
     trialIndex = 0;
+    deathMerit = merit;
     show(
       'bardo',
       `<h2 class="game-heading">中陰身</h2>
@@ -256,13 +261,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     );
   }
 
+  // 中陰身沒過關：陰德夠多去天道，不然回人道
   function reincarnateScreen() {
+    const heaven = deathMerit >= HEAVEN_MERIT;
+    const realm = heaven ? heavenRealm : humanRealm;
     show(
-      'reborn',
-      `<h2 class="game-heading">輪迴</h2>
-       <p class="game-text">眼前一黑。再睜開眼時，你聽見嬰兒的哭聲——那是你自己。</p>
-       <p class="game-text">醫生笑著說：「恭喜，是個健康的寶寶！」你心裡只有一個念頭：「不會吧……九九乘法表又要重背一次？」</p>
-       ${button('再活一次', 'rebirth')}`,
+      heaven ? 'heaven' : 'reborn',
+      `<p class="game-meta">輪迴</p>
+       <h2 class="game-heading">${realm.name}</h2>
+       ${paras(realm.text)}
+       <p class="game-meta">${realm.note}</p>
+       ${button(realm.button, heaven ? 'heaven-fall' : 'rebirth')}`,
     );
   }
 
@@ -270,6 +279,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     life++;
     // 好的陰德留一半到下一世，惡業則全部跟著你
     merit = merit > 0 ? Math.floor(merit / 2) : merit;
+    startLife();
+  }
+
+  function heavenFall() {
+    life++;
+    // 福報在天上享盡了
+    merit = 0;
     startLife();
   }
 
@@ -307,6 +323,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         return reincarnateScreen();
       case 'rebirth':
         return rebirth();
+      case 'heaven-fall':
+        return heavenFall();
       case 'liberate':
         return liberationScreen();
       case 'restart':
@@ -355,6 +373,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
   .game[data-scene='death'] {
     background: linear-gradient(160deg, #3d3a38, #1c1a19);
+  }
+  .game[data-scene='heaven'] {
+    background: radial-gradient(circle at 50% 20%, #b8862b, #4a3412);
   }
   .game[data-scene='evil'] {
     background: radial-gradient(circle at 50% 80%, #6e1a12, #1a0806);

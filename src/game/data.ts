@@ -700,10 +700,40 @@ export const evilRealms: EvilRealm[] = [
   },
 ];
 
+// 中陰身沒過關時的去處：死的時候陰德有 HEAVEN_MERIT 以上去天道，否則回人道。
+// 天道福報享盡會掉回人間，而且陰德全部用光；人道則保留一半陰德。
+export interface GoodRealm {
+  name: string;
+  text: string;
+  note: string; // 最後一行小字
+  button: string;
+}
+
+export const HEAVEN_MERIT = 12;
+
+export const heavenRealm: GoodRealm = {
+  name: '天道',
+  text:
+    '你飄進了一片金光閃閃的天界。這裡沒有塞車、沒有房貸、沒有已讀不回。想吃什麼，桌上就自己變出來，連珍奶的珍珠都是剛煮好的。你每天聽仙樂、看天花亂墜，舒服到連自己是誰都忘了。\n\n' +
+    '不知道過了幾千年，有一天你發現：頭上的花冠開始枯萎，衣服開始有汗臭味，連最愛的寶座都坐不住了——天人五衰，福報用完了。\n\n' +
+    '你這才驚覺，這幾千年你什麼都沒做，就像一個只會刷卡、從來不存錢的人，把這輩子存下的好，全部花光了。',
+  note: '福報享盡，你又掉回了人間，而且一點陰德都沒剩。',
+  button: '重新做人',
+};
+
+export const humanRealm: GoodRealm = {
+  name: '人道',
+  text:
+    '眼前一黑。再睜開眼時，你聽見嬰兒的哭聲——那是你自己。\n\n' +
+    '醫生笑著說：「恭喜，是個健康的寶寶！」你心裡只有一個念頭：「不會吧……九九乘法表又要重背一次？」',
+  note: '人身難得。人間有苦有樂，才是最有機會修行的地方。上一世的好，有一半跟著你。',
+  button: '再活一次',
+};
+
 // 一生能玩幾回（從所有章節裡隨機抽）；大惡的選擇會折壽，減少剩下的回數。
 export const LIFE_ROUNDS = 8;
 export const START_AGE = 18;
 
 // 不用卡片（或用錯卡片）時，要有多少陰德才撐得過去；撐過去會消耗陰德。
-export const MERIT_NEEDED = 5;
-export const MERIT_COST = 3;
+export const MERIT_NEEDED = 8;
+export const MERIT_COST = 6;
