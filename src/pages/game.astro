@@ -1,0 +1,473 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="生命模擬器" description="在人間做選擇、收集卡片，死後用卡片通過中陰身的考驗。">
+  <section class="game-wrap">
+    <div class="game" id="game" data-scene="title">
+      <div class="game-stage" id="game-stage"></div>
+      <div class="game-hand" id="game-hand" hidden></div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import {
+    cards,
+    chapters,
+    trials,
+    MERIT_NEEDED,
+    MERIT_COST,
+    START_AGE,
+    DEATH_AGE,
+    type Chapter,
+  } from '../game/data';
+
+  const game = document.getElementById('game')!;
+  const stage = document.getElementById('game-stage')!;
+  const handEl = document.getElementById('game-hand')!;
+
+  // 一輩子的狀態（陰德 merit 不顯示給玩家）
+  let life = 1;
+  let merit = 0;
+  let age = START_AGE;
+  let hand: string[] = [];
+  let deck: Chapter[] = [];
+  let pendingKarma: string | null = null;
+  let trialIndex = 0;
+
+  const rand = (min: number, max: number) => min + Math.floor(Math.random() * (max - min + 1));
+
+  function shuffle<T>(list: T[]): T[] {
+    const a = [...list];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function show(scene: string, html: string, showHand = false) {
+    game.dataset.scene = scene;
+    stage.innerHTML = html;
+    handEl.hidden = !showHand;
+    if (showHand) renderHand();
+    game.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderHand() {
+    handEl.innerHTML = hand.length
+      ? `<span class="game-hand-label">手上的卡片</span>` +
+        hand.map((id) => `<img src="${cards[id].img}" alt="${cards[id].name}" title="${cards[id].name}" />`).join('')
+      : `<span class="game-hand-label">手上還沒有卡片</span>`;
+  }
+
+  function button(label: string, action: string, extra = '') {
+    return `<button type="button" class="game-btn" data-action="${action}" ${extra}>${label}</button>`;
+  }
+
+  function cardFigure(id: string) {
+    const c = cards[id];
+    return `<figure class="game-card">
+      <img src="${c.img}" alt="${c.name}" />
+      <figcaption><strong>${c.name}</strong><span>${c.quote}</span></figcaption>
+    </figure>`;
+  }
+
+  // ---------- 畫面 ----------
+
+  function titleScreen() {
+    show(
+      'title',
+      `<h1 class="game-title">生命模擬器</h1>
+       <p class="game-lead">導師「愛、光和良知」看著你說：<br />「去人間好好體驗吧。記得，每一個選擇都算數。」</p>
+       ${button('投胎去', 'start')}`,
+    );
+  }
+
+  function startLife() {
+    age = START_AGE;
+    hand = [];
+    deck = shuffle(chapters);
+    pendingKarma = null;
+    nextChapter();
+  }
+
+  function nextChapter() {
+    const chapter = deck.shift();
+    if (!chapter || age >= DEATH_AGE) return deathScreen();
+    const karma = pendingKarma;
+    pendingKarma = null;
+    show(
+      'life',
+      `<p class="game-meta">第 ${life} 世 · ${age} 歲</p>
+       ${karma ? `<div class="game-karma"><strong>因果</strong>${karma}</div>` : ''}
+       <h2 class="game-heading">${chapter.title}</h2>
+       <p class="game-text">${chapter.text}</p>
+       <div class="game-choices">
+         ${chapter.choices.map((c, i) => button(c.text, 'choose', `data-chapter="${chapter.id}" data-index="${i}"`)).join('')}
+       </div>`,
+      true,
+    );
+  }
+
+  function choose(chapterId: string, index: number) {
+    const choice = chapters.find((c) => c.id === chapterId)!.choices[index];
+    merit += choice.merit;
+    const gained = choice.cards ?? [];
+    hand.push(...gained);
+    if (choice.karma) pendingKarma = choice.karma;
+    age += rand(8, 12);
+    show(
+      'life',
+      `<p class="game-text">${choice.result}</p>
+       ${gained.length ? `<p class="game-meta">你得到了卡片</p><div class="game-cards">${gained.map(cardFigure).join('')}</div>` : ''}
+       ${button('繼續', 'next-chapter')}`,
+      true,
+    );
+  }
+
+  function deathScreen() {
+    age = Math.max(age, DEATH_AGE) + rand(0, 8);
+    const karma = pendingKarma;
+    pendingKarma = null;
+    show(
+      'death',
+      `${karma ? `<div class="game-karma"><strong>因果</strong>${karma}</div>` : ''}
+       <h2 class="game-heading">人生落幕</h2>
+       <p class="game-text">${age} 歲那年，你慢慢閉上了眼睛。這一生的點點滴滴，像電影一樣在眼前播放……</p>
+       ${button('進入中陰身', 'bardo')}`,
+      true,
+    );
+  }
+
+  function bardoIntro() {
+    trialIndex = 0;
+    show(
+      'bardo',
+      `<h2 class="game-heading">中陰身</h2>
+       <p class="game-text">你離開了身體。四周灰濛濛的，分不清白天還是黑夜。手上的卡片發著微微的光。<br />接下來的路，要靠你自己。</p>
+       ${button('往前走', 'trial')}`,
+      true,
+    );
+  }
+
+  function trialScreen() {
+    const trial = trials[trialIndex];
+    const unique = [...new Set(hand)];
+    show(
+      'bardo',
+      `<p class="game-meta">考驗 ${trialIndex + 1} / ${trials.length}</p>
+       <h2 class="game-heading">${trial.title}</h2>
+       <p class="game-text">${trial.text}</p>
+       ${unique.length ? `<p class="game-meta">要用哪一張卡片面對它？</p>` : ''}
+       <div class="game-pick">
+         ${unique
+           .map(
+             (id) => `<button type="button" class="game-pick-card" data-action="use-card" data-card="${id}">
+               <img src="${cards[id].img}" alt="" /><span>${cards[id].name}</span>
+             </button>`,
+           )
+           .join('')}
+       </div>
+       ${button('不用卡片，憑自己的心', 'use-card', 'data-card=""')}`,
+      true,
+    );
+  }
+
+  function useCard(cardId: string) {
+    const trial = trials[trialIndex];
+    let passed = false;
+    let note = '';
+    if (cardId) hand.splice(hand.indexOf(cardId), 1);
+    if (cardId && trial.counters.includes(cardId)) {
+      passed = true;
+      note = `「${cards[cardId].name}」的光包圍著你。`;
+    } else {
+      if (cardId) note = `「${cards[cardId].name}」的光閃了一下就熄了，好像不是這張卡……`;
+      // 沒有對的卡片，只能靠一生累積的陰德撐過去
+      if (merit >= MERIT_NEEDED) {
+        passed = true;
+        merit -= MERIT_COST;
+        note += (note ? '<br />' : '') + '你想起這一生做過的好事，心裡慢慢安定下來。';
+      }
+    }
+    trialIndex++;
+    const last = trialIndex >= trials.length;
+    show(
+      'bardo',
+      `${note ? `<p class="game-meta">${note}</p>` : ''}
+       <p class="game-text">${passed ? trial.pass : trial.fail}</p>
+       ${passed ? button(last ? '繼續' : '繼續往前走', last ? 'liberate' : 'trial') : button('……', 'reincarnate')}`,
+      true,
+    );
+  }
+
+  function reincarnateScreen() {
+    show(
+      'reborn',
+      `<h2 class="game-heading">輪迴</h2>
+       <p class="game-text">眼前一黑。再睜開眼時，你聽見嬰兒的哭聲——那是你自己。<br />新的一生，又開始了。</p>
+       ${button('再活一次', 'rebirth')}`,
+    );
+  }
+
+  function rebirth() {
+    life++;
+    // 好的陰德留一半到下一世，惡業則全部跟著你
+    merit = merit > 0 ? Math.floor(merit / 2) : merit;
+    startLife();
+  }
+
+  function liberationScreen() {
+    show(
+      'free',
+      `<h2 class="game-heading">解脫</h2>
+       <p class="game-text">你走進了一片溫暖明亮的光裡。導師「愛、光和良知」在那裡等你，微笑著說：「歡迎回來。」</p>
+       <p class="game-meta">你一共經歷了 ${life} 世</p>
+       ${button('重新開始', 'restart')}`,
+    );
+  }
+
+  stage.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-action]');
+    if (!btn) return;
+    switch (btn.dataset.action) {
+      case 'start':
+        return startLife();
+      case 'choose':
+        return choose(btn.dataset.chapter!, Number(btn.dataset.index));
+      case 'next-chapter':
+        return nextChapter();
+      case 'bardo':
+        return bardoIntro();
+      case 'trial':
+        return trialScreen();
+      case 'use-card':
+        return useCard(btn.dataset.card ?? '');
+      case 'reincarnate':
+        return reincarnateScreen();
+      case 'rebirth':
+        return rebirth();
+      case 'liberate':
+        return liberationScreen();
+      case 'restart':
+        life = 1;
+        merit = 0;
+        return titleScreen();
+    }
+  });
+
+  titleScreen();
+</script>
+
+<style is:global>
+  .game-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 16px 64px;
+  }
+  .game {
+    position: relative;
+    min-height: 70vh;
+    border-radius: 12px;
+    overflow: hidden;
+    color: #fff;
+    background: #2b2620 center / cover no-repeat;
+    font-family: var(--font-serif);
+    display: flex;
+    flex-direction: column;
+    scroll-margin-top: 16px;
+  }
+  .game::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 16, 10, 0.55);
+  }
+  .game[data-scene='title'],
+  .game[data-scene='reborn'] {
+    background-image: url('/game/heaven-2.jpg');
+  }
+  .game[data-scene='free'] {
+    background-image: url('/game/heaven-1.jpg');
+  }
+  .game[data-scene='life'] {
+    background: linear-gradient(160deg, #6b5338, #3a2c1e);
+  }
+  .game[data-scene='death'] {
+    background: linear-gradient(160deg, #3d3a38, #1c1a19);
+  }
+  .game[data-scene='bardo'] {
+    background: radial-gradient(circle at 50% 30%, #3b3f52, #101118);
+  }
+  .game-stage,
+  .game-hand {
+    position: relative;
+  }
+  .game-stage {
+    flex: 1;
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+  }
+  .game-title {
+    font-size: 2.4rem;
+    letter-spacing: 0.2em;
+    text-align: center;
+    margin: 0;
+  }
+  .game-lead {
+    text-align: center;
+    line-height: 2;
+    margin: 0;
+  }
+  .game-heading {
+    font-size: 1.6rem;
+    letter-spacing: 0.1em;
+    margin: 0;
+  }
+  .game-text {
+    font-size: 1.1rem;
+    line-height: 1.95;
+    letter-spacing: 0.05em;
+    margin: 0;
+  }
+  .game-meta {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    letter-spacing: 0.1em;
+    margin: 0;
+  }
+  .game-karma {
+    background: rgba(140, 30, 30, 0.55);
+    border-left: 4px solid #e06666;
+    padding: 12px 16px;
+    line-height: 1.8;
+    border-radius: 4px;
+  }
+  .game-karma strong {
+    display: block;
+    color: #ffb3b3;
+    margin-bottom: 4px;
+  }
+  .game-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .game-btn {
+    font: inherit;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    padding: 12px 18px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s;
+  }
+  .game-stage > .game-btn {
+    align-self: center;
+    text-align: center;
+    min-width: 160px;
+  }
+  .game-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+  }
+  .game-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .game-card {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin: 0;
+    flex: 1 1 280px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    animation: game-glow 1.2s ease-out;
+  }
+  .game-card img {
+    width: 90px;
+    border-radius: 4px;
+  }
+  .game-card figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+  .game-card strong {
+    font-size: 1.2rem;
+  }
+  @keyframes game-glow {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+      box-shadow: 0 0 40px rgba(255, 220, 140, 0.9);
+    }
+  }
+  .game-pick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .game-pick-card {
+    font: inherit;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 8px;
+    padding: 6px;
+    width: 96px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+  .game-pick-card:hover {
+    box-shadow: 0 0 16px rgba(255, 220, 140, 0.8);
+  }
+  .game-pick-card img {
+    width: 100%;
+    border-radius: 4px;
+  }
+  .game-hand {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: rgba(0, 0, 0, 0.35);
+  }
+  .game-hand[hidden] {
+    display: none;
+  }
+  .game-hand-label {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-right: 6px;
+  }
+  .game-hand img {
+    width: 32px;
+    border-radius: 2px;
+  }
+  @media (max-width: 600px) {
+    .game-stage {
+      padding: 28px 18px;
+    }
+    .game-title {
+      font-size: 1.9rem;
+    }
+  }
+</style>
