@@ -25,6 +25,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     MERIT_COST,
     stages,
     lifePlans,
+    LIFE_ROUNDS,
     howToPlay,
     DISCLAIMER,
     type Chapter,
@@ -56,7 +57,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   let deathMerit = 0; // 死的時候的陰德，決定沒過關時去天道還是人道
   let trialIndex = 0;
   type Slot = { chapter: Chapter; stage: Stage; age: number; step: number };
-  let rolePicked: Role | null = null; // 這一世選的職業
+  let rolePicked: Role | null = null; // 這一世選的情節（家庭、工作、感情）
+  let characterPicked: Role | null = null; // 情節底下選的角色（例如工作 → 醫學會專員）
   function shuffle<T>(list: T[]): T[] {
     const a = [...list];
     for (let i = a.length - 1; i > 0; i--) {
@@ -169,6 +171,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     round = 0;
     lostRounds = 0;
     rolePicked = null;
+    characterPicked = null;
     nextChapter();
   }
 
@@ -192,7 +195,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     show(
       'life',
       `${newStage ? `<p class="game-stage-banner">${next.stage.name}</p>` : ''}
-       <p class="game-meta">第 ${life} 世 · ${next.stage.name}${rolePicked?.stage === next.stage.id ? ` · ${rolePicked.name}` : ''} · ${age} 歲 · 第 ${round} 回</p>
+       <p class="game-meta">第 ${life} 世 · ${next.stage.name}${rolePicked?.stage === next.stage.id ? ` · ${rolePicked.name}` : ''}${characterPicked?.stage === next.stage.id ? ` · ${characterPicked.name}` : ''} · ${age} 歲 · 第 ${round} 回</p>
        ${karma ? `<div class="game-karma"><strong>因果</strong>${karma}</div>` : ''}
        <div class="game-heading-row">
          <h2 class="game-heading">${chapter.title}</h2>
@@ -248,14 +251,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     );
   }
 
-  function roleScreen(s: Stage) {
+  // 選情節（例如家庭、工作、感情）；傳入 parent 時，改選那個情節底下的角色
+  function roleScreen(s: Stage, parent?: Role) {
     show(
       'life',
-      `<p class="game-stage-banner">${s.name}</p>
-       <h2 class="game-heading game-center">現在，你想進入哪個情節？</h2>
+      `<p class="game-stage-banner">${parent ? `${s.name} · ${parent.name}` : s.name}</p>
+       <h2 class="game-heading game-center">${parent ? '你想成為哪個角色？' : '現在，你想進入哪個情節？'}</h2>
        <div class="game-roles">
          ${roles
-           .filter((r) => r.stage === s.id)
+           .filter((r) => r.stage === s.id && r.parent === parent?.id)
            .map(
              (r) => `<button type="button" class="game-role" data-action="pick-role" data-role="${r.id}" ${r.ready ? '' : 'disabled'}>
                <span class="game-role-icon" aria-hidden="true">${r.icon}</span><strong>${r.name}</strong><span>${r.ready ? r.blurb : '準備中'}</span>
@@ -269,13 +273,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   function pickRole(id: string) {
     const role = roles.find((r) => r.id === id)!;
-    rolePicked = role;
-    // 這個職業有專屬故事的話，優先換進這個階段的回數裡（年紀照原本的安排）
+    if (role.parent) characterPicked = role;
+    else rolePicked = role;
+    // 這個情節底下還有角色可以選的話，先選角色
+    if (roles.some((r) => r.parent === role.id)) return roleScreen(deck[0].stage, role);
+    // 角色的故事照 sequence 的順序先排進去，再放這個情節（或角色）其他的專屬故事；年紀照原本的安排
+    const ordered = (role.sequence ?? []).map((cid) => chapters.find((c) => c.id === cid)!).filter(Boolean);
+    const others = shuffle(
+      chapters.filter((c) => !ordered.includes(c) && (c.roles?.includes(role.id) || (role.parent && c.roles?.includes(role.parent)))),
+    );
+    const own = [...ordered, ...others];
     const here = deck.filter((s) => s.stage === deck[0].stage);
-    const own = shuffle(chapters.filter((c) => c.roles?.includes(role.id)));
+    // 專屬故事比剩下的回數多時，補回數（最多到 LIFE_ROUNDS），年紀接著往後排
+    while (here.length < Math.min(own.length, LIFE_ROUNDS)) {
+      const last = here[here.length - 1];
+      const slot = { ...last, age: last.age + last.step };
+      deck.splice(deck.indexOf(last) + 1, 0, slot);
+      here.push(slot);
+    }
     for (const slot of here) {
       if (!own.length) break;
-      slot.chapter = own.pop()!;
+      slot.chapter = own.shift()!;
     }
     nextChapter();
   }
