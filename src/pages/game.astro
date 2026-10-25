@@ -116,6 +116,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       'title',
       `<h1 class="game-title">生命模擬器</h1>
        <p class="game-lead">導師「愛、光和良知」看著你說：<br />「去人間好好體驗吧。記得，每一個選擇都算數。」</p>
+       <p class="game-motto">選項沒有絕對的對錯，<br />提供給你的慣性另一個選項，<br />在一次又一次的過程，<br />學會祝福想要讓我們懂得的。</p>
        <p class="game-meta game-center">${life > 1 ? `第 ${life} 世，` : ''}你想從哪裡開始投胎？</p>
        <div class="game-starts">
          ${stages
@@ -550,6 +551,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     text-align: center;
     line-height: 2;
     margin: 0;
+  }
+  .game-motto {
+    margin: 0;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 2;
+    letter-spacing: 0.08em;
+    color: #f3d98b;
   }
   .game-heading {
     font-size: 1.6rem;
