@@ -229,7 +229,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       `${paras(choice.result)}
        ${cut ? `<p class="game-shorten">⏳ 惡業折壽：這一生少了 ${cut} 回。</p>` : ''}
        ${gained.length ? `<p class="game-meta">你得到了卡片</p><div class="game-cards">${gained.map(cardFigure).join('')}</div>` : ''}
-       ${chapter.epilogue ? `<div class="game-epilogue"><p class="game-meta">後來……</p>${paras(chapter.epilogue)}</div>` : ''}
+       ${
+         chapter.epilogue
+           ? `<div class="game-epilogue"><p class="game-meta">後來……</p>${paras(chapter.epilogue)}${
+               chapter.epilogueSource
+                 ? `<p class="game-epilogue-source">資料來源：${
+                     chapter.epilogueSource.url
+                       ? `<a href="${chapter.epilogueSource.url}" target="_blank" rel="noopener">${chapter.epilogueSource.label}</a>`
+                       : chapter.epilogueSource.label
+                   }</p>`
+                 : ''
+             }</div>`
+           : ''
+       }
        ${button('繼續', 'next-chapter')}`,
       true,
       currentStage?.background,
@@ -653,6 +665,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     border-left: 4px solid rgba(255, 255, 255, 0.55);
     border-radius: 4px;
     padding: 14px 18px;
+  }
+  .game-epilogue-source {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.75;
+    text-align: right;
+  }
+  .game-epilogue-source a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
   .game-epilogue .game-text {
     font-size: 1rem;

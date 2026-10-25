@@ -25,6 +25,7 @@ export interface Chapter {
   roles?: string[]; // 只有選了這些職業才會遇到（world.ts 的 roles id）；不寫就是大家都會遇到
   image?: string; // 故事的插圖，例如 '/game/stories/deepfake-boss.jpg'；不寫就只有文字
   epilogue?: string; // 不管選哪個選項，看完結果之後都會出現的一段話
+  epilogueSource?: { label: string; url?: string }; // 那段話的出處
   hint: { quote: string; source: string }; // 「停看聽」求救鈕顯示的筆記句子
   title: string;
   text: string;
@@ -753,6 +754,10 @@ export const chapters: Chapter[] = [
       '「那為什麼不該作弊？因為你們現在，正在決定自己一輩子會變成什麼樣的人。人總以為自己每天都在做重大決定，其實大部分的時候，你只是在做你習慣做的事。」\n\n' +
       '「如果現在就習慣走捷徑，等課越來越難、等你出了社會，身邊再也沒人可以偷看的時候，你還是會去找下一條捷徑。」他頓了一下：「說真的，我可不想搭一架由這門課作弊過的人寫程式的飛機。」\n\n' +
       '「作弊最好的結果，就是讓你這輩子去做一件你不會做、也不喜歡做的事。所以不要作弊——它真正傷害的，只有你自己。」',
+    epilogueSource: {
+      label: 'Professor Brian Harvey on why not to cheat',
+      url: 'https://www.youtube.com/watch?v=hMloyp6NI4E',
+    },
     choices: [
       {
         text: '你點開了傳來的答案，手指停在螢幕上……最後你忍住了，把手機關機塞進書包最底層，熬夜自己把迴圈搞懂。',
