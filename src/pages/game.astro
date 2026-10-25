@@ -32,6 +32,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     type Stage,
     type StageId,
   } from '../game/data';
+  import { roles, SHEET, SHEET_COLS, TILE, type Role } from '../game/world';
+  import { startMap } from '../game/mapEngine';
 
   const game = document.getElementById('game')!;
   const stage = document.getElementById('game-stage')!;
@@ -43,7 +45,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   let age = 0;
   let hand: string[] = [];
   // 這一世接下來的每一回：故事、屬於哪個階段、那時幾歲
-  let deck: { chapter: Chapter; stage: Stage; age: number; step: number }[] = [];
+  let deck: Slot[] = [];
   let currentStage: Stage | null = null;
   let lastStep = 0; // 最後一回之後再過幾年才走
   let pendingKarma: string | null = null;
@@ -54,6 +56,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   let lostRounds = 0; // 這一世因折壽少掉的回數
   let deathMerit = 0; // 死的時候的陰德，決定沒過關時去天道還是人道
   let trialIndex = 0;
+  // 走動地圖：這一世選的角色、地圖上還沒玩的回數、去過哪些場所
+  type Slot = { chapter: Chapter; stage: Stage; age: number; step: number };
+  let rolePicked: Role | null = null;
+  let mapState: { role: Role; slots: Slot[]; done: Set<string>; pos?: [number, number]; current?: string } | null = null;
+  let stopMap: (() => void) | null = null;
 
   function shuffle<T>(list: T[]): T[] {
     const a = [...list];
@@ -65,6 +72,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   function show(scene: string, html: string, showHand = false) {
+    stopMap?.();
+    stopMap = null;
     game.dataset.scene = scene;
     stage.innerHTML = html;
     handEl.hidden = !showHand;
@@ -155,12 +164,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     realmScore = emptyScore();
     round = 0;
     lostRounds = 0;
+    rolePicked = null;
+    mapState = null;
     nextChapter();
   }
 
   function nextChapter() {
-    const next = deck.shift();
+    const next = deck[0];
     if (!next) return deathScreen();
+    // 進入有角色可以選的階段時，先選這輩子的工作
+    if (!rolePicked && roles.some((r) => r.stage === next.stage.id)) return roleScreen(next.stage);
+    playSlot(deck.shift()!);
+  }
+
+  function playSlot(next: Slot) {
     const { chapter } = next;
     const newStage = next.stage !== currentStage;
     currentStage = next.stage;
@@ -206,9 +223,93 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       `${paras(choice.result)}
        ${cut ? `<p class="game-shorten">⏳ 惡業折壽：這一生少了 ${cut} 回。</p>` : ''}
        ${gained.length ? `<p class="game-meta">你得到了卡片</p><div class="game-cards">${gained.map(cardFigure).join('')}</div>` : ''}
-       ${button('繼續', 'next-chapter')}`,
+       ${mapState?.current ? button('回到地圖', 'back-to-map') : button('繼續', 'next-chapter')}`,
       true,
     );
+  }
+
+  // 人物圖（從圖塊表裁一塊，放大 3 倍，面向下）
+  function spriteDiv(sprite: number) {
+    const i = sprite + 1;
+    const x = (i % SHEET_COLS) * TILE * 3;
+    const y = Math.floor(i / SHEET_COLS) * TILE * 3;
+    return `<span class="game-sprite" style="background-image:url(${SHEET});background-position:-${x}px -${y}px"></span>`;
+  }
+
+  function roleScreen(s: Stage) {
+    show(
+      'life',
+      `<p class="game-stage-banner">${s.name}</p>
+       <h2 class="game-heading game-center">這輩子，你想做什麼工作？</h2>
+       <div class="game-roles">
+         ${roles
+           .filter((r) => r.stage === s.id)
+           .map(
+             (r) => `<button type="button" class="game-role" data-action="pick-role" data-role="${r.id}" ${r.map ? '' : 'disabled'}>
+               ${spriteDiv(r.sprite)}<strong>${r.name}</strong><span>${r.map ? r.blurb : '準備中'}</span>
+             </button>`,
+           )
+           .join('')}
+       </div>`,
+      true,
+    );
+  }
+
+  function pickRole(id: string) {
+    const role = roles.find((r) => r.id === id)!;
+    rolePicked = role;
+    const map = role.map!;
+    // 地圖上的每個場所各算一回：從牌堆前面拿這個階段的回數來用（年紀照原本的安排）
+    let n = 0;
+    while (n < map.places.length && deck[n]?.stage === deck[0].stage) n++;
+    const slots = deck.splice(0, n);
+    const placeChapters = new Set(map.places.map((p) => p.chapter));
+    // 場所的故事如果也排在後面，換成被地圖拿走的故事，避免同一世遇到兩次
+    const spare = slots.map((x) => x.chapter).filter((c) => !placeChapters.has(c.id));
+    for (const slot of deck) {
+      if (placeChapters.has(slot.chapter.id) && spare.length) slot.chapter = spare.pop()!;
+    }
+    // 折壽後回數不夠的話，多出來的場所就不開放
+    const done = new Set(map.places.slice(n).map((p) => p.id));
+    mapState = { role, slots, done };
+    currentStage = slots[0]?.stage ?? currentStage;
+    mapScreen();
+  }
+
+  function mapScreen() {
+    const ms = mapState!;
+    show(
+      'map',
+      `<p class="game-meta">第 ${life} 世 · ${currentStage?.name ?? ''} · ${ms.role.name}</p>
+       <div class="game-map" id="game-map"></div>
+       <p class="game-map-hint">點地面就會走過去（電腦也可以用方向鍵），走到發光的地方看看會發生什麼事。</p>`,
+      true,
+    );
+    stopMap = startMap({
+      host: document.getElementById('game-map')!,
+      map: ms.role.map!,
+      sprite: ms.role.sprite,
+      done: ms.done,
+      pos: ms.pos,
+      onPlace: (placeId, pos) => {
+        ms.pos = pos;
+        ms.current = placeId;
+        const place = ms.role.map!.places.find((p) => p.id === placeId)!;
+        const slot = ms.slots.shift()!;
+        playSlot({ ...slot, chapter: chapters.find((c) => c.id === place.chapter)! });
+      },
+      onExit: () => {
+        mapState = null;
+        nextChapter();
+      },
+    });
+  }
+
+  function backToMap() {
+    const ms = mapState!;
+    ms.done.add(ms.current!);
+    ms.current = undefined;
+    mapScreen();
   }
 
   function deathScreen() {
@@ -375,6 +476,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         return choose(btn.dataset.chapter!, Number(btn.dataset.index));
       case 'next-chapter':
         return nextChapter();
+      case 'pick-role':
+        return pickRole(btn.dataset.role!);
+      case 'back-to-map':
+        return backToMap();
       case 'help': {
         const hint = document.getElementById('game-hint')!;
         hint.hidden = !hint.hidden;
@@ -541,6 +646,65 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex;
     flex-direction: column;
     gap: 8px;
+  }
+  .game[data-scene='map'] {
+    background: linear-gradient(160deg, #6b5338, #3a2c1e);
+  }
+  .game-map {
+    border-radius: 8px;
+    overflow: hidden;
+    touch-action: none;
+  }
+  .game-map-canvas {
+    display: block;
+    cursor: pointer;
+  }
+  .game-map-hint {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.8;
+    text-align: center;
+  }
+  .game-roles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .game-role {
+    font: inherit;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    padding: 14px 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+  }
+  .game-role:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.28);
+  }
+  .game-role:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .game-role strong {
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+  }
+  .game-role span:last-child {
+    font-size: 0.85rem;
+    opacity: 0.85;
+  }
+  .game-sprite {
+    width: 48px;
+    height: 48px;
+    background-repeat: no-repeat;
+    background-size: 1296px 864px;
+    image-rendering: pixelated;
   }
   .game-heading-row {
     display: flex;
