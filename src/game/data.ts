@@ -22,7 +22,7 @@ export interface Choice {
 export interface Chapter {
   id: string;
   stage: StageId; // 屬於人生哪個階段
-  roles?: string[]; // 只有選了這些職業才會遇到（world.ts 的 roles id）；不寫就是大家都會遇到
+  roles?: string[]; // 只有選了這些主題才會遇到（world.ts 的 roles id：family／work／love）；不寫就是大家都會遇到
   image?: string; // 故事的插圖，例如 '/game/stories/deepfake-boss.jpg'；不寫就只有文字
   epilogue?: string; // 不管選哪個選項，看完結果之後都會出現的一段話
   epilogueSource?: { label: string; url?: string }; // 那段話的出處
@@ -120,7 +120,7 @@ export const chapters: Chapter[] = [
   {
     id: 'deepfake-boss',
     stage: 'adult',
-    roles: ['office'],
+    roles: ['work'],
     hint: { quote: '凡走過必留下痕跡，萬物之道皆有徵兆。透徹之人知初始，微觀之人知避禍，昏沈之人順因緣。', source: '戴戴筆記第八回（對應徵兆）' },
     title: '老闆的視訊電話',
     text:
@@ -584,6 +584,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'drunk-ride',
+    roles: ['work'],
     stage: 'adult',
     hint: { quote: '萬物都是有限的，學習量力而為之是控制的初始。', source: '戴戴筆記第四十四回（對應控制）' },
     title: '尾牙後的「我沒醉」',
@@ -688,6 +689,7 @@ export const chapters: Chapter[] = [
   },
   {
     id: 'typhoon-wedding',
+    roles: ['love'],
     stage: 'adult',
     hint: { quote: '山不轉路轉，路不轉人轉。當事與願違時，這個方法最舒心。', source: '戴戴筆記第十六回（對應轉機）' },
     title: '颱風天的婚禮',
@@ -1038,7 +1040,7 @@ export const DISCLAIMER = '內容純屬杜撰，僅供參考。';
 export const howToPlay: { title: string; text: string }[] = [
   {
     title: '一、選一個起點',
-    text: '你可以從學生時期、社會組或樂齡組開始，體驗不同階段的人生。\n\n進入社會組時，可以選這輩子的工作（目前開放「上班族」）。不同的工作，會遇到不同的故事。',
+    text: '你可以從學生時期、社會組或樂齡組開始，體驗不同階段的人生。\n\n選了社會組之後，可以從「家庭、工作、感情」三個主題選一個，不同的主題會遇到不同的故事。',
   },
   {
     title: '二、人生的每一回',

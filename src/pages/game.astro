@@ -32,7 +32,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     type Stage,
     type StageId,
   } from '../game/data';
-  import { roles, SHEET, SHEET_COLS, TILE, type Role } from '../game/world';
+  import { roles, type Role } from '../game/world';
 
   const game = document.getElementById('game')!;
   const stage = document.getElementById('game-stage')!;
@@ -248,25 +248,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     );
   }
 
-  // 人物圖（從圖塊表裁一塊，放大 3 倍，面向下）
-  function spriteDiv(sprite: number) {
-    const i = sprite + 1;
-    const x = (i % SHEET_COLS) * TILE * 3;
-    const y = Math.floor(i / SHEET_COLS) * TILE * 3;
-    return `<span class="game-sprite" style="background-image:url(${SHEET});background-position:-${x}px -${y}px"></span>`;
-  }
-
   function roleScreen(s: Stage) {
     show(
       'life',
       `<p class="game-stage-banner">${s.name}</p>
-       <h2 class="game-heading game-center">這輩子，你想做什麼工作？</h2>
+       <h2 class="game-heading game-center">這一段人生，你最在意什麼？</h2>
        <div class="game-roles">
          ${roles
            .filter((r) => r.stage === s.id)
            .map(
              (r) => `<button type="button" class="game-role" data-action="pick-role" data-role="${r.id}" ${r.ready ? '' : 'disabled'}>
-               ${spriteDiv(r.sprite)}<strong>${r.name}</strong><span>${r.ready ? r.blurb : '準備中'}</span>
+               <span class="game-role-icon" aria-hidden="true">${r.icon}</span><strong>${r.name}</strong><span>${r.ready ? r.blurb : '準備中'}</span>
              </button>`,
            )
            .join('')}
@@ -719,12 +711,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-size: 0.85rem;
     opacity: 0.85;
   }
-  .game-sprite {
-    width: 48px;
-    height: 48px;
-    background-repeat: no-repeat;
-    background-size: 1296px 864px;
-    image-rendering: pixelated;
+  .game-role-icon {
+    font-size: 2.2rem;
+    line-height: 1;
   }
   .game-heading-row {
     display: flex;
