@@ -122,7 +122,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
        <h2 class="game-heading">${chapter.title}</h2>
        ${paras(chapter.text)}
        <div class="game-choices">
-         ${chapter.choices.map((c, i) => button(c.text, 'choose', `data-chapter="${chapter.id}" data-index="${i}"`)).join('')}
+         ${shuffle(chapter.choices.map((c, i) => button(c.text, 'choose', `data-chapter="${chapter.id}" data-index="${i}"`))).join('')}
        </div>`,
       true,
     );
