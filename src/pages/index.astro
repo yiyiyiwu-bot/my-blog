@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import HomeBlock from '../components/HomeBlock.astro';
 import { siteConfig } from '../site.config';
 import { getCollection, getEntry } from 'astro:content';
-import { marked } from 'marked';
+import { renderMarkdown } from '../lib/markdown';
 
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 const posts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -11,7 +11,7 @@ const heroPost = posts[0];
 
 const homeIntro = await getEntry('pages', 'home-intro');
 const homeIntroHtml = homeIntro?.data.intro
-  ? marked.parse(homeIntro.data.intro, { breaks: true })
+  ? renderMarkdown(homeIntro.data.intro)
   : '';
 const homeBlocks = (await getCollection('home')).sort((a, b) => a.data.order - b.data.order);
 

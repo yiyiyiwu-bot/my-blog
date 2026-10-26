@@ -253,7 +253,8 @@ body.in-room #stage{filter:none;transform:none;transition:none}
 #scene.art .sc-back{background:rgba(33,29,29,.75)}
 /* 圖片層疊在中間那層上面，但只有「！」可以點，選項才不會被擋住 */
 .sc-art{position:absolute;left:0;right:0;z-index:3;display:grid;place-items:center;pointer-events:none;overflow:hidden}
-.art-book{position:relative;perspective:1600px;pointer-events:none}
+.art-book{position:relative;perspective:1600px;pointer-events:none;overflow:hidden}
+.art-inner{position:absolute;left:0;width:100%}
 .art-book img{position:absolute;inset:0;width:100%;height:100%;mix-blend-mode:multiply;user-select:none;-webkit-user-drag:none;pointer-events:none}
 .art-base{clip-path:inset(var(--fold) 0 0 0)}
 .art-pop{clip-path:inset(0 0 calc(100% - var(--fold)) 0);transform-origin:50% var(--fold)}
@@ -267,7 +268,12 @@ body.in-room #stage{filter:none;transform:none;transition:none}
 .sc-art.talk{z-index:1}
 .sc-art.dim .art-book{opacity:.14}
 #scene.art .sc-titlecard{display:none}
-.art-book{transition:opacity .4s ease, width .45s ease, height .45s ease}
+.art-book{transition:opacity .4s ease, width .45s ease, height .45s ease, filter .5s ease, transform .5s ease}
+.art-portrait{position:absolute;left:50%;bottom:4px;height:96%;max-width:90%;object-fit:contain;transform:translate(-50%, 40px);opacity:0;pointer-events:none;transition:opacity .45s ease, transform .6s cubic-bezier(.2,.9,.3,1);filter:drop-shadow(0 14px 26px rgba(40,30,20,.28))}
+.sc-art.focus .art-portrait{opacity:1;transform:translate(-50%, 0)}
+.sc-art.focus .art-book{filter:blur(6px) saturate(.85) brightness(1.02);transform:scale(1.04)}
+.sc-art.focus.dim .art-book{opacity:.35}
+@media (prefers-reduced-motion:reduce){ .art-portrait,.art-book{transition:none} }
 .npc-mark.on-art{transform:translate(-50%, -50%);pointer-events:auto}
 @media (prefers-reduced-motion:reduce){ .art-book.opening,.art-book.opening .art-pop,.art-book.opening .npc-mark{animation:none} .art-book{transition:none} }
 .sc-tip{background:rgba(24,18,14,.6);color:#fff;padding:10px 18px;border-radius:999px;font:700 14px var(--sans);animation:scIn .5s ease both}
@@ -318,6 +324,14 @@ body.in-scene .brand, body.in-scene .tools, body.in-scene #hud, body.in-scene #s
 .sc-src{color:var(--gold);font-size:13px}
 .sc-dlg{position:relative;width:min(880px,calc(100% - 32px));box-sizing:border-box;margin:0 auto 14px;padding:30px 30px 26px;min-height:150px;border-radius:22px;background:var(--cream);color:var(--ink);box-shadow:0 20px 50px #0007;cursor:pointer;outline:none}
 .sc-dlg:focus-visible{box-shadow:0 0 0 3px var(--coral),0 20px 50px #0007}
+.sc-end{position:absolute;top:-15px;right:20px;min-height:32px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);font:700 13px var(--sans);cursor:pointer;box-shadow:0 4px 12px #0002}
+.sc-end:hover{background:var(--yellow)}
+/* 電腦上說故事：書在左、對話和選項在右 */
+@media (min-width:1000px){
+  #scene.split .sc-art{right:44%}
+  #scene.split .sc-main{padding-left:calc(56% + 8px)}
+  #scene.split .sc-dlg{width:auto;margin:0 24px 14px calc(56% + 8px)}
+}
 .sc-dlg.idle{cursor:default;min-height:0;padding-top:24px;padding-bottom:18px}
 .sc-name{position:absolute;top:-15px;left:24px;background:var(--coral);color:#fff;border-radius:999px;padding:6px 16px;font:700 14px var(--sans);box-shadow:0 4px 12px #0003}
 .sc-text{margin:0;font:400 clamp(16px,2.1vw,19px)/1.95 var(--serif);white-space:pre-wrap;max-height:32vh;overflow:auto}
@@ -414,6 +428,7 @@ body.in-scene .brand, body.in-scene .tools, body.in-scene #hud, body.in-scene #s
   <div class="sc-main" id="scMain"></div>
   <div class="sc-dlg" id="scDlg" tabindex="0" aria-live="polite">
     <span class="sc-name" id="scName"></span>
+    <button class="sc-end" id="scEnd" type="button" data-en="End chat">結束對話</button>
     <p class="sc-text" id="scText"></p>
     <span class="sc-next" id="scNext" aria-hidden="true">▼</span>
   </div>
@@ -2362,7 +2377,7 @@ function bindPointer() {
   addEventListener('keydown', e => {
     if (e.target.closest && e.target.closest('input,select,textarea')) return;
     if (SC.open) {
-      if (e.key === 'Escape') exitScene();
+      if (e.key === 'Escape') { if (!$('#scDlg').hidden && SC.room && SC.room.npcs) endTalk(); else exitScene(); }
       else if ((e.key === 'Enter' || e.key === ' ') && !(e.target.closest && e.target.closest('button'))) { e.preventDefault(); advance(); }
       return;
     }
@@ -2467,7 +2482,7 @@ function exitScene() {
     // 從室內走出來：淡成白色，回到島上，鏡頭再慢慢拉遠
     fade(true, () => {
       SC.room = null; SC.open = false;
-      document.body.classList.remove('in-scene', 'in-room'); s.classList.remove('room', 'art'); s.hidden = true; hideArt();
+      document.body.classList.remove('in-scene', 'in-room'); s.classList.remove('room', 'art', 'split'); s.hidden = true; hideArt();
       setSel({ type: null });
       focus(new THREE.Vector3(isl.x, TOP, isl.z), new THREE.Vector3(2.75, 5.3, 6.2), true);
       dirty = true;
@@ -2521,6 +2536,7 @@ function showScene(isl, replay) {
   document.body.classList.toggle('in-room', !!SC.room);
   $('#scene').classList.toggle('room', !!SC.room);
   $('#scene').classList.toggle('art', !!(SC.room && SC.room.art));
+  $('#scene').classList.remove('split');
   if (SC.room && SC.room.art) showArt(SC.room.art); else hideArt();
   if (!SC.room) dirty = true;
   $('#scene').style.setProperty('--tint', isl.d.color);
@@ -2573,7 +2589,7 @@ function explore(isl) {
   $('#scMeta').textContent = sc.meta ? L(sc.meta) : '';
   setMain('');
   const art = !!SC.room.art;
-  const box = art ? $('#scArt .art-book') : $('#scMarks');
+  const box = art ? $('#scArt .art-inner') : $('#scMarks');
   box.querySelectorAll('.npc-mark').forEach(e => e.remove());
   for (const n of SC.room.npcs) n.el = null;
   artTalk(false);
@@ -2599,6 +2615,10 @@ function explore(isl) {
   if (art) { b.classList.add('on-art'); b.style.left = npc.x * 100 + '%'; b.style.top = npc.y * 100 + '%'; }
   npc.el = b; box.appendChild(b);
   if (!art) box.hidden = false;
+}
+// 結束對話：有「！」可以點的場景回到場景裡；沒有的話就回到島上
+function endTalk() {
+  if (SC.room && SC.room.npcs) explore(SC.isl); else exitScene();
 }
 function hideMarks() {
   const box = $('#scMarks'); if (box) { box.hidden = true; box.innerHTML = ''; }
@@ -2713,6 +2733,7 @@ function advance() {
 function initScene() {
   $('#scBack').onclick = exitScene;
   $('#scDlg').addEventListener('click', advance);
+  $('#scEnd').addEventListener('click', e => { e.stopPropagation(); endTalk(); });
   $('#scene').addEventListener('pointermove', e => { SC.px = e.clientX / innerWidth - .5; SC.py = e.clientY / innerHeight - .5; });
   $('#scHint').onclick = () => {
     const on = $('#scHint').getAttribute('aria-pressed') !== 'true';
@@ -2736,21 +2757,30 @@ function initScene() {
    ========================================================= */
 /* =========================================================
    立體書場景：用圖片當場景，點進去時像立體書一樣翻開、立起來
-   每個場景只放一個「！」，x、y 是它在圖上的位置（0～1，從左上角算），點在人的臉上
+   每個場景只放一個「！」，x、y 是它在整張圖上的位置（0～1，從左上角算），點在人的臉上
+   crop 是圖上方、下方空白的比例，顯示時會裁掉
+   portrait 是去背的人物圖：點了「！」之後背景變模糊，人物放大站到前面
    ========================================================= */
 const ART = {
-  sch: { src: 'art/classroom.jpg', ratio: .8, fold: 72, npcs: [{ name: '教室', story: 'exam-cheating', x: .35, y: .42 }] },
-  wrk: { src: 'art/office.jpg', ratio: .8, fold: 70, npcs: [{ name: '辦公室', story: 'med-website', x: .5, y: .38 }] },
-  st:  { src: 'art/street.jpg', ratio: .8, fold: 68, npcs: [{ name: '咖啡店的女生', x: .33, y: .54, lines: ['今天天氣真好，坐在路邊喝杯咖啡，看看來來往往的人。', '這裡的故事還在寫，之後再來找我聊聊吧！'] }] },
-  park: { src: 'art/park.jpg', ratio: .8, fold: 69, npcs: [{ name: '長椅上的女生', x: .31, y: .49, lines: ['旁邊這隻小貓每天都會來陪我坐一下。', '這裡的故事還在寫，之後再來看看。'] }] },
-  bch: { src: 'art/beach.jpg', ratio: .8, fold: 66, npcs: [{ name: '戴草帽的女生', x: .385, y: .46, lines: ['這杯芒果汁超好喝！', '這裡的故事還在寫，先吹吹海風吧。'] }] }
+  sch: { src: 'art/classroom.jpg', portrait: 'art/girl_classroom.png', ratio: .8, crop: [.08, .13], fold: 72, npcs: [{ name: '教室', story: 'exam-cheating', x: .35, y: .42 }] },
+  wrk: { src: 'art/office.jpg', ratio: .8, crop: [.135, .145], fold: 70, npcs: [{ name: '辦公室', story: 'med-website', x: .5, y: .38 }] },
+  st:  { src: 'art/street.jpg', ratio: .8, crop: [.055, .15], fold: 68, npcs: [{ name: '咖啡店的女生', x: .33, y: .54, lines: ['今天天氣真好，坐在路邊喝杯咖啡，看看來來往往的人。', '這裡的故事還在寫，之後再來找我聊聊吧！'] }] },
+  park: { src: 'art/park.jpg', ratio: .8, crop: [.1, .14], fold: 69, npcs: [{ name: '長椅上的女生', x: .31, y: .49, lines: ['旁邊這隻小貓每天都會來陪我坐一下。', '這裡的故事還在寫，之後再來看看。'] }] },
+  bch: { src: 'art/beach.jpg', ratio: .8, crop: [.083, .14], fold: 66, npcs: [{ name: '戴草帽的女生', x: .385, y: .46, lines: ['這杯芒果汁超好喝！', '這裡的故事還在寫，先吹吹海風吧。'] }] },
+  // 家裡有兩個故事：先出現還沒玩過的那一個（弟弟的手機遊戲、爸爸的投資群組）
+  hom: { src: 'art/home.jpg', ratio: .8, crop: [.14, .155], fold: 67, npcs: [
+    { name: '弟弟', story: 'mobile-game', x: .5, y: .5 },
+    { name: '爸爸', story: 'stock-guru', x: .46, y: .37 }
+  ] },
+  fun: { src: 'art/fun.jpg', ratio: .8, crop: [.075, .15], fold: 66, npcs: [{ name: '一家人', x: .55, y: .555, lines: ['今天是女兒的生日，我們要玩到閉園！', '這裡的故事還在寫，先去坐旋轉木馬吧。'] }] }
 };
 const artRoom = id => () => ({ art: ART[id], npcs: ART[id].npcs.map(n => ({ ...n })) });
 function showArt(cfg) {
   const box = $('#scArt');
-  box.hidden = false; box.classList.remove('talk', 'dim');
-  box.innerHTML = `<div class="art-book${reduced ? '' : ' opening'}" style="--fold:${cfg.fold}%">
-    <img class="art-base" src="${cfg.src}" alt="" draggable="false"><img class="art-pop" src="${cfg.src}" alt="" draggable="false"></div>`;
+  box.hidden = false; box.classList.remove('talk', 'dim', 'focus');
+  box.innerHTML = `<div class="art-book${reduced ? '' : ' opening'}"><div class="art-inner" style="--fold:${cfg.fold}%">
+    <img class="art-base" src="${cfg.src}" alt="" draggable="false"><img class="art-pop" src="${cfg.src}" alt="" draggable="false"></div></div>` +
+    (cfg.portrait ? `<img class="art-portrait" src="${cfg.portrait}" alt="" draggable="false">` : '');
   layoutArt();
   // 翻開動畫跑完就拿掉，之後聊天、回來時「！」不會再重播淡入
   const book = box.querySelector('.art-book');
@@ -2759,21 +2789,36 @@ function showArt(cfg) {
 function hideArt() { const box = $('#scArt'); if (box) { box.hidden = true; box.innerHTML = ''; } }
 // 圖的大小：平常放滿中間；說話時縮小到對話框上方，不會被對話框蓋住
 function layoutArt() {
-  const box = $('#scArt'), book = box && box.querySelector('.art-book');
-  if (!book || !SC.room || !SC.room.art) return;
+  const box = $('#scArt'), book = box && box.querySelector('.art-book'), inner = book && book.querySelector('.art-inner');
+  if (!inner || !SC.room || !SC.room.art) return;
+  const scene = $('#scene');
+  if (box.classList.contains('talk')) scene.classList.toggle('split', isSplit());
+  const split = scene.classList.contains('split');
   const top = $('.sc-top').getBoundingClientRect().bottom, hand = $('#scHand').getBoundingClientRect().top;
   const dlg = $('#scDlg'), dlgH = dlg.hidden ? 0 : dlg.offsetHeight;
-  const bottom = box.classList.contains('talk') ? hand - Math.max(190, dlgH + 26) : hand;
+  // 電腦上說故事時書在左邊、對話在右邊，書不用縮；其他時候說話就縮到對話框上方
+  const bottom = box.classList.contains('talk') && !split ? hand - Math.max(190, dlgH + 26) : hand;
   box.style.top = top + 'px'; box.style.height = Math.max(120, bottom - top) + 'px';
-  const r = SC.room.art.ratio, availW = innerWidth - 24, availH = Math.max(120, bottom - top - 8);
-  const w = Math.min(availW, availH * r);
-  book.style.width = w + 'px'; book.style.height = (w / r) + 'px';
+  const r = SC.room.art.ratio, [ct, cb] = SC.room.art.crop || [0, 0], vr = r / (1 - ct - cb);
+  const availW = (split ? innerWidth * .56 : innerWidth) - 32, availH = Math.max(120, bottom - top - 12);
+  const w = Math.min(availW, availH * vr), fullH = w / r;
+  book.style.width = w + 'px'; book.style.height = (w / vr) + 'px';
+  inner.style.height = fullH + 'px'; inner.style.top = -(ct * fullH) + 'px';
 }
-const artTalk = on => { const box = $('#scArt'); if (!box) return; box.classList.toggle('talk', on); if (!on) box.classList.remove('dim'); layoutArt(); };
+// 寬螢幕（電腦）才左右分開
+const isSplit = () => innerWidth >= 1000 && innerWidth / Math.max(1, innerHeight) >= 1.15;
+const artTalk = on => {
+  const box = $('#scArt'); if (!box) return;
+  box.classList.toggle('talk', on); if (!on) box.classList.remove('dim');
+  // 聚焦：有人物圖的場景，說話時背景模糊、人物站到前面
+  box.classList.toggle('focus', on && !!(SC.room && SC.room.art && SC.room.art.portrait));
+  $('#scene').classList.toggle('split', on && !!(SC.room && SC.room.art) && isSplit());
+  layoutArt();
+};
 // 出現選項、結果、卡片時，圖淡下去讓字清楚
-const artDim = on => { const box = $('#scArt'); if (box) box.classList.toggle('dim', on); };
+const artDim = on => { const box = $('#scArt'); if (box) box.classList.toggle('dim', on && !$('#scene').classList.contains('split')); };
 // 有立體書插圖的地點用插圖；其他地點用 3D 室內
-const ROOMS = { sch: artRoom('sch'), hom: buildHomeRoom, wrk: artRoom('wrk'), res: buildRestaurantRoom, bch: artRoom('bch'), hall: buildHallRoom, st: artRoom('st'), park: artRoom('park'), fun: buildFunRoom };
+const ROOMS = { sch: artRoom('sch'), hom: artRoom('hom'), wrk: artRoom('wrk'), res: buildRestaurantRoom, bch: artRoom('bch'), hall: buildHallRoom, st: artRoom('st'), park: artRoom('park'), fun: artRoom('fun') };
 const roomCache = {};
 function getRoom(isl) {
   const make = ROOMS[isl.d.id];
