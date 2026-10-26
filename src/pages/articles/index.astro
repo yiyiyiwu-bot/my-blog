@@ -2,11 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CategorySidebar from '../../components/CategorySidebar.astro';
 import { getEntry } from 'astro:content';
-import { marked } from 'marked';
+import { renderMarkdown } from '../../lib/markdown';
 
 const articlesPage = await getEntry('pages', 'articles');
 const introHtml = articlesPage?.data.intro
-  ? marked.parse(articlesPage.data.intro, { breaks: true })
+  ? renderMarkdown(articlesPage.data.intro)
   : '';
 ---
 

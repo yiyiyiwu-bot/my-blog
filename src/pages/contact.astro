@@ -1,11 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getEntry } from 'astro:content';
-import { marked } from 'marked';
+import { renderMarkdown } from '../lib/markdown';
 
 const contactPage = await getEntry('pages', 'contact');
 const introHtml = contactPage?.data.intro
-  ? marked.parse(contactPage.data.intro, { breaks: true })
+  ? renderMarkdown(contactPage.data.intro)
   : '';
 ---
 

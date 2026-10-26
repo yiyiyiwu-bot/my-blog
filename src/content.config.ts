@@ -1,8 +1,33 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import type { Loader } from 'astro/loaders';
+import { fixFakeBlankLines } from './lib/fake-blank-lines.mjs';
+
+// glob() for collections whose markdown body is rendered as the page (blog,
+// news): fixes "blank" lines holding invisible spaces before rendering.
+function cleanBodyGlob(options: Parameters<typeof glob>[0]): Loader {
+  const base = glob(options);
+  return {
+    ...base,
+    load: (context) => {
+      const entryTypes = new Map(context.entryTypes);
+      const md = entryTypes.get('.md');
+      if (md) {
+        entryTypes.set('.md', {
+          ...md,
+          getEntryInfo: async (params) => {
+            const info = await md.getEntryInfo(params);
+            return { ...info, body: fixFakeBlankLines(info.body) };
+          },
+        });
+      }
+      return base.load({ ...context, entryTypes });
+    },
+  };
+}
 
 const blog = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
+  loader: cleanBodyGlob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
   schema: z.object({
     title: z.string(),
     pubDate: z.coerce.date(),
@@ -55,7 +80,7 @@ const home = defineCollection({
 });
 
 const news = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/news' }),
+  loader: cleanBodyGlob({ pattern: '**/*.{md,mdx}', base: './src/content/news' }),
   schema: z.object({
     title: z.string(),
     pubDate: z.coerce.date(),
