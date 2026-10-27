@@ -1,0 +1,43 @@
+---
+// Member (學員) entry page: same list as /articles/<memberEntryCategory>/, no
+// password. Opening it marks this device as a member, so every other password-
+// protected category also opens without asking.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CategorySidebar from '../../../components/CategorySidebar.astro';
+import CategoryContent from '../../../components/CategoryContent.astro';
+import { getCollection } from 'astro:content';
+import { siteConfig, MEMBER_ACCESS_KEY } from '../../../site.config';
+
+export function getStaticPaths() {
+  return [{ params: { code: siteConfig.memberCode } }];
+}
+
+const category = siteConfig.memberEntryCategory;
+const categoryEntry = (await getCollection('categories')).find((cat) => cat.data.title === category);
+if (!categoryEntry) throw new Error(`Member entry category "${category}" not found`);
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const posts = allPosts
+  .filter((post) => post.data.category === category)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title={siteConfig.memberAppName}>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="manifest" href={`/m/${siteConfig.memberCode}/manifest.webmanifest`} />
+    <link rel="apple-touch-icon" href="/icons/member-180.png" />
+    <meta name="apple-mobile-web-app-title" content={siteConfig.memberAppName} />
+    <script is:inline define:vars={{ memberKey: MEMBER_ACCESS_KEY }}>
+      try {
+        localStorage.setItem(memberKey, '1');
+      } catch {}
+    </script>
+  </Fragment>
+  <div class="wrap articles-layout">
+    <CategorySidebar active={category} />
+    <div class="articles-main">
+      <CategoryContent categoryEntry={categoryEntry} posts={posts} gated={false} />
+    </div>
+  </div>
+</BaseLayout>

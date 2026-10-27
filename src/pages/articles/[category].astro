@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CategorySidebar from '../../components/CategorySidebar.astro';
+import CategoryContent from '../../components/CategoryContent.astro';
 import { getCollection } from 'astro:content';
-import { renderMarkdown } from '../../lib/markdown';
 
 export async function getStaticPaths() {
   const categories = await getCollection('categories');
@@ -25,85 +25,7 @@ const posts = allPosts
   <div class="wrap articles-layout">
     <CategorySidebar active={category} />
     <div class="articles-main">
-      <h1 class="articles-title">{category}</h1>
-
-      {categoryEntry.data.password && (
-        <div class="password-gate" id="password-gate">
-          {categoryEntry.data.passwordHint && (
-            <div class="password-hint" set:html={renderMarkdown(categoryEntry.data.passwordHint)} />
-          )}
-          <div class="password-form">
-            <input type="password" id="password-input" placeholder="請輸入密碼" />
-            <button type="button" id="password-submit">確認</button>
-          </div>
-          <p class="password-error" id="password-error" hidden>密碼不對，再試一次</p>
-        </div>
-      )}
-
-      <div id="protected-content" class={categoryEntry.data.password ? 'is-locked' : ''}>
-        {categoryEntry.data.description && (
-          <div class="articles-intro" set:html={renderMarkdown(categoryEntry.data.description)} />
-        )}
-
-        <div class="episode-list-header">
-          <h2 class="section-title">集數</h2>
-          <button type="button" id="sort-toggle" class="sort-toggle">新 → 舊</button>
-        </div>
-
-        {posts.length === 0 && <p class="empty-state">這個分類還沒有文章。</p>}
-
-        <ol class="episode-list" id="episode-list">
-          {posts.map((post) => (
-            <li><a href={`/blog/${post.id}/`}>{post.data.title}</a></li>
-          ))}
-        </ol>
-      </div>
+      <CategoryContent categoryEntry={categoryEntry} posts={posts} />
     </div>
   </div>
 </BaseLayout>
-
-<script>
-  const btn = document.getElementById('sort-toggle');
-  const list = document.getElementById('episode-list');
-  let reversed = false;
-  btn?.addEventListener('click', () => {
-    reversed = !reversed;
-    list?.classList.toggle('is-reversed', reversed);
-    if (btn) btn.textContent = reversed ? '舊 → 新' : '新 → 舊';
-  });
-</script>
-
-{categoryEntry.data.password && (
-  <script define:vars={{ categoryId: categoryEntry.id, encodedPassword: Buffer.from(categoryEntry.data.password).toString('base64') }}>
-    const KEY = `unlocked-category-${categoryId}`;
-    const gate = document.getElementById('password-gate');
-    const content = document.getElementById('protected-content');
-    const input = document.getElementById('password-input');
-    const submitBtn = document.getElementById('password-submit');
-    const error = document.getElementById('password-error');
-
-    function unlock() {
-      gate.style.display = 'none';
-      content.classList.remove('is-locked');
-    }
-
-    if (sessionStorage.getItem(KEY) === '1') {
-      unlock();
-    }
-
-    function tryUnlock() {
-      if (input.value === atob(encodedPassword)) {
-        sessionStorage.setItem(KEY, '1');
-        error.hidden = true;
-        unlock();
-      } else {
-        error.hidden = false;
-      }
-    }
-
-    submitBtn.addEventListener('click', tryUnlock);
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') tryUnlock();
-    });
-  </script>
-)}
