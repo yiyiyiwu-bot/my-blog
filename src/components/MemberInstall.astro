@@ -17,11 +17,12 @@ const menuIcon = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true
   </p>
   <div class="member-install-actions">
     <button type="button" class="member-install-btn" id="member-install-btn">📲 加到桌面</button>
+    <a class="member-install-dismiss" href={`/m/${siteConfig.memberCode}/guide/`}>看圖文教學</a>
     <button type="button" class="member-install-dismiss" data-dismiss>不再顯示</button>
   </div>
 
   <div class="member-install-guide" id="guide-ios" hidden>
-    <p>iPhone 請照這三步（要用 Safari 開這個網頁）：</p>
+    <p>iPhone 請照這三步（Safari 或 Chrome 都可以，步驟不一樣的話請看<a href={`/m/${siteConfig.memberCode}/guide/`}>圖文教學</a>）：</p>
     <ol>
       <li>按畫面下方的「分享」<Fragment set:html={shareIcon} /></li>
       <li>往下滑，選「加入主畫面」<Fragment set:html={addIcon} /></li>

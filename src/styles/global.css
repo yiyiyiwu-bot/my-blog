@@ -1151,3 +1151,90 @@ a {
   vertical-align: -0.25em;
   margin: 0 2px;
 }
+
+.member-install-guide a {
+  text-decoration: underline;
+}
+
+/* ---------- Member page: add-to-home-screen picture guide ---------- */
+
+.guide-page {
+  padding-top: 48px;
+  padding-bottom: 64px;
+  font-family: var(--font-sans);
+}
+
+.guide-lead {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.guide-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 28px 0 20px;
+}
+
+.guide-tab {
+  border: 1px solid var(--color-fg);
+  background: var(--color-bg);
+  color: var(--color-fg);
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.guide-tab[aria-selected='true'] {
+  background: var(--color-fg);
+  color: var(--color-bg);
+}
+
+.guide-panel[hidden] {
+  display: none;
+}
+
+.guide-hint {
+  margin: 0 0 20px;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.guide-steps {
+  margin: 0;
+  padding-left: 1.4em;
+}
+
+.guide-steps li {
+  margin-bottom: 36px;
+}
+
+.guide-step-text {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+.guide-step-note {
+  margin: 0 0 6px;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.guide-steps img {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin-top: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.guide-back a {
+  text-decoration: underline;
+  font-size: 0.9rem;
+}

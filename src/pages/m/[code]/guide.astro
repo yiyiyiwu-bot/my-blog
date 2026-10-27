@@ -1,0 +1,117 @@
+---
+// Picture guide for adding the member page to a phone's home screen. Linked
+// from the 加到桌面 box on the member page; like it, noindex and unlinked
+// elsewhere. Screenshots live in public/images/guide/ (personal info blurred).
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { siteConfig } from '../../../site.config';
+
+export function getStaticPaths() {
+  return [{ params: { code: siteConfig.memberCode } }];
+}
+
+const memberUrl = `/m/${siteConfig.memberCode}/`;
+
+type Step = { text: string; img?: string; note?: string };
+const guides: { id: string; label: string; hint: string; steps: Step[] }[] = [
+  {
+    id: 'android',
+    label: 'Android',
+    hint: '用 Chrome 打開學員頁。',
+    steps: [
+      { text: '按學員頁上方的「📲 加到桌面」。', img: 'android-1' },
+      { text: '跳出「安裝應用程式」，按「安裝」。', img: 'android-2' },
+      { text: '完成！桌面上會出現「學員」圖示。', img: 'android-3' },
+    ],
+  },
+  {
+    id: 'safari-new',
+    label: 'iPhone Safari（新版）',
+    hint: '畫面最下面是一條網址列，右邊有「⋯」。',
+    steps: [
+      { text: '按右下角的「⋯」，再按「分享」。', img: 'safari-1' },
+      { text: '按「加入主畫面」。', img: 'safari-2', note: '沒看到的話，先按「檢視較多」。' },
+      { text: '按右上角的「加入」（有些手機寫「新增」）。', img: 'add-final' },
+    ],
+  },
+  {
+    id: 'safari-old',
+    label: 'iPhone Safari（舊版）',
+    hint: '畫面最下面有一排按鈕：＜　＞　分享　書本　分頁。',
+    steps: [
+      { text: '按最下面中間的「分享」。', img: 'old-1' },
+      { text: '往下滑，按「加入主畫面」。', img: 'old-2' },
+      { text: '按右上角的「加入」（有些手機寫「新增」）。', img: 'add-final' },
+    ],
+  },
+  {
+    id: 'chrome-ios',
+    label: 'iPhone Chrome',
+    hint: '分享按鈕在網址列的右邊。',
+    steps: [
+      { text: '按網址列右邊的「分享」。', img: 'chrome-2' },
+      { text: '按「檢視較多」。', img: 'chrome-3' },
+      { text: '按「加入主畫面」。', img: 'chrome-4' },
+      { text: '按右上角的「加入」（有些手機寫「新增」）。', img: 'add-final' },
+    ],
+  },
+];
+---
+
+<BaseLayout title={`${siteConfig.memberAppName}：加到手機桌面`}>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+  </Fragment>
+  <div class="wrap guide-page">
+    <h1 class="articles-title">把「{siteConfig.memberAppName}」加到手機桌面</h1>
+    <p class="guide-lead">
+      加好之後，點一下桌面上的「學員」圖示，就能直接看文章，不用輸入密碼。
+    </p>
+    <p class="guide-lead">
+      如果你是在 LINE 裡打開，網頁會自動跳到手機的瀏覽器，再照下面的步驟做。
+    </p>
+
+    <div class="guide-tabs" role="tablist">
+      {guides.map((guide, i) => (
+        <button type="button" role="tab" class="guide-tab" data-tab={guide.id} aria-selected={i === 0 ? 'true' : 'false'}>
+          {guide.label}
+        </button>
+      ))}
+    </div>
+
+    {guides.map((guide, i) => (
+      <section class="guide-panel" id={`guide-${guide.id}`} role="tabpanel" hidden={i !== 0}>
+        <p class="guide-hint">{guide.hint}</p>
+        <ol class="guide-steps">
+          {guide.steps.map((step) => (
+            <li>
+              <p class="guide-step-text">{step.text}</p>
+              {step.note && <p class="guide-step-note">{step.note}</p>}
+              {step.img && <img src={`/images/guide/${step.img}.jpg`} alt={step.text} loading="lazy" />}
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+
+    <p class="guide-back"><a href={memberUrl}>← 回到學員頁</a></p>
+  </div>
+</BaseLayout>
+
+<script>
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.guide-tab'));
+
+  function select(id: string) {
+    tabs.forEach((tab) => tab.setAttribute('aria-selected', String(tab.dataset.tab === id)));
+    document.querySelectorAll<HTMLElement>('.guide-panel').forEach((panel) => {
+      panel.hidden = panel.id !== `guide-${id}`;
+    });
+  }
+
+  tabs.forEach((tab) => tab.addEventListener('click', () => select(tab.dataset.tab!)));
+
+  // Open the tab that matches this phone.
+  const ua = navigator.userAgent;
+  if (/CriOS/.test(ua)) select('chrome-ios');
+  else if (/iPhone|iPad|iPod/.test(ua)) select('safari-new');
+  else if (/Android/.test(ua)) select('android');
+</script>
