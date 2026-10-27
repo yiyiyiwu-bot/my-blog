@@ -2763,10 +2763,10 @@ function initScene() {
    ========================================================= */
 const ART = {
   sch: { src: 'art/classroom.jpg', portrait: 'art/girl_classroom.png', ratio: .8, crop: [.08, .13], fold: 72, npcs: [{ name: '教室', story: 'exam-cheating', x: .35, y: .42 }] },
-  wrk: { src: 'art/office.jpg', ratio: .8, crop: [.135, .145], fold: 70, npcs: [{ name: '辦公室', story: 'med-website', x: .5, y: .38 }] },
-  st:  { src: 'art/street.jpg', ratio: .8, crop: [.055, .15], fold: 68, npcs: [{ name: '咖啡店的女生', x: .33, y: .54, lines: ['今天天氣真好，坐在路邊喝杯咖啡，看看來來往往的人。', '這裡的故事還在寫，之後再來找我聊聊吧！'] }] },
-  park: { src: 'art/park.jpg', ratio: .8, crop: [.1, .14], fold: 69, npcs: [{ name: '長椅上的女生', x: .31, y: .49, lines: ['旁邊這隻小貓每天都會來陪我坐一下。', '這裡的故事還在寫，之後再來看看。'] }] },
-  bch: { src: 'art/beach.jpg', ratio: .8, crop: [.083, .14], fold: 66, npcs: [{ name: '戴草帽的女生', x: .385, y: .46, lines: ['這杯芒果汁超好喝！', '這裡的故事還在寫，先吹吹海風吧。'] }] },
+  wrk: { src: 'art/office.jpg', portrait: 'art/girl_office.png', ratio: .8, crop: [.135, .145], fold: 70, npcs: [{ name: '辦公室', story: 'med-website', x: .5, y: .38 }] },
+  st:  { src: 'art/street.jpg', portrait: 'art/girl_street.png', ratio: .8, crop: [.055, .15], fold: 68, npcs: [{ name: '咖啡店的女生', x: .33, y: .54, lines: ['今天天氣真好，坐在路邊喝杯咖啡，看看來來往往的人。', '這裡的故事還在寫，之後再來找我聊聊吧！'] }] },
+  park: { src: 'art/park.jpg', portrait: 'art/girl_park.png', ratio: .8, crop: [.1, .14], fold: 69, npcs: [{ name: '長椅上的女生', x: .31, y: .49, lines: ['旁邊這隻小貓每天都會來陪我坐一下。', '這裡的故事還在寫，之後再來看看。'] }] },
+  bch: { src: 'art/beach.jpg', portrait: 'art/girl_beach.png', ratio: .8, crop: [.083, .14], fold: 66, npcs: [{ name: '戴草帽的女生', x: .385, y: .46, lines: ['這杯芒果汁超好喝！', '這裡的故事還在寫，先吹吹海風吧。'] }] },
   // 家裡有兩個故事：先出現還沒玩過的那一個（弟弟的手機遊戲、爸爸的投資群組）
   hom: { src: 'art/home.jpg', ratio: .8, crop: [.14, .155], fold: 67, npcs: [
     { name: '弟弟', story: 'mobile-game', x: .5, y: .5 },
@@ -2804,6 +2804,9 @@ function layoutArt() {
   const w = Math.min(availW, availH * vr), fullH = w / r;
   book.style.width = w + 'px'; book.style.height = (w / vr) + 'px';
   inner.style.height = fullH + 'px'; inner.style.top = -(ct * fullH) + 'px';
+  // 人物圖最多放大 2.2 倍，太小的圖放太大會糊
+  const p = box.querySelector('.art-portrait');
+  if (p) { const cap = () => { if (p.naturalHeight) p.style.maxHeight = Math.round(p.naturalHeight * 2.2) + 'px'; }; if (p.complete) cap(); else p.onload = cap; }
 }
 // 寬螢幕（電腦）才左右分開
 const isSplit = () => innerWidth >= 1000 && innerWidth / Math.max(1, innerHeight) >= 1.15;
