@@ -1,0 +1,109 @@
+---
+// "Add to home screen" box for the member page. Phones only, hidden once the
+// page runs from the home screen or the member taps 不再顯示/我加好了.
+// Android Chrome gets the one-tap install prompt; iPhone has no such API, so it
+// gets step-by-step instructions. LINE's built-in browser can't add to the home
+// screen at all, so members there are sent to the phone's own browser first.
+import { siteConfig } from '../site.config';
+
+const shareIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+const addIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>';
+const menuIcon = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>';
+---
+
+<div class="member-install" id="member-install" hidden>
+  <p class="member-install-text">
+    把「{siteConfig.memberAppName}」放到手機桌面，以後點一下圖示就能直接進來看文章。
+  </p>
+  <div class="member-install-actions">
+    <button type="button" class="member-install-btn" id="member-install-btn">📲 加到桌面</button>
+    <button type="button" class="member-install-dismiss" data-dismiss>不再顯示</button>
+  </div>
+
+  <div class="member-install-guide" id="guide-ios" hidden>
+    <p>iPhone 請照這三步（要用 Safari 開這個網頁）：</p>
+    <ol>
+      <li>按畫面下方的「分享」<Fragment set:html={shareIcon} /></li>
+      <li>往下滑，選「加入主畫面」<Fragment set:html={addIcon} /></li>
+      <li>按右上角的「新增」</li>
+    </ol>
+    <button type="button" class="member-install-dismiss" data-dismiss>我加好了</button>
+  </div>
+
+  <div class="member-install-guide" id="guide-android" hidden>
+    <p>請照這三步：</p>
+    <ol>
+      <li>按右上角的「⋮」<Fragment set:html={menuIcon} /></li>
+      <li>選「加到主畫面」或「安裝應用程式」</li>
+      <li>按「新增」或「安裝」</li>
+    </ol>
+    <button type="button" class="member-install-dismiss" data-dismiss>我加好了</button>
+  </div>
+
+  <div class="member-install-guide" id="guide-line" hidden>
+    <p>在 LINE 裡面沒辦法加到桌面，請先用手機的瀏覽器打開這個網頁，再按一次「加到桌面」。</p>
+    <a class="member-install-btn" id="open-external" href="?openExternalBrowser=1">用瀏覽器開啟</a>
+  </div>
+</div>
+
+<script>
+  const DISMISS_KEY = 'member-install-dismissed';
+  const box = document.getElementById('member-install');
+  const button = document.getElementById('member-install-btn');
+  const guides = {
+    ios: document.getElementById('guide-ios'),
+    android: document.getElementById('guide-android'),
+    line: document.getElementById('guide-line'),
+  };
+
+  const ua = navigator.userAgent;
+  const isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isAndroid = /Android/.test(ua);
+  const inLine = /\bLine\//i.test(ua);
+  const fromHomeScreen =
+    matchMedia('(display-mode: standalone)').matches ||
+    matchMedia('(display-mode: minimal-ui)').matches ||
+    (navigator as Navigator & { standalone?: boolean }).standalone === true;
+
+  let dismissed = false;
+  try {
+    dismissed = localStorage.getItem(DISMISS_KEY) === '1';
+  } catch {}
+
+  function hideForever() {
+    try {
+      localStorage.setItem(DISMISS_KEY, '1');
+    } catch {}
+    if (box) box.hidden = true;
+  }
+
+  // Android Chrome hands us its install prompt; keep it for the button.
+  let installPrompt: (Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> }) | null = null;
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    installPrompt = event as typeof installPrompt;
+  });
+  window.addEventListener('appinstalled', hideForever);
+
+  if (box && (isIOS || isAndroid) && !fromHomeScreen && !dismissed) box.hidden = false;
+
+  function showGuide(name: keyof typeof guides) {
+    Object.values(guides).forEach((guide) => guide && (guide.hidden = true));
+    const guide = guides[name];
+    if (guide) guide.hidden = false;
+  }
+
+  button?.addEventListener('click', async () => {
+    if (inLine) return showGuide('line');
+    if (installPrompt) {
+      await installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      installPrompt = null;
+      if (outcome === 'accepted') hideForever();
+      return;
+    }
+    showGuide(isIOS ? 'ios' : 'android');
+  });
+
+  document.querySelectorAll('[data-dismiss]').forEach((el) => el.addEventListener('click', hideForever));
+</script>

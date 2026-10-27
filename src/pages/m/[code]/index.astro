@@ -5,6 +5,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import CategorySidebar from '../../../components/CategorySidebar.astro';
 import CategoryContent from '../../../components/CategoryContent.astro';
+import MemberInstall from '../../../components/MemberInstall.astro';
 import { getCollection } from 'astro:content';
 import { siteConfig, MEMBER_ACCESS_KEY } from '../../../site.config';
 
@@ -37,6 +38,7 @@ const posts = allPosts
   <div class="wrap articles-layout">
     <CategorySidebar active={category} />
     <div class="articles-main">
+      <MemberInstall />
       <CategoryContent categoryEntry={categoryEntry} posts={posts} gated={false} />
     </div>
   </div>
