@@ -244,6 +244,74 @@ body.in-room #stage{filter:none;transform:none;transition:none}
 .npc-mark:hover .bang{transform:scale(1.15)}
 .npc-mark:focus-visible{outline:3px solid var(--coral);outline-offset:4px;border-radius:12px}
 @keyframes bang{50%{transform:translateY(-5px)}}
+/* 地圖上的對話泡泡和跟隨小視窗 */
+.map-bubble{position:fixed;left:0;top:0;z-index:6;pointer-events:none;max-width:220px;background:#fff;color:var(--ink);border-radius:14px;padding:8px 12px;font:700 13px/1.5 var(--sans);box-shadow:0 6px 18px #4a2a1426;transform:translate(-50%,-100%);margin-top:-8px;white-space:nowrap}
+.map-bubble::after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-6px;border:6px solid transparent;border-bottom:0;border-top-color:#fff}
+.map-bubble.pop{animation:bubblePop .35s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes bubblePop{from{transform:translate(-50%,-100%) scale(.6);opacity:0}to{transform:translate(-50%,-100%) scale(1);opacity:1}}
+.mb-heart{display:inline-block;margin-left:6px;color:var(--coral);animation:heartUp 1.6s ease-out both}
+@keyframes heartUp{0%{transform:translateY(4px) scale(.6);opacity:0}25%{opacity:1}100%{transform:translateY(-26px) scale(1.25);opacity:0}}
+.follow-card{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:6;width:270px;box-sizing:border-box;background:var(--glass-strong);border-radius:18px;box-shadow:var(--shadow);padding:12px 14px 14px 16px;display:flex;flex-direction:column;gap:6px;animation:scIn .35s ease both}
+.fc-head{display:flex;align-items:center;gap:8px}
+.fc-dot{width:12px;height:12px;border-radius:50%;flex:none;box-shadow:0 0 0 2px #fff}
+.fc-head b{flex:1;font-size:16px}
+.fc-head .btn{min-height:36px;min-width:36px;padding:0}
+.fc-line{margin:0;font-size:13px;line-height:1.5;color:#4d4442}
+#fcFollow{margin-top:4px;background:var(--ink);color:var(--cream);font-weight:700}
+#fcFollow:hover{background:var(--coral)}
+#fcFollow[aria-pressed="true"]{background:var(--coral)}
+@media (max-width:800px){ .follow-card{left:10px;right:10px;width:auto;bottom:calc(10px + env(safe-area-inset-bottom,0px))} }
+@media (prefers-reduced-motion:reduce){ .map-bubble.pop,.mb-heart,.follow-card{animation:none} }
+/* 自由探索：發亮的小點，點了跳出專屬介面 */
+.spot{position:absolute;width:64px;height:64px;transform:translate(-50%,-50%);border:0;background:none;padding:0;cursor:pointer;pointer-events:auto;border-radius:50%}
+.spot i{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px var(--coral),0 0 12px 4px #fff8;animation:spotGlow 1.8s ease-in-out infinite}
+.spot span{position:absolute;left:50%;top:calc(50% + 12px);transform:translateX(-50%);white-space:nowrap;background:rgba(24,18,14,.75);color:#fff;font:700 11px var(--sans);padding:2px 8px;border-radius:999px;opacity:0;transition:opacity .2s}
+.spot:hover span,.spot:focus-visible span{opacity:1}
+.spot:hover i{transform:scale(1.3)}
+.spot:focus-visible{outline:3px solid var(--coral);outline-offset:-10px}
+@keyframes spotGlow{50%{box-shadow:0 0 0 2px var(--coral),0 0 18px 8px #fffc}}
+.sc-panel{position:absolute;inset:0;z-index:8;display:grid;place-items:center;background:rgba(40,30,20,.35);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);padding:16px}
+.pn-card{width:min(520px,100%);max-height:calc(100% - 32px);overflow:auto;box-sizing:border-box;background:var(--cream);color:var(--ink);border-radius:22px;box-shadow:var(--shadow);padding:14px 20px 22px;animation:cardIn .45s cubic-bezier(.2,.9,.3,1.15) both}
+.pn-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pn-head b{font:900 20px var(--serif)}
+.pn-board{background:#2f5a45;color:#f4f1e8;border-radius:14px;padding:20px 22px;border:8px solid #b48560;font-family:var(--serif)}
+.pn-board h3{margin:0 0 12px;font-size:26px;letter-spacing:4px}
+.pn-board ul{margin:0;padding-left:20px;line-height:2;font-size:17px}
+.pn-doodle{margin:12px 0 0;color:#f8e38a;font-size:14px}
+.pn-clock{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.pn-clock svg{width:min(220px,60vw);height:auto}
+.c-face{fill:#fffdf8;stroke:var(--coral);stroke-width:8}
+.c-tick{stroke:var(--ink);stroke-width:4;stroke-linecap:round}
+.c-h{stroke:var(--ink);stroke-width:8;stroke-linecap:round}
+.c-m{stroke:var(--ink);stroke-width:5;stroke-linecap:round}
+.c-s{stroke:var(--coral);stroke-width:2;stroke-linecap:round}
+.c-pin{fill:var(--coral)}
+.pn-clock b{font:italic 400 30px var(--num)}
+.pn-clock p,.pn-shelf>p,.pn-view p{margin:0;line-height:1.7;font-family:var(--serif)}
+.sh-row{display:flex;align-items:flex-end;gap:4px;margin:14px 0;padding:0 6px 6px;border-bottom:8px solid #a97a52;overflow-x:auto}
+.sh-book{flex:none;width:34px;height:var(--h);border:0;border-radius:4px 4px 2px 2px;background:var(--c);color:#fff;font:700 14px var(--serif);writing-mode:vertical-rl;letter-spacing:4px;cursor:pointer;box-shadow:inset -4px 0 0 #0002;transition:transform .25s}
+.sh-book:hover{transform:translateY(-6px)}
+.sh-book.out{transform:translateY(-22px)}
+.sh-quote{margin:0;min-height:60px;background:#fff;border-left:4px solid var(--gold);border-radius:10px;padding:12px 14px;font:400 15px/1.8 var(--serif)}
+.sh-quote cite{display:block;margin-top:6px;font:700 12px var(--sans);font-style:normal;color:#a07a2c}
+.pn-note{background:repeating-linear-gradient(#fffdf6 0 31px,#d7e3ea 31px 32px);border-radius:10px;padding:14px 18px 18px 40px;box-shadow:inset 3px 0 0 #f2b5c6;font-family:var(--serif)}
+.pn-note h3{margin:0 0 6px;font-size:19px;line-height:32px}
+.pn-note pre{margin:0;font:600 14px/32px ui-monospace,monospace;color:#3e5f8a;white-space:pre-wrap}
+.pn-note ul{list-style:none;margin:4px 0 0;padding:0}
+.pn-note li{line-height:32px;font-size:16px}
+.pn-note label{cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.pn-note input{width:18px;height:18px;accent-color:var(--coral)}
+.pn-note input:checked + span{text-decoration:line-through;color:var(--muted)}
+.pn-view .sky{position:relative;height:200px;border-radius:14px;overflow:hidden;background:linear-gradient(#8ec5e8,#d9eef8 70%,#bfe0b0 70%,#9cc27a);border:10px solid #b48560;margin-bottom:12px}
+.pn-view .cl{position:absolute;height:26px;border-radius:999px;background:#fff;box-shadow:16px -10px 0 4px #fff,-14px -6px 0 2px #fff;animation:cloud 18s linear infinite}
+.pn-view .c1{width:70px;top:40px;left:40px}
+.pn-view .c2{width:90px;top:80px;left:200px;animation-duration:26s;animation-delay:-9s}
+.pn-view .c3{width:56px;top:22px;left:340px;animation-duration:22s;animation-delay:-15s}
+.pn-view .bird{position:absolute;font-style:normal;color:#3b3330;font-size:14px;animation:bird 9s linear infinite}
+.pn-view .b1{top:60px;left:120px}.pn-view .b2{top:72px;left:100px;animation-delay:-1.2s}
+@keyframes cloud{from{transform:translateX(-420px)}to{transform:translateX(420px)}}
+@keyframes bird{0%{transform:translate(-200px,0)}50%{transform:translate(60px,-14px)}100%{transform:translate(360px,6px)}}
+@media (prefers-reduced-motion:reduce){ .spot i,.pn-view .cl,.pn-view .bird,.pn-card{animation:none} }
 /* 上方的小提示：自己一層，不會被圖或其他東西蓋掉 */
 .sc-tip2{position:absolute;left:50%;top:calc(66px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:5;background:rgba(24,18,14,.7);color:#fff;padding:7px 16px;border-radius:999px;font:700 13px var(--sans);white-space:nowrap;pointer-events:none;animation:scIn .5s ease both}
 /* 立體書場景：白底用 multiply 融進紙色背景；上半部從書頁上立起來 */
@@ -279,7 +347,7 @@ body.in-room #stage{filter:none;transform:none;transition:none}
 .sc-tip{background:rgba(24,18,14,.6);color:#fff;padding:10px 18px;border-radius:999px;font:700 14px var(--sans);animation:scIn .5s ease both}
 @media (prefers-reduced-motion:reduce){ .npc-mark .bang{animation:none} }
 #scene.room .sc-grid{background:rgba(24,18,14,.45);padding:12px;border-radius:16px;box-sizing:border-box}
-body.in-scene .brand, body.in-scene .tools, body.in-scene #hud, body.in-scene #side, body.in-scene #log, body.in-scene #legend, body.in-scene #timeBtn, body.in-scene #card, body.in-scene .css2d{visibility:hidden}
+body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, body.in-scene .tools, body.in-scene #hud, body.in-scene #side, body.in-scene #log, body.in-scene #legend, body.in-scene #timeBtn, body.in-scene #card, body.in-scene .css2d{visibility:hidden}
 #scene{position:fixed;inset:0;z-index:12;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;color:#fff;
   background:radial-gradient(120% 75% at 50% 0%, color-mix(in srgb, var(--tint,#a7cfe0) 42%, transparent), transparent 72%), linear-gradient(180deg, rgba(33,29,29,.22), rgba(28,22,22,.72));
   transition:clip-path .75s cubic-bezier(.65,0,.35,1)}
@@ -388,6 +456,13 @@ body.in-scene .brand, body.in-scene .tools, body.in-scene #hud, body.in-scene #s
 </section>
 
 <div id="legend" hidden></div>
+<div id="mapBubble" class="map-bubble" hidden aria-live="polite"></div>
+<section id="follow" class="follow-card" hidden aria-label="路人小視窗">
+  <div class="fc-head"><span class="fc-dot" id="fcDot"></span><b id="fcName"></b><button class="btn" id="fcClose" aria-label="關閉"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <p class="fc-line" id="fcRoute"></p>
+  <p class="fc-line" id="fcWhere"></p>
+  <button class="btn" id="fcFollow" aria-pressed="false">跟著他走</button>
+</section>
 
 <div id="hud" role="toolbar" aria-label="時間與顯示">
   <div class="clock"><b id="clockTxt">10:00</b><span id="slotTxt"></span></div>
@@ -435,6 +510,9 @@ body.in-scene .brand, body.in-scene .tools, body.in-scene #hud, body.in-scene #s
   <div class="sc-hand" id="scHand"></div>
   <div class="sc-art" id="scArt" hidden></div>
   <div class="sc-tip2" id="scTip" hidden></div>
+  <div class="sc-panel" id="scPanel" hidden role="dialog" aria-modal="true" aria-labelledby="pnTitle">
+    <div class="pn-card"><div class="pn-head"><b id="pnTitle"></b><button class="btn" id="pnClose" aria-label="關閉"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div id="pnBody"></div></div>
+  </div>
   <div class="sc-marks" id="scMarks" hidden></div>
 </section>
 
@@ -498,16 +576,8 @@ const DATA = {
         { id:'sch4', model:'court', name:'球場|Court', desc:'' },
         { id:'sch5', model:'busstop', name:'校車站|School Bus', desc:'' }
       ]},
-    { id:'res', icon:'餐', q:0, r:1, name:'餐廳|Restaurant', color:'#f6cf8f', ground:'#f3e6cf', pattern:'brick', tree:'olive',
-      scene:{ type:'soon', meta:'準備中|Coming soon' },
-      summary:'餐廳的故事還在寫。|The restaurant story is still being written.',
-      items:[
-        { id:'res1', model:'restaurant', name:'晴天餐廳|Sunny Diner', desc:'' },
-        { id:'res2', model:'kiosk', name:'小吃攤|Snack Stall', desc:'' },
-        { id:'res3', model:'kiosk', name:'飲料店|Drink Shop', desc:'' },
-        { id:'res4', model:'stage', name:'駐唱舞台|Live Music', desc:'' }
-      ]},
-    { id:'bch', icon:'海', q:0, r:2, name:'海邊|Beach', color:'#9fd6d8', ground:'#f0deb0', pattern:'sand', tree:'palm', beach:true,
+    // 餐廳先拿掉；海邊搬到原本餐廳的位置，才接得到其他島
+    { id:'bch', icon:'海', q:0, r:1, name:'海邊|Beach', color:'#9fd6d8', ground:'#f0deb0', pattern:'sand', tree:'palm', beach:true,
       scene:{ type:'soon', meta:'準備中|Coming soon' },
       summary:'沙灘、海灘傘和一波一波的浪。故事還在寫。|Sand, umbrellas and rolling waves. The story is still being written.',
       items:[
@@ -517,14 +587,14 @@ const DATA = {
         { id:'bch4', model:'sandcastle', name:'沙堡|Sandcastle', desc:'' },
         { id:'bch5', model:'lifeguard', name:'救生員塔|Lifeguard Tower', desc:'' }
       ]},
-    { id:'hall', icon:'市', q:1, r:-1, name:'市政廳|City Hall', color:'#c9bde6', ground:'#ece6f0', pattern:'brick', tree:'conifer',
+    { id:'exam', icon:'考', q:1, r:-1, name:'考試院|Exam Hall', color:'#d8c6a0', ground:'#efe8dc', pattern:'brick', tree:'conifer',
       scene:{ type:'soon', meta:'準備中|Coming soon' },
-      summary:'抽號碼牌、辦事情的地方。故事還在寫。|Take a number and get things done. The story is still being written.',
+      summary:'坐進考場、面對考試的地方。故事還在寫。|Where you sit down and face the exam. The story is still being written.',
       items:[
-        { id:'hall1', model:'hall', name:'市政廳|City Hall', desc:'' },
-        { id:'hall2', model:'policebox', name:'服務站|Service Desk', desc:'' },
-        { id:'hall3', model:'park', name:'市民廣場|Plaza', desc:'' },
-        { id:'hall4', model:'signal', name:'路口|Crossing', desc:'' }
+        { id:'exam1', model:'hall', name:'考試院|Exam Hall', desc:'' },
+        { id:'exam2', model:'classroom', name:'考場|Exam Room', desc:'' },
+        { id:'exam3', model:'book', name:'閱覽室|Reading Room', desc:'' },
+        { id:'exam4', model:'clock', name:'大鐘|Big Clock', desc:'' }
       ]},
     { id:'st', icon:'街', q:0, r:-1, name:'街上|On the Street', color:'#b9c7cf', ground:'#e4e1dc', pattern:'brick', tree:'round',
       scene:{ type:'soon', meta:'準備中|Coming soon' },
@@ -560,15 +630,27 @@ const DATA = {
     { id:'f1', from:'cls', to:'sch', cargo:'book', role:'student', level:'official', name:'去上學|To School', note:'' },
     { id:'f2', from:'cls', to:'wrk', cargo:'laptop', role:'commuter', level:'official', name:'去上班|To Work', note:'' },
     { id:'f3', from:'cls', to:'hom', cargo:'lunch', role:'parent', level:'official', name:'回家|Home', note:'' },
-    { id:'f4', from:'cls', to:'res', cargo:'ticket', role:'tourist', level:'thematic', name:'去吃飯|To Eat', note:'' },
-    { id:'f5', from:'res', to:'bch', cargo:'ball', role:'tourist', level:'thematic', name:'去海邊|To the Beach', note:'' },
+    { id:'f5', from:'cls', to:'bch', cargo:'ball', role:'tourist', level:'thematic', name:'去海邊|To the Beach', note:'' },
     { id:'f6', from:'hom', to:'sch', cargo:'book', role:'student', level:'thematic', name:'上學路上|On the Way', note:'' },
-    { id:'f7', from:'wrk', to:'res', cargo:'lunch', role:'elder', level:'pending', name:'午休|Lunch Break', note:'' },
-    { id:'f8', from:'cls', to:'hall', cargo:'book', role:'civil', level:'pending', name:'去辦事|Errands', note:'' },
+    { id:'f7', from:'wrk', to:'bch', cargo:'lunch', role:'elder', level:'pending', name:'午休|Lunch Break', note:'' },
+    { id:'f12', from:'cls', to:'exam', cargo:'book', role:'student', level:'thematic', name:'去考試|To the Exam', note:'' },
     { id:'f9', from:'st', to:'hom', cargo:'lunch', role:'commuter', level:'thematic', name:'逛街|Out and About', note:'' },
     { id:'f10', from:'park', to:'sch', cargo:'ball', role:'elder', level:'thematic', name:'散步|A Walk', note:'' },
-    { id:'f11', from:'fun', to:'hall', cargo:'ticket', role:'tourist', level:'thematic', name:'去玩|Fun Day', note:'' }
+    { id:'f11', from:'fun', to:'cls', cargo:'ticket', role:'tourist', level:'thematic', name:'去玩|Fun Day', note:'' }
   ],
+  // 地圖上的路人和貓狗被點到時，會從這裡隨機挑一句說（可以自己改、自己加）
+  chatter: {
+    people: ['早安！', '今天天氣真好～', '要去上班了！', '等一下要去公園散步。', '你也是這座島的人嗎？', '晚餐要吃什麼呢……'],
+    roles: {
+      student: ['作業還沒寫完……', '放學要去打球！'],
+      elder: ['年輕人，走路慢慢來喔。', '今天的菜園長得很好。'],
+      parent: ['孩子快放學了，要趕快回家。'],
+      commuter: ['借過借過，我要遲到了！'],
+      tourist: ['這座島好漂亮，下次還要再來！']
+    },
+    cat: ['喵～', '喵嗚？', '（呼嚕呼嚕……）', '（伸了一個大懶腰）'],
+    dog: ['汪！', '汪汪！', '（尾巴搖個不停）', '（把肚子翻過來給你摸）']
+  },
   dayCycle: [
     { from:0, to:1440, name:'|', items:[] }
   ]
@@ -897,6 +979,7 @@ function init() {
   buildLabels();
   buildUI();
   initScene();
+  initMapFun();
 
   new ResizeObserver(onResize).observe(stage);
   onResize();
@@ -2080,6 +2163,7 @@ function logEvent(kind, w) {
 }
 function updateWalkers(dt) {
   for (const w of walkers) {
+    if (w.hop > 0) w.hop = Math.max(0, w.hop - dt * 2.4);
     if (w.wait > 0) {
       w.wait -= dt;
       if (w.wait <= 0 && w.k === 0) logEvent(w.dir < 0 ? 'handoff' : 'depart', w);
@@ -2110,7 +2194,9 @@ function drawWalkers(camD) {
     const bob = moving && !w.bike ? Math.abs(Math.sin(ph)) * .012 : 0;
     const lift = w.bike ? .07 : 0;
     _Q.setFromAxisAngle(_V.set(0, 1, 0), w.yaw);
-    _B.compose(w.pos, _Q, _S.set(sc, sc, sc));
+    const hv = drawWalkers.hv || (drawWalkers.hv = new THREE.Vector3());
+    hv.copy(w.pos); if (w.hop > 0) hv.y += Math.sin(w.hop * Math.PI) * .14 * sc;
+    _B.compose(hv, _Q, _S.set(sc, sc, sc));
     const carry = w.dir > 0;
     const pedal = w.bike && moving ? Math.sin(ph * .7) * .5 : 0;
     WM.leg.setMatrixAt(i * 2, part(_B, -.025, .09 + lift, 0, w.bike ? -1 + pedal : swing, 0, 0, 1, 1, 1));
@@ -2180,11 +2266,11 @@ function animalMesh(kind, col) {
   return g;
 }
 function buildAnimals() {
-  const list = [['cat', '#e8823a'], ['dog', '#c9a26b'], ['cat', '#f4ebdd'], ['dog', '#3b3330'], ['cat', '#6b6560'], ['dog', '#f0e0c0'], ['cat', '#2b2422'], ['dog', '#d99a5a']];
-  list.forEach(([kind, col], i) => {
+  const list = [['cat', '#e8823a', '橘貓'], ['dog', '#c9a26b', '小黃'], ['cat', '#f4ebdd', '小白'], ['dog', '#3b3330', '小黑'], ['cat', '#6b6560', '灰灰'], ['dog', '#f0e0c0', '奶茶'], ['cat', '#2b2422', '煤炭'], ['dog', '#d99a5a', '阿柴']];
+  list.forEach(([kind, col, name], i) => {
     const F = flows[i % flows.length], g = animalMesh(kind, col);
     scene.add(g);
-    animals.push({ F, g, s: F.len * ((i * .37) % 1), dir: i % 2 ? -1 : 1, speed: kind === 'cat' ? .2 : .3, lane: i % 2 ? .14 : -.14, phase: i, wait: 0 });
+    animals.push({ kind, col, name, F, g, hop: 0, s: F.len * ((i * .37) % 1), dir: i % 2 ? -1 : 1, speed: kind === 'cat' ? .2 : .3, lane: i % 2 ? .14 : -.14, phase: i, wait: 0 });
   });
   updateAnimals(0);
 }
@@ -2199,9 +2285,109 @@ function updateAnimals(dt) {
     samplePath(a.F, a.s, a.g.position, _tan);
     a.g.position.x += _tan.z * a.lane; a.g.position.z -= _tan.x * a.lane;
     if (a.wait <= 0) a.g.position.y += Math.abs(Math.sin(simTime * 11 + a.phase)) * .01;
+    if (a.hop > 0) { a.hop = Math.max(0, a.hop - dt * 2.4); a.g.position.y += Math.sin(a.hop * Math.PI) * .12 * sc; }
     a.g.rotation.y = Math.atan2(_tan.x * a.dir, _tan.z * a.dir);
     a.g.scale.setScalar(sc);
   }
+}
+
+/* =========================================================
+   地圖上的路人和貓狗：點了會停下來、跳一下、說一句話；也可以跟著他走
+   ========================================================= */
+const MAP = { obj: null, bubbleUntil: 0, following: false };
+const pickOne = arr => arr[Math.floor(Math.random() * arr.length)];
+const mapScale = () => clamp(camera.position.distanceTo(controls.target) / 20, 1, 1.45);
+const objPos = o => o.kind === 'walker' ? o.ref.pos : o.ref.g.position;
+const objName = o => o.kind === 'walker' ? L(ROLES[o.ref.role].name) : o.ref.name;
+// 找滑鼠點的位置附近（螢幕上 38 像素內）最近的路人或動物
+function creatureAt(cx, cy) {
+  let best = null, bd = 38;
+  const sc = mapScale();
+  const test = (pos, h, obj) => {
+    _pv.copy(pos); _pv.y += h; _pv.project(camera);
+    if (_pv.z > 1) return;
+    const d = Math.hypot((_pv.x * .5 + .5) * innerWidth - cx, (-_pv.y * .5 + .5) * innerHeight - cy);
+    if (d < bd) { bd = d; best = obj; }
+  };
+  if (show.walk) for (const w of walkers) test(w.pos, .2 * sc, { kind: 'walker', ref: w });
+  for (const a of animals) test(a.g.position, .08 * sc, { kind: a.kind, ref: a });
+  return best;
+}
+function poke(o) {
+  MAP.obj = o;
+  const r = o.ref;
+  r.hop = 1; r.wait = Math.max(r.wait || 0, 2.4);
+  const C2 = DATA.chatter;
+  const lines = o.kind === 'walker' ? (C2.roles[r.role] || []).concat(C2.people) : C2[o.kind];
+  showBubble(pickOne(lines), o.kind !== 'walker');
+  openFollowCard(o);
+  dirty = true;
+}
+function showBubble(text, heart) {
+  const b = $('#mapBubble');
+  b.innerHTML = esc(text) + (heart ? '<span class="mb-heart" aria-hidden="true">♥</span>' : '');
+  b.hidden = false; b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+  MAP.bubbleUntil = performance.now() + 3200;
+}
+function openFollowCard(o) {
+  $('#follow').hidden = false;
+  $('#fcName').textContent = objName(o);
+  $('#fcDot').style.background = o.kind === 'walker' ? '#' + o.ref.cloth.getHexString() : o.ref.col;
+  setFollow(MAP.following && MAP.obj === o);
+  updateFollowCard();
+}
+function closeFollow() {
+  setFollow(false); MAP.obj = null;
+  $('#follow').hidden = true; $('#mapBubble').hidden = true;
+}
+function setFollow(on) {
+  MAP.following = on;
+  const btn = $('#fcFollow');
+  btn.textContent = on ? tr('停止跟隨', 'Stop following') : tr(MAP.obj && MAP.obj.kind !== 'walker' ? '跟著牠走' : '跟著他走', 'Follow');
+  btn.setAttribute('aria-pressed', on);
+  if (on && MAP.obj) {
+    if (show.bird) setBird(false, true);
+    const p = objPos(MAP.obj).clone(); p.y = TOP;
+    flyTo(p.clone().add(new THREE.Vector3(2.2, 3.6, 4.6)), p);
+  }
+}
+// 跟隨：鏡頭每一格往他身上靠一點
+function followStep() {
+  if (!MAP.following || !MAP.obj || fly) return;
+  const p = objPos(MAP.obj), t = controls.target;
+  const dx = (p.x - t.x) * .08, dz = (p.z - t.z) * .08;
+  t.x += dx; t.z += dz; camera.position.x += dx; camera.position.z += dz;
+  dirty = true;
+}
+function updateFollowCard() {
+  const o = MAP.obj;
+  if (!o || $('#follow').hidden) return;
+  const r = o.ref, F = r.F, from = r.dir > 0 ? F.A : F.B, to = r.dir > 0 ? F.B : F.A, p = objPos(o);
+  let near = islands[0], nd = Infinity;
+  for (const isl of islands) { const d = Math.hypot(isl.x - p.x, isl.z - p.z); if (d < nd) { nd = d; near = isl; } }
+  const route = r.wait > 0 ? tr('停下來休息一下', 'Taking a short break') : tr(`正從「${L(from.d.name)}」走到「${L(to.d.name)}」`, `Walking from ${L(from.d.name)} to ${L(to.d.name)}`);
+  const where = tr(`現在在「${L(near.d.name)}」附近`, `Now near ${L(near.d.name)}`);
+  if ($('#fcRoute').textContent !== route) $('#fcRoute').textContent = route;
+  if ($('#fcWhere').textContent !== where) $('#fcWhere').textContent = where;
+}
+// 每一格：讓泡泡跟著頭頂走，並更新小視窗的文字
+function updateMapUI(now) {
+  const b = $('#mapBubble');
+  if (!b.hidden) {
+    if (now > MAP.bubbleUntil || !MAP.obj) b.hidden = true;
+    else {
+      _pv.copy(objPos(MAP.obj)); _pv.y += (MAP.obj.kind === 'walker' ? .46 : .24) * mapScale(); _pv.project(camera);
+      b.style.left = ((_pv.x * .5 + .5) * innerWidth).toFixed(1) + 'px';
+      b.style.top = ((-_pv.y * .5 + .5) * innerHeight).toFixed(1) + 'px';
+    }
+  }
+  updateFollowCard();
+}
+function initMapFun() {
+  $('#fcFollow').onclick = () => setFollow(!MAP.following);
+  $('#fcClose').onclick = closeFollow;
+  // 自己拖曳地圖時就停止跟隨
+  controls.addEventListener('start', () => { if (MAP.following) setFollow(false); });
 }
 
 function relatedFlows() {
@@ -2365,10 +2551,12 @@ function bindPointer() {
   el.addEventListener('pointerup', e => {
     if (Math.hypot(e.clientX - dx, e.clientY - dy) > 6) return;
     const r = el.getBoundingClientRect();
+    const who = creatureAt(e.clientX, e.clientY);
+    if (who) { poke(who); return; }
     raycaster.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), camera);
     const objs = pickMeshes.concat(flows.filter(F => F.tube.visible).map(F => F.tube));
     const h = raycaster.intersectObjects(objs, false)[0];
-    if (!h) return;
+    if (!h) { if (!MAP.following) closeFollow(); return; }
     const ud = h.object.userData;
     if (ud.flow) { selectFlow(flows.find(F => F.d === ud.flow)); return; }
     if (ud.owners) { const o = ud.owners[h.instanceId]; if (o && o.item) return selectItem(o.item); if (o && o.island != null) return selectIsland(islands[o.island]); return; }
@@ -2377,6 +2565,7 @@ function bindPointer() {
   addEventListener('keydown', e => {
     if (e.target.closest && e.target.closest('input,select,textarea')) return;
     if (SC.open) {
+      if (e.key === 'Escape' && !$('#scPanel').hidden) { closePanel(); return; }
       if (e.key === 'Escape') { if (!$('#scDlg').hidden && SC.room && SC.room.npcs) endTalk(); else exitScene(); }
       else if ((e.key === 'Enter' || e.key === ' ') && !(e.target.closest && e.target.closest('button'))) { e.preventDefault(); advance(); }
       return;
@@ -2402,6 +2591,7 @@ function frame(now) {
     else if (dirty) { dirty = false; renderer.render(scene, camera); }
     return;
   }
+  if (!fly) followStep();
   if (controls.update()) dirty = true;
   const animating = !reduced && !paused;
   if (animating) {
@@ -2424,6 +2614,7 @@ function frame(now) {
   renderer.render(scene, camera);
   css2d.render(scene, camera);
   layoutLabels();
+  updateMapUI(now);
 }
 
 /* =========================================================
@@ -2439,6 +2630,7 @@ const paras = s => s.split('\n\n');
 const NARR = () => tr('旁白', 'Narrator');
 
 function enterScene(isl) {
+  closeFollow();
   if (SC.open) { if ($('#scene').hidden) return; showScene(isl); return; }
   SC.open = true;
   closeCard(); setSel({ type: 'island', isl });
@@ -2476,6 +2668,7 @@ function openScene(isl, sx, sy) {
 }
 function exitScene() {
   if (!SC.open || $('#scene').hidden) return;
+  closePanel();
   clearInterval(SC.typing); SC.typing = null;
   const s = $('#scene'), [sx, sy] = SC.origin, isl = SC.isl;
   if (SC.room) {
@@ -2526,6 +2719,7 @@ function pickStory(isl, replay) {
   return list[isl.turn];
 }
 function showScene(isl, replay) {
+  closePanel();
   clearInterval(SC.typing); SC.typing = null;
   SC.isl = isl;
   const sc = isl.d.scene || { type: 'soon' };
@@ -2590,13 +2784,14 @@ function explore(isl) {
   setMain('');
   const art = !!SC.room.art;
   const box = art ? $('#scArt .art-inner') : $('#scMarks');
-  box.querySelectorAll('.npc-mark').forEach(e => e.remove());
+  box.querySelectorAll('.npc-mark, .spot').forEach(e => e.remove());
   for (const n of SC.room.npcs) n.el = null;
   artTalk(false);
   const npc = oneNpc(SC.room.npcs, stories);
   const entry = npc.story ? stories.find(e => e.story === npc.story) : null;
   const done = entry && GS.done.has(entry.story);
-  showTip(entry ? tr('點「！」開始', 'Tap “!” to begin') : tr('點「！」聊聊', 'Tap “!” to chat'));
+  const more = art && (SPOTS[isl.d.id] || []).length ? tr('，發亮的小點也可以點點看', ', and try the glowing dots') : '';
+  showTip((entry ? tr('點「！」開始', 'Tap “!” to begin') : tr('點「！」聊聊', 'Tap “!” to chat')) + more);
   const b = document.createElement('button');
   b.className = 'npc-mark' + (npc.talked || done ? ' talked' : '');
   b.innerHTML = `<span class="bang" aria-hidden="true">${done ? '✓' : '！'}</span>`;
@@ -2614,6 +2809,7 @@ function explore(isl) {
   };
   if (art) { b.classList.add('on-art'); b.style.left = npc.x * 100 + '%'; b.style.top = npc.y * 100 + '%'; }
   npc.el = b; box.appendChild(b);
+  if (art) addSpots(isl, box);
   if (!art) box.hidden = false;
 }
 // 結束對話：有「！」可以點的場景回到場景裡；沒有的話就回到島上
@@ -2622,7 +2818,7 @@ function endTalk() {
 }
 function hideMarks() {
   const box = $('#scMarks'); if (box) { box.hidden = true; box.innerHTML = ''; }
-  document.querySelectorAll('#scArt .npc-mark').forEach(e => e.remove());
+  document.querySelectorAll('#scArt .npc-mark, #scArt .spot').forEach(e => e.remove());
 }
 function placeMarks(r) {
   const box = $('#scMarks');
@@ -2734,6 +2930,8 @@ function initScene() {
   $('#scBack').onclick = exitScene;
   $('#scDlg').addEventListener('click', advance);
   $('#scEnd').addEventListener('click', e => { e.stopPropagation(); endTalk(); });
+  $('#pnClose').onclick = closePanel;
+  $('#scPanel').addEventListener('click', e => { if (e.target.id === 'scPanel') closePanel(); });
   $('#scene').addEventListener('pointermove', e => { SC.px = e.clientX / innerWidth - .5; SC.py = e.clientY / innerHeight - .5; });
   $('#scHint').onclick = () => {
     const on = $('#scHint').getAttribute('aria-pressed') !== 'true';
@@ -2774,6 +2972,57 @@ const ART = {
   ] },
   fun: { src: 'art/fun.jpg', ratio: .8, crop: [.075, .15], fold: 66, npcs: [{ name: '一家人', x: .55, y: .555, lines: ['今天是女兒的生日，我們要玩到閉園！', '這裡的故事還在寫，先去坐旋轉木馬吧。'] }] }
 };
+/* =========================================================
+   自由探索：場景裡可以點的東西，點了會跳出那個東西專屬的介面
+   每個 spot：name 名稱、x/y 在整張圖上的位置、panel 用哪一種介面、其餘是那個介面要用的內容
+   ========================================================= */
+const SPOTS = {
+  sch: [
+    { name: '黑板', x: .6, y: .3, panel: 'board', title: '好好學習　天天向上',
+      lines: ['明天 08:10　期中考', '範圍：迴圈、陣列、函式', '帶：准考證、2B 鉛筆、橡皮擦', '值日生：小雨'], doodle: '（角落有人畫了一個笑臉 ☺）' },
+    { name: '時鐘', x: .584, y: .2, panel: 'clock', note: '秒針一直在走。距離明天的期中考，又少了一點點時間。' },
+    { name: '書櫃', x: .85, y: .4, panel: 'shelf', note: '書櫃裡有一排很特別的書，每一本的書背上都寫著兩個字。抽一本出來看看吧。' },
+    { name: '桌上的筆記', x: .713, y: .565, panel: 'notebook', title: '期中考前的讀書計畫',
+      code: ['for (i = 0; i < n; i++) {', '  sum += i;', '}   ← 為什麼一直跑不停？？'],
+      todo: ['把迴圈重新看一遍', '寫兩題考古題', '不要偷看群組', '早點睡覺'] },
+    { name: '窗戶', x: .25, y: .3, panel: 'view', note: '窗外的天空好藍，雲慢慢地飄過去。考完試，想去公園走一走。' }
+  ]
+};
+const PANELS = {
+  board: s => `<div class="pn-board"><h3>${esc(s.title)}</h3><ul>${s.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul><p class="pn-doodle">${esc(s.doodle || '')}</p></div>`,
+  clock: s => `<div class="pn-clock"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="92" class="c-face"/>${[...Array(12)].map((_, i) => { const a = i * Math.PI / 6; return `<line x1="${100 + Math.sin(a) * 78}" y1="${100 - Math.cos(a) * 78}" x2="${100 + Math.sin(a) * 88}" y2="${100 - Math.cos(a) * 88}" class="c-tick"/>`; }).join('')}<line id="cH" x1="100" y1="100" x2="100" y2="52" class="c-h"/><line id="cM" x1="100" y1="100" x2="100" y2="30" class="c-m"/><line id="cS" x1="100" y1="112" x2="100" y2="24" class="c-s"/><circle cx="100" cy="100" r="6" class="c-pin"/></svg><b id="cTxt"></b><p>${esc(s.note)}</p></div>`,
+  shelf: s => `<div class="pn-shelf"><p>${esc(s.note)}</p><div class="sh-row">${Object.entries(GAME.cards).map(([id, c], i) => `<button class="sh-book" data-card="${id}" style="--h:${150 + (i * 37) % 40}px;--c:${['#db6a41', '#3e7c8c', '#6f7fb5', '#8db86f', '#b48560', '#c97a9a'][i % 6]}">${esc(c.name)}</button>`).join('')}</div><blockquote class="sh-quote" id="shQuote">${tr('點一本書，讀讀導師的話。', 'Tap a book to read the teacher’s words.')}</blockquote></div>`,
+  notebook: s => `<div class="pn-note"><h3>${esc(s.title)}</h3><pre>${s.code.map(esc).join('\n')}</pre><ul>${s.todo.map((t, i) => `<li><label><input type="checkbox" id="todo${i}"> <span>${esc(t)}</span></label></li>`).join('')}</ul></div>`,
+  view: s => `<div class="pn-view"><div class="sky"><i class="cl c1"></i><i class="cl c2"></i><i class="cl c3"></i><i class="bird b1">︶</i><i class="bird b2">︶</i></div><p>${esc(s.note)}</p></div>`
+};
+let panelTimer = null;
+function openPanel(spot) {
+  const p = $('#scPanel');
+  $('#pnTitle').textContent = spot.name;
+  $('#pnBody').innerHTML = PANELS[spot.panel](spot);
+  p.hidden = false;
+  clearInterval(panelTimer);
+  if (spot.panel === 'clock') { const tick = () => { const d = new Date(), h = d.getHours(), m = d.getMinutes(), sec = d.getSeconds(); const set = (id, deg) => { const el = $(id); if (el) el.setAttribute('transform', `rotate(${deg} 100 100)`); }; set('#cH', (h % 12) * 30 + m * .5); set('#cM', m * 6 + sec * .1); set('#cS', sec * 6); const t = $('#cTxt'); if (t) t.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`; }; tick(); panelTimer = setInterval(tick, 1000); }
+  if (spot.panel === 'shelf') $('#pnBody').querySelectorAll('.sh-book').forEach(b => b.onclick = () => {
+    $('#pnBody').querySelectorAll('.sh-book').forEach(x => x.classList.toggle('out', x === b));
+    const c = GAME.cards[b.dataset.card];
+    $('#shQuote').innerHTML = `${esc(c.quote)}<cite>${tr('戴戴筆記・', 'Daidai Notes · ')}${esc(c.name)}</cite>`;
+  });
+  setTimeout(() => $('#pnClose').focus({ preventScroll: true }), 30);
+}
+function closePanel() { clearInterval(panelTimer); $('#scPanel').hidden = true; }
+function addSpots(isl, box) {
+  for (const spot of SPOTS[isl.d.id] || []) {
+    const b = document.createElement('button');
+    b.className = 'spot';
+    b.style.left = spot.x * 100 + '%'; b.style.top = spot.y * 100 + '%';
+    b.innerHTML = `<i aria-hidden="true"></i><span>${esc(spot.name)}</span>`;
+    b.setAttribute('aria-label', tr(`看看${spot.name}`, `Look at ${spot.name}`));
+    b.onclick = () => openPanel(spot);
+    box.appendChild(b);
+  }
+}
+
 const artRoom = id => () => ({ art: ART[id], npcs: ART[id].npcs.map(n => ({ ...n })) });
 function showArt(cfg) {
   const box = $('#scArt');
@@ -2821,7 +3070,7 @@ const artTalk = on => {
 // 出現選項、結果、卡片時，圖淡下去讓字清楚
 const artDim = on => { const box = $('#scArt'); if (box) box.classList.toggle('dim', on && !$('#scene').classList.contains('split')); };
 // 有立體書插圖的地點用插圖；其他地點用 3D 室內
-const ROOMS = { sch: artRoom('sch'), hom: artRoom('hom'), wrk: artRoom('wrk'), res: buildRestaurantRoom, bch: artRoom('bch'), hall: buildHallRoom, st: artRoom('st'), park: artRoom('park'), fun: artRoom('fun') };
+const ROOMS = { sch: artRoom('sch'), hom: artRoom('hom'), wrk: artRoom('wrk'), bch: artRoom('bch'), st: artRoom('st'), park: artRoom('park'), fun: artRoom('fun'), exam: buildExamRoom };
 const roomCache = {};
 function getRoom(isl) {
   const make = ROOMS[isl.d.id];
@@ -3275,6 +3524,48 @@ function buildFunRoom() {
   ], new THREE.Vector3(0, 1.8, 6.5), new THREE.Vector3(0, 2.6, -12));
   room.update = t => { wheel.rotation.z = t * .15; caro.rotation.y = t * .4; };
   return room;
+}
+
+/* ---------- 考試院：一排排單人考桌、大時鐘、監考老師 ---------- */
+function buildExamRoom() {
+  const K = roomKit({ floor: '#d9c9ad', wall: '#f2ede2', w: 9, d: 10, seed: 19 }), b = K.b;
+  for (let i = 0; i < 18; i++) b.box(-4.25 + i * .5, 0, 0, .02, .004, 10, '#c7b494');
+  // 左邊窗戶
+  for (const z of [-3, 0, 3]) { b.box(-4.43, .95, z, .04, 1.65, 1.8, '#d6edf6'); b.box(-4.4, .95, z, .05, 1.71, .05, C.wood); b.box(-4.4, 2.6, z, .05, .06, 1.9, C.wood); }
+  // 天花板燈
+  for (const x of [-2.2, 0, 2.2]) for (const z of [-3, 0, 3]) b.gb(x, 3.12, z, 1.3, .05, .3, '#fffaf0');
+  // 前面：大時鐘、講台、准考證核對桌
+  b.cyl(0, 2.35, -4.94, .38, .06, C.cream, Math.PI / 2); b.tor(0, 2.35, -4.86, .38, C.ink, Math.PI / 2);
+  b.box(0, 2.35, -4.85, .03, .26, .01, C.ink); b.box(.1, 2.34, -4.85, .2, .03, .01, C.ink);
+  b.rb(0, 0, -4.1, 2.2, .85, .7, C.wood); b.box(0, .85, -4.1, 2.3, .05, .8, '#a97a52');
+  b.box(-.5, .9, -4.05, .45, .04, .32, '#ffffff'); b.box(.35, .9, -4.05, .3, .1, .22, C.stone);
+  // 一排排單人考桌（桌上有考卷和筆）
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
+    const x = -2.7 + c * 1.8, z = -2.4 + r * 1.55;
+    b.box(x, .72, z, .75, .04, .5, '#e6d2ad');
+    for (const [dx, dz] of [[-.33, -.21], [.33, -.21], [-.33, .21], [.33, .21]]) b.cyl(x + dx, 0, z + dz, .02, .72, C.ink);
+    b.box(x, .76, z, .3, .005, .4, '#ffffff'); b.box(x + .2, .765, z + .05, .015, .01, .16, C.yellow, .4);
+    b.box(x, .42, z + .45, .42, .04, .38, C.teal); b.box(x, .46, z + .64, .42, .4, .04, C.teal);
+    for (const [dx, dz] of [[-.18, .3], [.18, .3], [-.18, .6], [.18, .6]]) b.cyl(x + dx, 0, z + dz, .015, .42, C.ink);
+  }
+  // 幾位正在寫考卷的考生
+  const shirts = [C.blue, C.coral, '#8db86f', C.pink, C.yellow];
+  [[0, 0], [2, 1], [1, 2], [3, 0], [0, 3]].forEach(([c, r], i) => person(b, -2.7 + c * 1.8, -2.4 + r * 1.55 + .45, { sit: true, shirt: shirts[i], hair: ['#2b2422', '#4a3228', '#1d1a1a'][i % 3] }));
+  // 盆栽、置物櫃
+  b.cyl(4.0, 0, -4.4, .22, .4, C.eave); b.ico(4.0, .85, -4.4, .45, C.leaf2);
+  b.box(4.15, 0, 1.2, .5, 1.2, 2.4, '#c9c2b6'); for (let k = 0; k < 4; k++) b.box(3.89, .2, .4 + k * .55, .02, .8, .45, '#b8b0a3');
+  // 黑板上的考場告示
+  const sign = textPlane(768, 256, 3.2, 1.05, (g, w, h) => {
+    g.fillStyle = '#2f5a45'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#f4f1e8'; g.font = '900 84px "Noto Serif TC", serif'; g.fillText('考場', 40, 110);
+    g.font = '700 40px "Noto Serif TC", serif'; g.fillText('請保持安靜　手機請關機', 40, 190);
+    g.fillStyle = '#f8e38a'; g.font = '700 40px ui-monospace, monospace'; g.fillText('09:00 – 11:00', 420, 100);
+  });
+  sign.position.set(-.2, 1.55, -4.93); K.S.add(sign);
+  const proctor = person(b, 1.4, -3.4, { shirt: '#3e4c6b', hair: '#2b2422' });
+  return K.done([
+    { name: '監考老師', head: proctor, lines: ['考試即將開始，請把手機關機收好。', '這裡的故事還在寫，之後再來應試吧！'] }
+  ], new THREE.Vector3(1.2, 1.75, 4.6), new THREE.Vector3(-.2, 1.2, -4));
 }
 
 /* ---------- 街上：馬路、斑馬線、兩排店面、機車和紅綠燈 ---------- */
