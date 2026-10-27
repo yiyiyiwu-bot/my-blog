@@ -43,6 +43,7 @@ const menuIcon = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true
   <div class="member-install-guide" id="guide-line" hidden>
     <p>在 LINE 裡面沒辦法加到桌面，請先用手機的瀏覽器打開這個網頁，再按一次「加到桌面」。</p>
     <a class="member-install-btn" id="open-external" href="?openExternalBrowser=1">用瀏覽器開啟</a>
+    <p>如果按了還是在 LINE 裡，請按右上角的「⋮」或「⋯」，選「用預設瀏覽器開啟」或「在 Safari 中開啟」。</p>
   </div>
 </div>
 
@@ -60,6 +61,15 @@ const menuIcon = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true
   const isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const isAndroid = /Android/.test(ua);
   const inLine = /\bLine\//i.test(ua);
+
+  // LINE reopens a page in the phone's own browser when the URL carries
+  // openExternalBrowser=1, so add it automatically. Only once: if we're still in
+  // LINE with the parameter already there, LINE ignored it and the guide shows.
+  const params = new URLSearchParams(location.search);
+  if (inLine && !params.has('openExternalBrowser')) {
+    params.set('openExternalBrowser', '1');
+    location.replace(`${location.pathname}?${params}${location.hash}`);
+  }
   const fromHomeScreen =
     matchMedia('(display-mode: standalone)').matches ||
     matchMedia('(display-mode: minimal-ui)').matches ||
@@ -85,12 +95,18 @@ const menuIcon = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true
   });
   window.addEventListener('appinstalled', hideForever);
 
-  if (box && (isIOS || isAndroid) && !fromHomeScreen && !dismissed) box.hidden = false;
-
   function showGuide(name: keyof typeof guides) {
     Object.values(guides).forEach((guide) => guide && (guide.hidden = true));
     const guide = guides[name];
     if (guide) guide.hidden = false;
+  }
+
+  if (box && inLine) {
+    // Still inside LINE after the redirect: show how to leave it right away.
+    box.hidden = false;
+    showGuide('line');
+  } else if (box && (isIOS || isAndroid) && !fromHomeScreen && !dismissed) {
+    box.hidden = false;
   }
 
   button?.addEventListener('click', async () => {
