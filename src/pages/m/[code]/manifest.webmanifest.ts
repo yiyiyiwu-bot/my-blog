@@ -10,9 +10,12 @@ export const GET: APIRoute = () => {
   const manifest = {
     name: siteConfig.memberAppName,
     short_name: siteConfig.memberAppName,
+    id: `/m/${siteConfig.memberCode}/`,
     start_url: `/m/${siteConfig.memberCode}/`,
     scope: '/',
-    display: 'browser',
+    // minimal-ui (not browser) so Android Chrome offers its one-tap install
+    // prompt; it keeps a small back/forward bar. iPhone treats it as a bookmark.
+    display: 'minimal-ui',
     background_color: '#ffffff',
     theme_color: '#ffffff',
     icons: [
