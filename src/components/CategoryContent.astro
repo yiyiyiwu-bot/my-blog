@@ -1,0 +1,101 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { renderMarkdown } from '../lib/markdown';
+import { MEMBER_ACCESS_KEY } from '../site.config';
+
+interface Props {
+  categoryEntry: CollectionEntry<'categories'>;
+  posts: CollectionEntry<'blog'>[];
+  // false on the member page: show the list without the password gate.
+  gated?: boolean;
+}
+
+const { categoryEntry, posts, gated = !!categoryEntry.data.password } = Astro.props;
+const category = categoryEntry.data.title;
+---
+
+<h1 class="articles-title">{category}</h1>
+
+{gated && (
+  <div class="password-gate" id="password-gate">
+    {categoryEntry.data.passwordHint && (
+      <div class="password-hint" set:html={renderMarkdown(categoryEntry.data.passwordHint)} />
+    )}
+    <div class="password-form">
+      <input type="password" id="password-input" placeholder="請輸入密碼" />
+      <button type="button" id="password-submit">確認</button>
+    </div>
+    <p class="password-error" id="password-error" hidden>密碼不對，再試一次</p>
+  </div>
+)}
+
+<div id="protected-content" class={gated ? 'is-locked' : ''}>
+  {categoryEntry.data.description && (
+    <div class="articles-intro" set:html={renderMarkdown(categoryEntry.data.description)} />
+  )}
+
+  <div class="episode-list-header">
+    <h2 class="section-title">集數</h2>
+    <button type="button" id="sort-toggle" class="sort-toggle">新 → 舊</button>
+  </div>
+
+  {posts.length === 0 && <p class="empty-state">這個分類還沒有文章。</p>}
+
+  <ol class="episode-list" id="episode-list">
+    {posts.map((post) => (
+      <li><a href={`/blog/${post.id}/`}>{post.data.title}</a></li>
+    ))}
+  </ol>
+</div>
+
+<script>
+  const btn = document.getElementById('sort-toggle');
+  const list = document.getElementById('episode-list');
+  let reversed = false;
+  btn?.addEventListener('click', () => {
+    reversed = !reversed;
+    list?.classList.toggle('is-reversed', reversed);
+    if (btn) btn.textContent = reversed ? '舊 → 新' : '新 → 舊';
+  });
+</script>
+
+{gated && (
+  <script define:vars={{ categoryId: categoryEntry.id, encodedPassword: Buffer.from(categoryEntry.data.password ?? '').toString('base64'), memberKey: MEMBER_ACCESS_KEY }}>
+    const KEY = `unlocked-category-${categoryId}`;
+    const gate = document.getElementById('password-gate');
+    const content = document.getElementById('protected-content');
+    const input = document.getElementById('password-input');
+    const submitBtn = document.getElementById('password-submit');
+    const error = document.getElementById('password-error');
+
+    function unlock() {
+      gate.style.display = 'none';
+      content.classList.remove('is-locked');
+    }
+
+    // Visitors who opened the member link on this device skip every password.
+    let isMember = false;
+    try {
+      isMember = localStorage.getItem(memberKey) === '1';
+    } catch {}
+
+    if (isMember || sessionStorage.getItem(KEY) === '1') {
+      unlock();
+    }
+
+    function tryUnlock() {
+      if (input.value === atob(encodedPassword)) {
+        sessionStorage.setItem(KEY, '1');
+        error.hidden = true;
+        unlock();
+      } else {
+        error.hidden = false;
+      }
+    }
+
+    submitBtn.addEventListener('click', tryUnlock);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') tryUnlock();
+    });
+  </script>
+)}

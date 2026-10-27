@@ -9,4 +9,12 @@ export const siteConfig = {
     { label: '文章', href: '/articles' },
     { label: '聯絡我們', href: '/contact' },
   ],
+  // 學員專用網址:/m/<memberCode>/ — 不用密碼就能看全部文章分類,從 memberEntryCategory 進入。
+  // 網站上沒有任何連結通到這裡,這段代碼不要公開。
+  memberCode: 'wk739yetx6',
+  memberEntryCategory: '每月祝福',
+  memberAppName: '每月祝福學員版',
 };
+
+// localStorage key set by the member page; password gates skip when it's '1'.
+export const MEMBER_ACCESS_KEY = 'member-access';
