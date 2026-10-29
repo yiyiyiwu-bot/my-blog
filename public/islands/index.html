@@ -448,6 +448,8 @@ body.in-room #stage{filter:none;transform:none;transition:none}
 @media (prefers-reduced-motion:reduce){ .npc-mark .bang{animation:none} }
 #scene.room .sc-grid{background:rgba(24,18,14,.45);padding:12px;border-radius:16px;box-sizing:border-box}
 body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, body.in-scene .tools, body.in-scene #hud, body.in-scene #side, body.in-scene #log, body.in-scene #legend, body.in-scene #timeBtn, body.in-scene #card, body.in-scene .css2d{visibility:hidden}
+#scene.room:not(.art){touch-action:none;cursor:grab}
+#scene.room.looking{cursor:grabbing}
 #scene{position:fixed;inset:0;z-index:12;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;color:#fff;
   background:radial-gradient(120% 75% at 50% 0%, color-mix(in srgb, var(--tint,#a7cfe0) 42%, transparent), transparent 72%), linear-gradient(180deg, rgba(33,29,29,.22), rgba(28,22,22,.72));
   transition:clip-path .75s cubic-bezier(.65,0,.35,1)}
@@ -2950,6 +2952,7 @@ function pickStory(isl, replay) {
 }
 function showScene(isl, replay) {
   closePanel();
+  if (!replay) { SC.lookX = SC.lookY = 0; }
   clearInterval(SC.typing); SC.typing = null;
   SC.isl = isl;
   const sc = isl.d.scene || { type: 'soon' };
@@ -3076,8 +3079,9 @@ function placeMarks(r) {
   for (const npc of r.npcs.concat(r.props || [])) {
     if (!npc.el) continue;
     _pv.copy(npc.head).project(r.cam);
-    // 小點和名字不要跑出畫面外
-    const x = clamp((_pv.x * .5 + .5) * innerWidth, 44, innerWidth - 44), y = (-_pv.y * .5 + .5) * innerHeight;
+    // 轉頭轉到看不到的東西就先藏起來；剛好在邊邊的，小點和名字不要跑出畫面外
+    const rx = (_pv.x * .5 + .5) * innerWidth, x = clamp(rx, 44, innerWidth - 44), y = (-_pv.y * .5 + .5) * innerHeight;
+    npc.el.style.visibility = _pv.z > 1 || rx < -30 || rx > innerWidth + 30 ? 'hidden' : '';
     npc.el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%, -50%)`;
   }
 }
@@ -3186,7 +3190,25 @@ function initScene() {
   $('#pnClose').onclick = closePanel;
   $('#famClose').onclick = () => { closeFamily(); explore(SC.isl); };
   $('#scPanel').addEventListener('click', e => { if (e.target.id === 'scPanel') closePanel(); });
-  $('#scene').addEventListener('pointermove', e => { SC.px = e.clientX / innerWidth - .5; SC.py = e.clientY / innerHeight - .5; });
+  $('#scene').addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { SC.px = e.clientX / innerWidth - .5; SC.py = e.clientY / innerHeight - .5; } });
+  // 3D 房間裡按住拖曳轉頭看看；從按鈕、對話框、小視窗開始的不算
+  const lookable = e => SC.room && !SC.room.art && !e.target.closest('button, input, .sc-dlg, .sc-panel, .binder, .fam-pick, .sc-actions, .sc-choices');
+  $('#scene').addEventListener('pointerdown', e => {
+    if (!lookable(e) || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    SC.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: 0 };
+    $('#scene').classList.add('looking');
+  });
+  addEventListener('pointermove', e => {
+    const d = SC.drag; if (!d || d.id !== e.pointerId) return;
+    const dx = e.clientX - d.x, dy = e.clientY - d.y; d.x = e.clientX; d.y = e.clientY; d.moved += Math.abs(dx) + Math.abs(dy);
+    const k = e.pointerType === 'mouse' ? 1 : 1.4;
+    SC.lookX = clamp((SC.lookX || 0) - dx / innerWidth * 1.8 * k, -.95, .95);
+    SC.lookY = clamp((SC.lookY || 0) + dy / innerHeight * 1.2 * k, -.5, .45);
+  });
+  const endLook = e => { const d = SC.drag; if (!d || d.id !== e.pointerId) return; SC.dragMoved = d.moved > 8; setTimeout(() => SC.dragMoved = false, 0); SC.drag = null; $('#scene').classList.remove('looking'); };
+  addEventListener('pointerup', endLook); addEventListener('pointercancel', endLook);
+  // 拖曳完放開，不要被當成點一下
+  $('#scene').addEventListener('click', e => { if (SC.dragMoved) { SC.dragMoved = false; e.stopPropagation(); e.preventDefault(); } }, true);
   $('#scHint').onclick = () => {
     const on = $('#scHint').getAttribute('aria-pressed') !== 'true';
     $('#scHint').setAttribute('aria-pressed', on);
@@ -3385,7 +3407,11 @@ const EN = {
   refill: 22.5,      // 站在補充站每秒補多少（原本 45 的一半）
   goodGain: 4,       // 碰到善，覺知加多少
   evilHit: 20,       // 碰到惡，覺知減多少
-  orbs: 7,           // 畫面上同時有幾顆善／惡
+  good: 10,          // 一開始有幾顆善
+  evil: 4,           // 一開始有幾顆惡
+  surgeGood: 5,      // 善全部吃完時，下一波善多加幾顆（一波比一波多）
+  surgeEvil: 3,      // 善全部吃完時，下一波惡多加幾顆
+  maxOrbs: 48,       // 畫面上最多幾顆，免得太擠
   frags: 4,          // 每次變黑會出現幾片碎片
   lightAgain: 50,    // 走到燈旁邊，覺知回到多少（一半）
   bright: 5          // 碎片有幾片以上，就去光之世界
@@ -3431,18 +3457,32 @@ function gmSpot(minFromPlayer) {
   }
   return { x: gmRand(40, G.w - 40), y: gmRand(G.top + 40, G.h - 40) };
 }
-function gmOrb() {
+function gmOrb(good = Math.random() < .55) {
   const p = gmSpot(160 * G.u), a = Math.random() * Math.PI * 2, v = gmRand(18, 40) * G.u;
-  return { ...p, vx: Math.cos(a) * v, vy: Math.sin(a) * v, good: Math.random() < .55, ph: Math.random() * 6 };
+  return { ...p, vx: Math.cos(a) * v, vy: Math.sin(a) * v, good, ph: Math.random() * 6 };
 }
 function gmStart() {
   $('#gmCard').hidden = true;
   gmPlaceStations();
   Object.assign(G, { px: G.w / 2, py: G.top + (G.h - G.top) / 2, tx: null, ty: null, energy: 0, good: 0, frag: 0, time: EN.time, dark: false, frags: [], lamp: null, fx: [], floats: [], burstT: 0, shake: 0, msg: '', msgT: 0, t: 0, keys: {} });
-  G.orbs = Array.from({ length: EN.orbs }, gmOrb);
+  G.wave = 0;
+  G.orbs = gmWave(EN.good, EN.evil);
   gmDarken(true);
   G.on = true; G.last = performance.now();
   cancelAnimationFrame(G.raf); G.raf = requestAnimationFrame(gmFrame);
+}
+// 一波善與惡：善吃完就不見，全部吃完會來下一波，而且善、惡都變得更多
+function gmWave(nGood, nEvil) {
+  const room = Math.max(0, EN.maxOrbs - nGood), e = Math.min(nEvil, room);
+  return [...Array.from({ length: nGood }, () => gmOrb(true)), ...Array.from({ length: e }, () => gmOrb(false))];
+}
+function gmSurge() {
+  G.wave++;
+  const evilNow = G.orbs.length;
+  G.orbs = G.orbs.concat(gmWave(EN.good + EN.surgeGood * G.wave, EN.evil + EN.surgeEvil * G.wave - evilNow));
+  G.shake = .25;
+  gmFloat(`第 ${G.wave + 1} 波`, G.w / 2, G.top + (G.h - G.top) / 2, { vy: -20, life: 2, color: '#c58a10', size: 30 });
+  gmSay('好事都做完了……可是善和惡，一下子都變多了！');
 }
 function gmSay(t) { G.msg = t; G.msgT = 3.2; }
 function gmFrame(now) {
@@ -3487,9 +3527,12 @@ function gmStep(dt) {
         G.fx.push({ x: o.x, y: o.y, good: o.good, t: 0 });
         if (o.good) { G.good++; G.energy += EN.goodGain; const d = pickOne(DEEDS.good); gmFloat('✦ ' + d, o.x, o.y - 14, { color: '#b07a10', size: 15 }); gmSay('你做了一件好事：' + d); }
         else { G.energy -= EN.evilHit; G.shake = .35; const d = pickOne(DEEDS.evil); gmFloat(d, o.x, o.y - 14, { color: '#80469a', size: 15 }); gmSay('你做了一件不好的事：' + d + '……覺知少了好多。'); }
-        Object.assign(o, gmOrb());
+        // 善吃掉就不見；惡換個地方再出現
+        if (o.good) o.gone = true; else Object.assign(o, gmOrb(false));
       }
     }
+    G.orbs = G.orbs.filter(o => !o.gone);
+    if (!G.orbs.some(o => o.good)) gmSurge();
     G.energy = Math.min(100, G.energy);
     if (G.energy <= 0) gmDarken();
   } else {
@@ -3627,6 +3670,7 @@ function gmCard(kind) {
       <li>一開始<b>一片黑</b>，覺知是 0。黑暗裡有看不清的<b>碎片</b>，還有一盞叫<b>「愛」</b>的燈。碰到愛，光會回來，覺知變成一半。</li>
       <li>有光的時候，<b>覺知</b>會很快用完。走進<b>覺知補充站</b>可以慢慢補回來，旁邊會冒出《弟子規》。覺知越多，越看得清楚哪個是<b class="g-good">善 ✦</b>、哪個是<b class="g-evil">惡（有刺）</b>。</li>
       <li>碰到善：做了一件好事，善 +1。碰到惡：做了一件不好的事，覺知一下子少很多。</li>
+      <li>把善全部吃完，下一波的<b>善和惡都會暴增</b>，一波比一波多。</li>
       <li>覺知用完，又會變黑，再去撿碎片、找那一盞燈。</li>
       <li>${EN.time} 秒後，<b>碎片的多寡</b>決定你去哪一個世界。</li>
     </ul><div class="gm-btns"><button class="sc-btn primary" id="gmGo">開始</button></div>`;
@@ -3734,7 +3778,9 @@ function renderRoom(now) {
   if (r.art) return; // 圖片場景不用畫 3D
   // 鏡頭輕輕晃，跟著滑鼠稍微轉頭，像坐在教室後排
   r.cam.position.set(r.base.x + Math.sin(t * .35) * .06 + SC.px * .3, r.base.y + Math.sin(t * .5) * .025 - SC.py * .12, r.base.z);
-  r.cam.lookAt(r.look.x + SC.px * .9, r.look.y - SC.py * .4, r.look.z);
+  // 拖曳的角度：以鏡頭為中心，把看的點往左右轉、往上下抬
+  const lx = SC.lookX || 0, ly = SC.lookY || 0, dx = r.look.x - r.base.x, dz = r.look.z - r.base.z, c = Math.cos(lx), sn = Math.sin(lx), dist = Math.hypot(dx, dz);
+  r.cam.lookAt(r.cam.position.x + dx * c - dz * sn + SC.px * .9, r.look.y - SC.py * .4 + ly * dist * .6, r.cam.position.z + dx * sn + dz * c);
   if (r.update) r.update(t);
   renderer.render(r.scene, r.cam);
   placeMarks(r);
