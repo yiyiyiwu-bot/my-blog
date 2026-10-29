@@ -449,6 +449,8 @@ body.in-room #stage{filter:none;transform:none;transition:none}
 #scene.room .sc-grid{background:rgba(24,18,14,.45);padding:12px;border-radius:16px;box-sizing:border-box}
 body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, body.in-scene .tools, body.in-scene #hud, body.in-scene #side, body.in-scene #log, body.in-scene #legend, body.in-scene #timeBtn, body.in-scene #card, body.in-scene .css2d{visibility:hidden}
 #scene.room:not(.art){touch-action:none;cursor:grab}
+/* 中間放字的那一層會捲動，手機上一根手指滑會被當成捲動；房間裡沒有字的時候讓手指拿來轉頭 */
+#scene.room:not(.art) .sc-main:empty,#scene.room:not(.art) .sc-main:has(> .sc-inner:empty){touch-action:none}
 #scene.room.looking{cursor:grabbing}
 #scene{position:fixed;inset:0;z-index:12;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;color:#fff;
   background:radial-gradient(120% 75% at 50% 0%, color-mix(in srgb, var(--tint,#a7cfe0) 42%, transparent), transparent 72%), linear-gradient(180deg, rgba(33,29,29,.22), rgba(28,22,22,.72));
