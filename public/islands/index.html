@@ -3,6 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@700&display=swap&text=%E5%A5%87%E8%B9%9F%E6%AF%8F%E4%B8%80%E6%AC%A1%E5%AD%B8%E7%BF%92%E9%83%BD%E6%98%AF">
 <style>
 /* 全螢幕 3D 場景，介面以毛玻璃卡片浮在四周；單一暖色黏土風格（刻意不做深色版） */
 :root{
@@ -238,6 +239,34 @@ body.in-room #stage{filter:none;transform:none;transition:none}
 .npc-mark:hover .bang{transform:scale(1.15)}
 .npc-mark:focus-visible{outline:3px solid var(--coral);outline-offset:4px;border-radius:12px}
 @keyframes bang{50%{transform:translateY(-5px)}}
+/* 奇蹟：首頁中間發白黃光的字，像天堂的光（出現時先把地圖上的名牌、泡泡藏起來） */
+body.miracle-on .css2d,body.miracle-on .map-bubble{opacity:0;transition:opacity .5s}
+.css2d{transition:opacity .6s}
+.miracle{position:fixed;inset:0;z-index:40;background:radial-gradient(ellipse 75% 65% at 50% 48%,rgba(70,45,10,.18) 0%,rgba(55,35,8,.5) 62%,rgba(35,22,5,.72) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px,1.6vh,16px);pointer-events:none;overflow:hidden;opacity:0}
+.miracle.on{animation:mrShow 4.8s ease both}
+@keyframes mrShow{0%{opacity:0}14%{opacity:1}80%{opacity:1}100%{opacity:0}}
+.mr-glow{position:absolute;left:50%;top:50%;width:min(130vmin,1100px);height:min(95vmin,800px);transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(255,236,170,.5),rgba(255,214,120,.28) 40%,rgba(255,200,90,.1) 68%,rgba(255,200,90,0));filter:blur(4px)}
+.mr-rays{position:absolute;left:50%;top:50%;width:170vmax;height:170vmax;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,rgba(255,240,190,.32) 0deg 4deg,rgba(255,240,190,0) 4deg 15deg);-webkit-mask:radial-gradient(circle,#000 0,rgba(0,0,0,.6) 18%,transparent 48%);mask:radial-gradient(circle,#000 0,rgba(0,0,0,.6) 18%,transparent 48%)}
+.miracle.on .mr-rays{animation:mrSpin 14s linear infinite}
+@keyframes mrSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.mr-title,.mr-sub{position:relative;margin:0;text-align:center;color:#fffbea;font-family:"LXGW WenKai TC",var(--serif)}
+.mr-title{font-weight:700;font-size:clamp(54px,11vw,108px);line-height:1.1;letter-spacing:.24em;padding-left:.24em;
+  -webkit-text-stroke:.6px rgba(214,150,40,.55);text-shadow:0 1px 2px rgba(110,60,0,.55),0 0 10px #fff3c4,0 0 26px #ffe08a,0 0 52px rgba(255,200,80,.95),0 0 100px rgba(255,180,60,.75)}
+.mr-sub{font-weight:700;font-size:clamp(16px,3vw,28px);letter-spacing:.36em;padding-left:.36em;
+  text-shadow:0 1px 2px rgba(110,60,0,.6),0 0 8px #fff3c4,0 0 20px #ffd76a,0 0 40px rgba(255,190,70,.85)}
+.miracle.on .mr-title{animation:mrTitle 4.8s cubic-bezier(.2,.8,.3,1) both}
+.miracle.on .mr-sub{animation:mrSub 4.8s cubic-bezier(.2,.8,.3,1) both}
+@keyframes mrTitle{0%{transform:scale(.86);filter:blur(10px);opacity:0}20%{transform:scale(1);filter:blur(0);opacity:1}100%{transform:scale(1.04);opacity:1}}
+@keyframes mrSub{0%,12%{transform:translateY(10px);filter:blur(6px);opacity:0}32%{transform:none;filter:blur(0);opacity:1}100%{opacity:1}}
+.mr-sparks{position:absolute;inset:0}
+.mr-sparks i{position:absolute;width:calc(10px * var(--s,1));height:calc(10px * var(--s,1));transform:translate(-50%,-50%) rotate(45deg);background:#fff9de;box-shadow:0 0 10px 3px rgba(255,220,120,.9);opacity:0;animation:mrTwinkle 2.4s ease-in-out infinite}
+@keyframes mrTwinkle{0%,100%{opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(.4)}50%{opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(1)}}
+.miracle-toast{position:fixed;left:0;right:0;margin:0 auto;width:max-content;max-width:calc(100vw - 32px);box-sizing:border-box;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:41;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 20px;border-radius:16px;background:linear-gradient(135deg,#fffaf0,#fdf0d3);border:1px solid #f0d58f;box-shadow:0 0 0 5px rgba(255,220,140,.25),0 12px 30px rgba(60,35,5,.3);color:#4a3412;text-align:center;pointer-events:none}
+.miracle-toast b{font:900 16px var(--sans);color:#a07a2c}
+.miracle-toast span{font:700 13px var(--sans)}
+.miracle-toast.on{animation:mrToast 3.4s ease both}
+@keyframes mrToast{0%{opacity:0;transform:translateY(14px)}12%{opacity:1;transform:none}85%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){ .miracle.on,.miracle.on .mr-title,.miracle.on .mr-sub,.miracle.on .mr-rays,.mr-sparks i,.miracle-toast.on{animation:none} .miracle.on{opacity:1} .mr-sparks i{opacity:.8} }
 /* 地圖上的對話泡泡和跟隨小視窗 */
 .map-bubble{position:fixed;left:0;top:0;z-index:6;pointer-events:none;width:max-content;max-width:min(250px,70vw);text-align:center;background:#fff;color:var(--ink);border-radius:14px;padding:8px 12px;font:700 13px/1.5 var(--sans);box-shadow:0 6px 18px #4a2a1426;transform:translate(-50%,-100%);margin-top:-8px}
 .map-bubble::after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-6px;border:6px solid transparent;border-bottom:0;border-top-color:#fff}
@@ -415,6 +444,70 @@ body.in-room #stage{filter:none;transform:none;transition:none}
 .gm-btns{display:flex;gap:10px;flex-wrap:wrap}
 @media (max-width:600px){ .gm-name{display:none} .gm-hud{gap:6px;padding-left:10px;padding-right:10px} .gm-chip{padding:4px 8px;font-size:12px} .gm-bar span{display:none} .gm-card h2{font-size:28px} .gm-rules{font-size:14px} }
 @media (prefers-reduced-motion:reduce){ .gm-card{animation:none} }
+/* 愛焚爐：寫信的信紙、燒完後的那句話 */
+.ll{position:absolute;inset:0;z-index:8;display:grid;place-items:center;padding:16px;box-sizing:border-box;background:radial-gradient(80% 70% at 50% 45%,rgba(255,140,150,.25),rgba(40,15,20,.6));backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.ll-paper{position:relative;width:min(520px,100%);max-height:calc(100% - 24px);overflow:auto;box-sizing:border-box;padding:26px 26px 22px;border-radius:6px 6px 18px 18px;color:#5a2f2a;
+  background:#fffaf2;box-shadow:0 0 0 1px #f0d2c8,0 24px 60px rgba(40,10,15,.5);transform:rotate(-1deg);animation:llIn .5s cubic-bezier(.2,.9,.3,1.15) both}
+@keyframes llIn{from{transform:translateY(30px) rotate(-6deg);opacity:0}to{transform:rotate(-1deg);opacity:1}}
+.ll-paper::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,#f07a8a,#e8bf5a,#f07a8a);border-radius:6px 6px 0 0}
+.ll-close{position:absolute;right:12px;top:14px;min-height:38px;min-width:38px;padding:0;background:#fff}
+.ll-close svg{width:18px;height:18px;fill:none;stroke:#5a2f2a;stroke-width:2.4;stroke-linecap:round}
+.ll-eyebrow{font:800 12px var(--sans);letter-spacing:3px;color:#c2665a}
+.ll-paper b{display:block;margin:4px 0 6px;font:900 26px var(--serif);letter-spacing:2px}
+.ll-hint{margin:0 0 12px;font:400 14px/1.8 var(--serif);color:#8a5a50}
+.ll-paper textarea{width:100%;box-sizing:border-box;border:0;background:repeating-linear-gradient(transparent 0 33px,#f0d2c8 33px 34px);background-attachment:local;resize:vertical;font:400 18px/34px var(--serif);color:#4a2420;padding:0 4px;min-height:204px}
+.ll-paper textarea:focus{outline:2px dashed #f0b3b8;outline-offset:4px}
+.ll-err{margin:4px 0 0;min-height:1em;font:700 13px var(--sans);color:#b0402e}
+.ll-send{display:block;margin:10px 0 0 auto;border:0;border-radius:999px;padding:11px 22px;background:linear-gradient(135deg,#ff8fa3,#e0566a);color:#fff;font:900 16px var(--sans);letter-spacing:1px;cursor:pointer;box-shadow:0 6px 16px rgba(224,86,106,.4)}
+.ll-send:hover{filter:brightness(1.06)}
+.love-msg{position:absolute;inset:0;z-index:9;display:grid;place-items:center;pointer-events:none;padding:24px;box-sizing:border-box}
+.love-msg p{margin:0;text-align:center;font:900 clamp(24px,4.6vw,40px)/1.7 var(--serif);letter-spacing:4px;color:#fff6dc;text-shadow:0 0 18px rgba(255,190,90,.95),0 0 46px rgba(255,120,140,.75),0 2px 4px rgba(60,20,10,.6);opacity:0}
+.love-msg em{font-style:normal;color:#ffe08a}
+.love-msg.on p{animation:loveMsg 3.6s ease both}
+@keyframes loveMsg{0%{opacity:0;transform:scale(.92);filter:blur(6px)}18%{opacity:1;transform:scale(1);filter:blur(0)}80%{opacity:1}100%{opacity:0;transform:scale(1.04)}}
+@media (prefers-reduced-motion:reduce){ .ll-paper{animation:none} .love-msg.on p{animation:none;opacity:1} }
+/* 祝福樹：金色的留言和愛心卡片 */
+.bt{position:absolute;inset:0;z-index:8;display:grid;place-items:center;padding:16px;box-sizing:border-box;background:radial-gradient(80% 70% at 50% 40%,rgba(255,214,140,.28),rgba(40,26,10,.55));backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.bt-card{width:min(640px,100%);max-height:calc(100% - 24px);display:flex;flex-direction:column;box-sizing:border-box;background:linear-gradient(170deg,#fffaf0 0%,#fdf0d3 100%);color:#4a3412;border-radius:24px;border:1px solid #f0d58f;box-shadow:0 0 0 6px rgba(255,220,140,.25),0 24px 60px rgba(60,35,5,.45);overflow:hidden;animation:cardIn .45s cubic-bezier(.2,.9,.3,1.15) both}
+.bt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 20px 14px;background:radial-gradient(120% 140% at 15% 0%,#fff3c4 0%,#f6cf72 55%,#e3a93c 100%);color:#4a2e06;position:relative}
+.bt-head::after{content:"✦ ✧ ✦";position:absolute;right:70px;top:16px;color:#fff8de;letter-spacing:6px;opacity:.9;font-size:14px}
+.bt-eyebrow{display:block;font:800 11px var(--sans);letter-spacing:2px;color:#7a5410}
+.bt-head b{display:block;font:900 30px var(--serif);letter-spacing:6px;text-shadow:0 1px 0 #fff3c4}
+.bt-head p{margin:2px 0 0;font:700 13px var(--sans);color:#6b4710}
+.bt-head .btn{min-height:40px;min-width:40px;padding:0;background:#fffaf0;flex:none}
+.bt-head .btn svg{width:18px;height:18px;fill:none;stroke:#4a2e06;stroke-width:2.4;stroke-linecap:round}
+.bt-body{overflow:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain}
+.bt-msg{margin:18px 6px;text-align:center;line-height:1.8;font-family:var(--serif);color:#7a5a24}
+.bt-ev{background:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 2px 0 #f3e2b8,0 8px 20px rgba(138,100,32,.1);border:1px solid #f6e6c0}
+.bt-ev h3{margin:0 0 4px;font:900 19px/1.4 var(--serif);color:#4a3412}
+.bt-desc{margin:0 0 8px;font:400 15px/1.7 var(--serif);color:#5f4a2a;white-space:pre-wrap}
+.bt-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bt-heart{position:relative;display:inline-flex;align-items:center;gap:6px;border:1.5px solid #f2c9cf;background:#fff7f8;color:#c0505e;border-radius:999px;padding:6px 14px;font:800 15px var(--sans);cursor:pointer;transition:transform .15s,background .2s}
+.bt-heart .bt-h{font-size:17px;transition:transform .25s}
+.bt-heart:hover{transform:scale(1.05)}
+.bt-heart.on{background:linear-gradient(135deg,#ff8fa3,#e0566a);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(224,86,106,.35)}
+.bt-heart.on .bt-h{transform:scale(1.2)}
+.bt-pop{position:absolute;left:50%;top:0;font-style:normal;color:#e0566a;pointer-events:none;animation:btPop 1s ease-out forwards}
+@keyframes btPop{from{transform:translate(-50%,0) scale(.6);opacity:1}to{transform:translate(calc(-50% + var(--x)),-46px) scale(1.2);opacity:0}}
+.bt-more{border:0;background:#fbf0d6;color:#7a5410;border-radius:999px;padding:7px 14px;font:700 14px var(--sans);cursor:pointer;display:inline-flex;gap:6px}
+.bt-more:hover{background:#f6e2b0}
+.bt-date{margin-left:auto;font:600 12px var(--sans);color:#a88b57}
+.bt-cmts{margin-top:10px;border-top:1px dashed #efd9a6;padding-top:10px}
+.bt-cmts ol{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:8px}
+.bt-cmts li{background:#fffaf0;border-radius:12px;padding:8px 12px;border-left:3px solid #f2c45a}
+.bt-cmts li b{font:800 13px var(--sans);color:#8a6420}
+.bt-cmts li p{margin:2px 0;font:400 15px/1.7 var(--serif);white-space:pre-wrap;color:#4a3412}
+.bt-cmts li small{font:600 11px var(--sans);color:#b09566}
+.bt-form{display:grid;gap:8px}
+.bt-form input,.bt-form textarea{font:16px var(--sans);padding:9px 12px;border-radius:12px;border:1.5px solid #f0dcae;background:#fffdf7;color:#4a3412;box-sizing:border-box;width:100%;resize:vertical}
+.bt-form input:focus,.bt-form textarea:focus{outline:none;border-color:#e3a93c;box-shadow:0 0 0 3px rgba(227,169,60,.2)}
+.bt-form button{justify-self:end;border:0;border-radius:999px;padding:9px 18px;background:linear-gradient(135deg,#f6cf72,#e3a93c);color:#3d2604;font:900 14px var(--sans);cursor:pointer;box-shadow:0 4px 12px rgba(227,169,60,.35)}
+.bt-form button:disabled{opacity:.5;cursor:default}
+.bt-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.bt-err{margin:0;min-height:1em;font:700 13px var(--sans);color:#b0402e}
+.bt-foot{margin:0;padding:10px 18px 14px;font:700 13px var(--sans);color:#7a5a24;text-align:center;border-top:1px solid #f3e2b8;background:#fffaf0}
+.bt-foot a{color:#c0505e}
+@media (prefers-reduced-motion:reduce){ .bt-card,.bt-pop{animation:none} }
 /* 上方的小提示：自己一層，不會被圖或其他東西蓋掉 */
 .sc-tip2{position:absolute;left:0;right:0;margin:0 auto;width:max-content;max-width:calc(100vw - 32px);box-sizing:border-box;top:calc(66px + env(safe-area-inset-top,0px));z-index:5;background:rgba(24,18,14,.7);color:#fff;padding:7px 16px;border-radius:999px;font:700 13px var(--sans);white-space:nowrap;pointer-events:none;animation:scIn .5s ease both}
 @media (max-width:600px){ .sc-tip2{white-space:normal;text-align:center;border-radius:16px;line-height:1.5} }
@@ -565,6 +658,8 @@ body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, bod
 
 <div id="legend" hidden></div>
 <div id="mapBubble" class="map-bubble" hidden aria-live="polite"></div>
+<div id="miracle" class="miracle" hidden aria-live="polite"><div class="mr-rays" aria-hidden="true"></div><div class="mr-glow" aria-hidden="true"></div><div class="mr-sparks" aria-hidden="true"></div><h2 class="mr-title">奇蹟</h2><p class="mr-sub">每一次學習都是奇蹟</p></div>
+<div id="miracleToast" class="miracle-toast" hidden role="status"><b>✦ 收到祝福卡「奇蹟」</b><span>已經放進點滴在心頭教室的卡夾</span></div>
 <div class="game" id="game" hidden role="dialog" aria-modal="true" aria-label="小遊戲：啟蒙">
   <canvas id="gmCanvas"></canvas>
   <div class="gm-hud">
@@ -637,6 +732,28 @@ body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, bod
     <div class="fam-head"><b id="famTitle">你想當誰？</b><button class="btn" id="famClose" aria-label="關閉"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="fam-stage" id="famStage"></div>
     <p class="fam-tip">點一位家人，用他的眼睛看這個家</p>
+  </div>
+  <div class="ll" id="loveLetter" hidden role="dialog" aria-modal="true" aria-labelledby="llTitle">
+    <div class="ll-paper">
+      <button class="btn ll-close" id="llClose" aria-label="關閉"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="ll-eyebrow">愛焚爐</div>
+      <b id="llTitle">寫一封信，交給愛</b>
+      <p class="ll-hint">放不下的煩惱、說不出口的話、想跟過去說的再見……<br>這封信不會被任何人看到，只會被愛燒掉。</p>
+      <textarea id="llText" maxlength="1000" rows="7" placeholder="親愛的……" aria-label="信的內容"></textarea>
+      <p class="ll-err" id="llErr" role="status"></p>
+      <button class="ll-send" id="llSend">♥ 送進愛焚爐</button>
+    </div>
+  </div>
+  <div class="love-msg" id="loveMsg" hidden aria-live="polite"><p>用愛燃燒後，<br>將自身化為<em>清淨機</em>，<br>淨化這個世界。</p></div>
+  <div class="bt" id="blessTree" hidden role="dialog" aria-modal="true" aria-labelledby="btTitle">
+    <div class="bt-card">
+      <div class="bt-head">
+        <div><span class="bt-eyebrow">人生小島・公園</span><b id="btTitle">祝福樹</b><p>為這些事情，送上一點祝福吧</p></div>
+        <button class="btn" id="btClose" aria-label="關閉"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <div class="bt-body" id="btBody"></div>
+      <p class="bt-foot">有想要被祝福的事情嗎？<a href="/contact/" target="_top">告訴小編</a>，小編會盡量安排的！</p>
+    </div>
   </div>
   <div class="binder" id="binder" hidden role="dialog" aria-modal="true" aria-labelledby="bdTitle">
     <div class="bd-book">
@@ -751,6 +868,15 @@ const DATA = {
         { id:'park3', model:'playground', name:'遊戲區|Play Area', desc:'' },
         { id:'park4', model:'farm', name:'花圃|Flower Beds', desc:'' }
       ]},
+    { id:'love', icon:'爐', q:-2, r:0, name:'愛焚爐|Love Furnace', color:'#f4a3a8', ground:'#f8e1dc', pattern:'brick', tree:'cherry',
+      scene:{ type:'soon', meta:'用愛燃燒|Burned with love' },
+      summary:'一座用愛心燃燒的爐子。把放不下的事寫成信，送進爐子裡。|A furnace that burns with love. Write a letter and let it go.',
+      items:[
+        { id:'love1', model:'furnace', name:'愛焚爐|Love Furnace', desc:'' },
+        { id:'love2', model:'balloons', name:'愛心氣球|Heart Balloons', desc:'' },
+        { id:'love3', model:'farm', name:'玫瑰花圃|Rose Garden', desc:'' },
+        { id:'love4', model:'park', name:'小廣場|Little Square', desc:'' }
+      ]},
     { id:'fun', icon:'樂', q:2, r:-1, name:'遊樂園|Amusement Park', color:'#f6c3b5', ground:'#f6e6dc', pattern:'stripes', tree:'cherry',
       scene:{ type:'soon', meta:'準備中|Coming soon' },
       summary:'摩天輪、旋轉木馬和氣球。故事還在寫。|A Ferris wheel, a carousel and balloons.',
@@ -769,6 +895,8 @@ const DATA = {
     { id:'f5', from:'cls', to:'bch', cargo:'ball', role:'tourist', level:'thematic', name:'去海邊|To the Beach', note:'' },
     { id:'f6', from:'hom', to:'sch', cargo:'book', role:'student', level:'thematic', name:'上學路上|On the Way', note:'' },
     { id:'f7', from:'wrk', to:'bch', cargo:'lunch', role:'elder', level:'pending', name:'午休|Lunch Break', note:'' },
+    { id:'f13', from:'hom', to:'love', cargo:'lunch', role:'elder', level:'thematic', name:'去愛焚爐|To the Furnace', note:'' },
+    { id:'f14', from:'love', to:'park', cargo:'book', role:'tourist', level:'thematic', name:'散步|A Walk', note:'' },
     { id:'f12', from:'cls', to:'exam', cargo:'book', role:'student', level:'thematic', name:'去考試|To the Exam', note:'' },
     { id:'f9', from:'st', to:'hom', cargo:'lunch', role:'commuter', level:'thematic', name:'逛街|Out and About', note:'' },
     { id:'f10', from:'park', to:'sch', cargo:'ball', role:'elder', level:'thematic', name:'散步|A Walk', note:'' },
@@ -1104,11 +1232,17 @@ function init() {
   buildTerrain();
   buildFlowsAndWalkers();
   buildAnimals();
+  buildLoveSparks();
   buildLabels();
   buildUI();
   initScene();
   initMapFun();
   initBinder();
+  $('#btClose').onclick = closeBlessTree;
+  $('#llClose').onclick = closeLoveLetter;
+  $('#llSend').onclick = sendLoveLetter;
+  $('#loveLetter').addEventListener('click', e => { if (e.target.id === 'loveLetter') closeLoveLetter(); });
+  $('#blessTree').addEventListener('click', e => { if (e.target.id === 'blessTree') closeBlessTree(); });
   initEnlight();
 
   new ResizeObserver(onResize).observe(stage);
@@ -1122,7 +1256,7 @@ function init() {
   setTimeout(() => {
     $('#loader').classList.add('done');
     setTimeout(() => { $('#loader').hidden = true; }, 700);
-    if (!lsGet('policyIsland.intro.v1')) openIntro();
+    setTimeout(miracleStart, 350);
   }, 60);
 }
 
@@ -2441,6 +2575,8 @@ function updateAnimals(dt) {
    要加新的卡：在下面照樣加一張就好，卡夾一頁放 9 張，會自動換頁
    ========================================================= */
 const BLESS = [
+  { id: 'miracle', ep: '奇蹟', src: '人生小島', date: '', short: ['每一次學習都是奇蹟'],
+    long: '第一次打開人生小島的那一刻，你收到了這張祝福卡。\n願你在每一次的學習裡，都看見奇蹟。' },
   { id: 'b01', ep: '第一回', date: '2022.3.9', short: ['知道做不到就是不知道'],
     long: '現在我們要學習關注的不是結果，重要的是過程。在經驗中學習修正，倘若最後的結果還是不好，那麼過程告訴我們什麼，是方向錯了嗎？還是我們的努力不夠？相信這樣的學習，你會發現錯會越來越少，對會越來越多。' },
   { id: 'b02', ep: '第二回', date: '2022.4.4', short: ['變是唯一不變的', '盡量讓自己變得快樂', '變得有愛心', '變得更愛所有的一切'],
@@ -2466,6 +2602,97 @@ function gainBless(card) {
   if (blessGot.has(card.id)) return false;
   blessGot.add(card.id); lsSet(BLESS_KEY, JSON.stringify([...blessGot]));
   return true;
+}
+
+/* =========================================================
+   奇蹟：每次打開首頁，中間浮現發著白黃光的「奇蹟／每一次學習都是奇蹟」
+   第一次打開時，還會有一張「奇蹟」卡片轉著飛進點滴在心頭教室，收進卡夾
+   ========================================================= */
+const MIR = { card: null, mesh: null, flash: null };
+function showMiracle(done) {
+  const m = $('#miracle');
+  if (!m.dataset.ready) {
+    const sp = m.querySelector('.mr-sparks');
+    for (let i = 0; i < 28; i++) { const s = document.createElement('i'); const a = Math.random() * Math.PI * 2, r = 14 + Math.random() * 30; s.style.left = 50 + Math.cos(a) * r + '%'; s.style.top = 50 + Math.sin(a) * r * .7 + '%'; s.style.animationDelay = (Math.random() * 2.4).toFixed(2) + 's'; s.style.setProperty('--s', (.5 + Math.random()).toFixed(2)); sp.appendChild(s); }
+    m.dataset.ready = '1';
+  }
+  m.hidden = false; m.classList.remove('on'); void m.offsetWidth; m.classList.add('on');
+  document.body.classList.add('miracle-on');
+  setTimeout(() => { m.hidden = true; m.classList.remove('on'); document.body.classList.remove('miracle-on'); done && done(); }, 4800);
+}
+function miracleStart() {
+  const card = BLESS.find(c => c.id === 'miracle');
+  const first = card && !blessGot.has('miracle');
+  const next = () => { if (!lsGet('policyIsland.intro.v1')) openIntro(); };
+  showMiracle(() => { if (first) flyMiracleCard(card, next); else next(); });
+}
+// 卡片的樣子：正面金框奶油色，中間大大的「奇蹟」；背面是金色花紋
+function miracleCardMesh() {
+  const front = canvasTex(512, 720, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#fff3c4'); gr.addColorStop(.5, '#e8bf5a'); gr.addColorStop(1, '#fff0b8');
+    g.fillStyle = gr; g.beginPath(); g.roundRect(0, 0, w, h, 40); g.fill();
+    g.fillStyle = '#fffaf0'; g.beginPath(); g.roundRect(26, 26, w - 52, h - 52, 28); g.fill();
+    g.strokeStyle = '#e2b95a'; g.lineWidth = 4; g.beginPath(); g.roundRect(44, 44, w - 88, h - 88, 20); g.stroke();
+    const glow = g.createRadialGradient(w / 2, h * .44, 0, w / 2, h * .44, w * .5); glow.addColorStop(0, 'rgba(255,232,150,.75)'); glow.addColorStop(1, 'rgba(255,232,150,0)');
+    g.fillStyle = glow; g.fillRect(0, 0, w, h);
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillStyle = '#a07a2c'; g.font = '800 30px system-ui, sans-serif'; g.fillText('✦  祝 福 卡  ✦', w / 2, 112);
+    g.shadowColor = '#ffd76a'; g.shadowBlur = 24; g.fillStyle = '#7a5410'; g.font = '900 170px "Noto Serif TC", serif'; g.fillText('奇蹟', w / 2, h * .45);
+    g.shadowBlur = 0; g.fillStyle = '#8a6420'; g.font = '700 34px "Noto Serif TC", serif'; g.fillText('每一次學習都是奇蹟', w / 2, h * .68);
+    g.fillStyle = '#e2b95a'; for (const [x, y, r] of [[110, 600, 6], [402, 600, 6], [256, 618, 9], [150, 170, 5], [362, 170, 5]]) { g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+  }, false);
+  const back = canvasTex(512, 720, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#e8bf5a'); gr.addColorStop(1, '#c8902e');
+    g.fillStyle = gr; g.beginPath(); g.roundRect(0, 0, w, h, 40); g.fill();
+    g.strokeStyle = 'rgba(255,248,220,.6)'; g.lineWidth = 3;
+    for (let i = -h; i < w + h; i += 36) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i + h, h); g.stroke(); g.beginPath(); g.moveTo(i + h, 0); g.lineTo(i, h); g.stroke(); }
+    g.fillStyle = '#fff6dc'; g.font = '900 120px serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('✦', w / 2, h / 2);
+  }, false);
+  const edge = new THREE.MeshBasicMaterial({ color: '#e8bf5a', toneMapped: false });
+  const card = new THREE.Mesh(new THREE.BoxGeometry(.9, 1.26, .02), [edge, edge, edge, edge, new THREE.MeshBasicMaterial({ map: front, toneMapped: false }), new THREE.MeshBasicMaterial({ map: back, toneMapped: false })]);
+  const haloTex = canvasTex(128, 128, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, 'rgba(255,245,200,1)'); gr.addColorStop(.4, 'rgba(255,215,110,.5)'); gr.addColorStop(1, 'rgba(255,200,80,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); }, false);
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, toneMapped: false }));
+  halo.scale.set(2.4, 2.4, 1); halo.renderOrder = 998;
+  card.renderOrder = 999; card.material.forEach(mt => { mt.depthTest = false; });
+  const g = new THREE.Group(); g.add(halo, card); g.userData.card = card;
+  const flash = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); flash.visible = false;
+  return { g, flash };
+}
+function flyMiracleCard(card, done) {
+  gainBless(card);
+  const isl = islands.find(i => i.d.id === 'cls');
+  const end = new THREE.Vector3(isl.x, TOP + .9, isl.z);
+  if (reduced) { miracleToast(); setTimeout(done, 2600); return; }
+  if (!MIR.mesh) { const o = miracleCardMesh(); MIR.mesh = o.g; MIR.flash = o.flash; scene.add(MIR.mesh, MIR.flash); }
+  const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd);
+  const start = camera.position.clone().addScaledVector(fwd, 4.2);
+  const mid = start.clone().lerp(end, .5).add(new THREE.Vector3(0, 2.2, 0));
+  MIR.card = { t0: performance.now(), start, mid, end, done };
+  MIR.mesh.visible = true; dirty = true;
+}
+// 每一格：卡片先在眼前轉一圈亮相，再沿著弧線飛進教室，越飛越小；到了閃一下
+function updateMiracleCard(now) {
+  const c = MIR.card;
+  if (MIR.flash.visible) { const k = (now - MIR.flashT) / 900; if (k >= 1) MIR.flash.visible = false; else { MIR.flash.scale.setScalar(1 + k * 5); MIR.flash.material.opacity = 1 - k; } dirty = true; }
+  if (!c) return;
+  const hold = 1100, flyT = 1800, t = now - c.t0;
+  const g = MIR.mesh, card = g.userData.card;
+  let pos, s;
+  if (t < hold) { const k = t / hold; pos = c.start.clone().add(new THREE.Vector3(0, Math.sin(k * Math.PI) * .12, 0)); s = .2 + Math.min(1, k * 2.2) * .8; card.rotation.y = (1 - Math.min(1, k * 1.4)) * Math.PI * 2; }
+  else {
+    const k = Math.min(1, (t - hold) / flyT), e = k * k * (3 - 2 * k);
+    pos = c.start.clone().lerp(c.mid, e).lerp(c.mid.clone().lerp(c.end, e), e); s = 1 - e * .8; card.rotation.y = e * Math.PI * 4;
+    if (k >= 1) {
+      g.visible = false; MIR.card = null;
+      MIR.flash.position.copy(c.end); MIR.flash.visible = true; MIR.flashT = now;
+      miracleToast(); setTimeout(c.done, 2600);
+    }
+  }
+  g.position.copy(pos); g.scale.setScalar(s); g.quaternion.copy(camera.quaternion); dirty = true;
+}
+function miracleToast() {
+  const t = $('#miracleToast'); t.hidden = false; t.classList.remove('on'); void t.offsetWidth; t.classList.add('on');
+  setTimeout(() => { t.hidden = true; }, 3400);
 }
 
 /* ---------- 卡夾：一頁 3×3 放 9 張，右邊是注釋 ---------- */
@@ -2497,7 +2724,7 @@ function renderBinder() {
   $('#bdPrev').disabled = p === 0; $('#bdNext').disabled = p >= pages - 1;
   const c = BLESS.find(x => x.id === BINDER.sel), got = c && blessGot.has(c.id);
   $('#bdNote').innerHTML = !c ? '' : got
-    ? `<div class="bn-ep">${tr('戴戴的分享筆記', 'Daidai’s Notes')}・${esc(c.ep)}<small>${esc(c.date)}</small></div>` +
+    ? `<div class="bn-ep">${c.src ? esc(c.src) : tr('戴戴的分享筆記', 'Daidai’s Notes')}・${esc(c.ep)}<small>${esc(c.date)}</small></div>` +
       `<blockquote class="bn-short">${c.short.map(esc).join('<br>')}</blockquote>` +
       (c.long ? c.long.split('\n').map(t => `<p>${esc(t)}</p>`).join('') : `<p class="bn-muted">${tr('這一回的注釋之後補上。', 'Notes coming soon.')}</p>`)
     : `<div class="bn-ep">${esc(c.ep)}<small>${esc(c.date)}</small></div><p class="bn-muted">${tr('這張祝福卡還沒拿到。', 'Not collected yet.')}</p>`;
@@ -2803,6 +3030,8 @@ function bindPointer() {
     if (SC.open) {
       if (e.key === 'Escape' && !$('#scPanel').hidden) { closePanel(); return; }
       if (e.key === 'Escape' && !$('#binder').hidden) { closeBinder(); return; }
+      if (e.key === 'Escape' && !$('#blessTree').hidden) { closeBlessTree(); return; }
+      if (e.key === 'Escape' && !$('#loveLetter').hidden) { closeLoveLetter(); return; }
       if (e.key === 'Escape' && !$('#famPick').hidden) { closeFamily(); explore(SC.isl); return; }
       if (e.key === 'Escape') { if (!$('#scDlg').hidden && SC.room && SC.room.npcs) endTalk(); else exitScene(); }
       else if ((e.key === 'Enter' || e.key === ' ') && !(e.target.closest && e.target.closest('button'))) { e.preventDefault(); advance(); }
@@ -2830,6 +3059,7 @@ function frame(now) {
     return;
   }
   if (!fly) followStep();
+  if (MIR.mesh) updateMiracleCard(now);
   if (controls.update()) dirty = true;
   const animating = !reduced && !paused;
   if (animating) {
@@ -2839,6 +3069,7 @@ function frame(now) {
     updateWalkers(dt);
     updateAnimals(dt);
     updateClouds(dt);
+    updateLoveSparks(simTime);
     updateWaves(simTime);
     waterU.uTime.value = simTime;
     for (const F of flows) F.tube.material.uniforms.uTime.value = simTime;
@@ -3199,7 +3430,7 @@ function initScene() {
   $('#scPanel').addEventListener('click', e => { if (e.target.id === 'scPanel') closePanel(); });
   $('#scene').addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { SC.px = e.clientX / innerWidth - .5; SC.py = e.clientY / innerHeight - .5; } });
   // 3D 房間裡按住拖曳轉頭看看；從按鈕、對話框、小視窗開始的不算
-  const lookable = e => SC.room && !SC.room.art && !e.target.closest('button, input, .sc-dlg, .sc-panel, .binder, .fam-pick, .sc-actions, .sc-choices');
+  const lookable = e => SC.room && !SC.room.art && !e.target.closest('button, input, textarea, a, .sc-dlg, .sc-panel, .binder, .fam-pick, .bt, .ll, .sc-actions, .sc-choices');
   $('#scene').addEventListener('pointerdown', e => {
     if (!lookable(e) || (e.pointerType === 'mouse' && e.button !== 0)) return;
     SC.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: 0 };
@@ -3296,7 +3527,7 @@ function openPanel(spot) {
   });
   setTimeout(() => $('#pnClose').focus({ preventScroll: true }), 30);
 }
-function closePanel() { clearInterval(panelTimer); $('#scPanel').hidden = true; closeFamily(); closeBinder(); }
+function closePanel() { clearInterval(panelTimer); $('#scPanel').hidden = true; closeFamily(); closeBinder(); closeBlessTree(); closeLoveLetter(); }
 function addSpots(isl, box) {
   for (const spot of SPOTS[isl.d.id] || []) {
     const b = document.createElement('button');
@@ -3765,7 +3996,7 @@ const artTalk = on => {
 // 出現選項、結果、卡片時，圖淡下去讓字清楚
 const artDim = on => { const box = $('#scArt'); if (box) box.classList.toggle('dim', on && !$('#scene').classList.contains('split')); };
 // 有立體書插圖的地點用插圖；其他地點用 3D 室內
-const ROOMS = { sch: artRoom('sch'), hom: buildFamilyHome, wrk: artRoom('wrk'), bch: artRoom('bch'), st: artRoom('st'), park: artRoom('park'), fun: buildAmuseRoom, exam: buildExamRoom, cls: buildClsRoom };
+const ROOMS = { sch: artRoom('sch'), hom: buildFamilyHome, wrk: artRoom('wrk'), bch: artRoom('bch'), st: artRoom('st'), park: buildBlessPark, love: buildLoveFurnace, fun: buildAmuseRoom, exam: buildExamRoom, cls: buildClsRoom };
 const roomCache = {};
 function getRoom(isl) {
   const make = ROOMS[isl.d.id];
@@ -4576,6 +4807,513 @@ function buildAmuseRoom() {
     famG.forEach(g => chibiTick(g, t, dt));
   };
   return room;
+}
+
+/* =========================================================
+   愛焚爐：一般的焚化爐用火燒，這裡的爐子用愛心燒
+   地圖上：煙囪一直噴出金色的光，灑在整片島上
+   走進去：心形窗的銅爐，裡面是愛心形狀的火焰；點爐子寫一封信，信會飛進爐子裡被愛燒掉
+   信不會存起來，誰都看不到
+   ========================================================= */
+// 愛心的形狀（給 3D 用）
+function heartShape(s = 1) {
+  const h = new THREE.Shape();
+  h.moveTo(0, -.55 * s);
+  h.bezierCurveTo(-.15 * s, -.38 * s, -.62 * s, -.12 * s, -.55 * s, .2 * s);
+  h.bezierCurveTo(-.48 * s, .5 * s, -.12 * s, .55 * s, 0, .3 * s);
+  h.bezierCurveTo(.12 * s, .55 * s, .48 * s, .5 * s, .55 * s, .2 * s);
+  h.bezierCurveTo(.62 * s, -.12 * s, .15 * s, -.38 * s, 0, -.55 * s);
+  return h;
+}
+const heartGeo = (s, depth) => new THREE.ExtrudeGeometry(heartShape(s), { depth, bevelEnabled: true, bevelThickness: depth * .35, bevelSize: s * .05, bevelSegments: 3, curveSegments: 16 }).translate(0, 0, -depth / 2);
+
+/* ---------- 地圖上的愛焚爐建築（磚牆、銅頂、高高的煙囪，煙囪上有金色愛心）---------- */
+const LOVE_CHIMNEY = [.24, 1.72, -.1]; // 煙囪口在建築裡的位置（金光從這裡噴出）
+MODELS.furnace = b => {
+  b.box(0, 0, 0, 1.0, .05, .8, C.stone);
+  b.rb(0, .05, 0, .8, .5, .62, '#c2665a');
+  for (let k = 0; k < 4; k++) b.box(0, .12 + k * .11, .315, .78, .012, .01, '#a9544a');
+  b.dome(0, .55, 0, .38, '#c98a4f');
+  b.cyl(0, .53, 0, .41, .05, '#e2b95a');
+  b.box(-.14, .05, .31, .2, .28, .04, '#5a2f2a');
+  b.sph(-.14, .33, .32, .1, '#ffd27a', .9);
+  b.box(.14, .2, .315, .14, .14, .02, '#ffd27a');
+  const [cx, , cz] = LOVE_CHIMNEY;
+  b.cyl(cx, .5, cz, .1, 1.12, '#b8574c');
+  for (const y of [.75, 1.05, 1.35]) b.cyl(cx, y, cz, .11, .03, '#e2b95a');
+  b.cyl(cx, 1.6, cz, .13, .1, '#8a3f37');
+  b.sph(cx, 1.15, cz + .1, .05, '#f07a8a'); b.sph(cx - .04, 1.18, cz + .1, .035, '#f07a8a'); b.sph(cx + .04, 1.18, cz + .1, .035, '#f07a8a');
+};
+MODEL_H.furnace = 1.8;
+
+/* ---------- 金光：從煙囪噴出，畫一道弧線，灑在整片島上 ---------- */
+let loveSpark = null;
+function buildLoveSparks() {
+  const isl = islands.find(i => i.d.id === 'love'), it = isl && isl.d.items[0];
+  if (!it || !it.pos) return;
+  const s = it.scale, [cx, cy, cz] = LOVE_CHIMNEY;
+  const from = new THREE.Vector3(it.pos.x + cx * s, it.pos.y + cy * s, it.pos.z + cz * s);
+  const N = 420, g = new THREE.BufferGeometry(), pos = new Float32Array(N * 3), col = new Float32Array(N * 3), parts = [];
+  const rnd = mulberry32(77);
+  // 落點：所有島上隨機的位置（每顆金光的家）
+  for (let i = 0; i < N; i++) {
+    const to = islands[Math.floor(rnd() * islands.length)];
+    const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * 1.5;
+    parts.push({ tx: to.x + Math.cos(a) * r, tz: to.z + Math.sin(a) * r, life: 5 + rnd() * 3, off: rnd(), h: .9 + rnd() * 1.4, wob: rnd() * 6 });
+  }
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const tex = canvasTex(64, 64, (c, w, h) => { const gr = c.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, 'rgba(255,240,180,1)'); gr.addColorStop(.3, 'rgba(255,200,80,.85)'); gr.addColorStop(1, 'rgba(255,170,40,0)'); c.fillStyle = gr; c.fillRect(0, 0, w, h); }, false);
+  const pts = new THREE.Points(g, new THREE.PointsMaterial({ map: tex, size: .5, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+  pts.frustumCulled = false; scene.add(pts);
+  loveSpark = { from, pos, col, g, parts };
+  updateLoveSparks(0);
+}
+function updateLoveSparks(t) {
+  if (!loveSpark) return;
+  const { from, pos, col, g, parts } = loveSpark;
+  parts.forEach((p, i) => {
+    const k = ((t / p.life) + p.off) % 1;
+    // 水平方向往落點走，高度是一道拋物線：先往上噴，再慢慢落到島上
+    const e = 1 - Math.pow(1 - k, 1.6);
+    const x = from.x + (p.tx - from.x) * e + Math.sin(t * 2 + p.wob) * .08 * k, z = from.z + (p.tz - from.z) * e + Math.cos(t * 1.7 + p.wob) * .08 * k;
+    const y = from.y + p.h * 4 * k * (1 - k) * .9 + (TOP + .05 - from.y) * k * k;
+    pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z;
+    const b = (k < .06 ? k / .06 : 1) * (k > .85 ? (1 - k) / .15 : 1) * (.75 + Math.sin(t * 6 + p.wob) * .25);
+    col[i * 3] = b; col[i * 3 + 1] = b * .7; col[i * 3 + 2] = b * .18;
+  });
+  g.attributes.position.needsUpdate = true; g.attributes.color.needsUpdate = true;
+}
+
+/* ---------- 走進去：愛焚爐的大廳 ---------- */
+function buildLoveFurnace() {
+  const P = { brick: '#b8574c', brick2: '#a64c43', plaster: '#f6e2d6', wood: '#8a5a3c', copper: '#c27a45', copper2: '#9c5a33', gold: '#e8bf5a', rose: '#f07a8a', pink: '#f6b6c4', cream: '#fff4ea', leaf: '#6f9a5c' };
+  const K = roomKit({ floor: '#9a6648', wall: P.plaster, ceil: '#3a2a3a', w: 8, d: 8, h: 3.4, seed: 91,
+    sky: 0xffd6d0, ground: 0x4a2a2a, hemi: .85, keyColor: 0xffc0a0, keyI: 1.1, keyPos: new THREE.Vector3(-3, 7, 6), fill: false });
+  const b = K.b, S = K.S;
+  const tex = (w, h, draw, rep = false) => canvasTex(w, h, draw, rep);
+  const glowM = (c, o = {}) => new THREE.MeshBasicMaterial({ color: c, toneMapped: false, ...o });
+  const add = (geo, mat, x, y, z, parent = S) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; parent.add(m); return m; };
+
+  // ---- 牆：下半部紅磚、上半部灰泥；地板：深色木頭＋愛心花紋地毯 ----
+  const brickTex = tex(256, 256, (g, w, h) => { g.fillStyle = '#7a3a33'; g.fillRect(0, 0, w, h); const r = mulberry32(3); for (let row = 0; row < 16; row++) for (let x = -(row % 2) * 16; x < w; x += 32) { g.fillStyle = ['#b8574c', '#a64c43', '#c2665a', '#ad5248'][Math.floor(r() * 4)]; g.fillRect(x + 1, row * 16 + 1, 30, 14); } }, true);
+  for (const [x, z, ry] of [[0, -3.935, 0], [-3.935, 0, Math.PI / 2], [3.935, 0, -Math.PI / 2]]) { const t = brickTex.clone(); t.needsUpdate = true; t.repeat.set(5, 1); const m = add(new THREE.PlaneGeometry(7.9, 1.2), new THREE.MeshStandardMaterial({ map: t, roughness: .9 }), x, .6, z); m.rotation.y = ry; m.castShadow = false; }
+  b.box(0, 1.2, -3.9, 7.9, .07, .1, P.wood); b.box(-3.9, 1.2, 0, .1, .07, 7.9, P.wood); b.box(3.9, 1.2, 0, .1, .07, 7.9, P.wood);
+  const floorTex = tex(512, 512, (g, w, h) => { const r = mulberry32(6); for (let row = 0; row < 8; row++) for (let x = -(row % 2) * 96; x < w; x += 192) { g.fillStyle = ['#8a5a3c', '#7d5034', '#946243', '#83563a'][Math.floor(r() * 4)]; g.fillRect(x, row * 64, 192, 64); g.fillStyle = 'rgba(30,15,5,.35)'; g.fillRect(x, row * 64, 2, 64); g.fillRect(x, row * 64, 192, 1.5); } }, true);
+  floorTex.repeat.set(3, 3);
+  add(new THREE.PlaneGeometry(8, 8).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ map: floorTex, roughness: .7 }), 0, .002, 0).castShadow = false;
+  const rugTex = tex(512, 512, (g, w, h) => {
+    const c = w / 2; g.fillStyle = '#f3dccd'; g.beginPath(); g.arc(c, c, c, 0, 7); g.fill();
+    g.strokeStyle = '#c2665a'; g.lineWidth = 14; g.beginPath(); g.arc(c, c, c - 14, 0, 7); g.stroke();
+    g.strokeStyle = '#e8bf5a'; g.lineWidth = 4; g.beginPath(); g.arc(c, c, c - 34, 0, 7); g.stroke();
+    const heart = (x, y, s, col) => { g.fillStyle = col; g.beginPath(); g.moveTo(x, y + s * .5); g.bezierCurveTo(x - s, y - s * .2, x - s * .5, y - s, x, y - s * .4); g.bezierCurveTo(x + s * .5, y - s, x + s, y - s * .2, x, y + s * .5); g.fill(); };
+    for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; heart(c + Math.cos(a) * c * .72, c + Math.sin(a) * c * .72, 18, i % 2 ? '#f07a8a' : '#e8bf5a'); }
+    heart(c, c + 20, 90, '#f07a8a'); heart(c, c + 14, 60, '#f6b6c4');
+  });
+  add(new THREE.CircleGeometry(2.3, 64).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ map: rugTex, transparent: true, roughness: 1 }), 0, .01, -.4).castShadow = false;
+
+  // ---- 後牆兩扇拱形窗：夜空、星星、月亮 ----
+  const nightTex = tex(256, 512, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#141a3d'); gr.addColorStop(.7, '#3a2d63'); gr.addColorStop(1, '#7a4a78'); g.fillStyle = gr; g.fillRect(0, 0, w, h); const r = mulberry32(21); g.fillStyle = '#fff'; for (let i = 0; i < 60; i++) { g.globalAlpha = .3 + r() * .7; const s = r() < .1 ? 3 : 1.5; g.fillRect(r() * w, r() * h * .8, s, s); } g.globalAlpha = 1; });
+  for (const wx of [-2.4, 2.4]) {
+    const shp = new THREE.Shape(); shp.moveTo(-.55, 0); shp.lineTo(-.55, 1.2); shp.absarc(0, 1.2, .55, Math.PI, 0, true); shp.lineTo(.55, 0); shp.lineTo(-.55, 0);
+    const win = add(new THREE.ShapeGeometry(shp, 24), glowM('#ffffff', { map: nightTex }), wx, 1.25, -3.92); win.castShadow = false;
+    const uv = win.geometry.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, (uv.getX(i) + .55) / 1.1, uv.getY(i) / 1.75);
+    const frame = new THREE.Shape(); frame.moveTo(-.65, 0); frame.lineTo(-.65, 1.2); frame.absarc(0, 1.2, .65, Math.PI, 0, true); frame.lineTo(.65, 0); frame.lineTo(-.65, 0);
+    frame.holes.push(shp);
+    add(new THREE.ExtrudeGeometry(frame, { depth: .08, bevelEnabled: false, curveSegments: 24 }), new THREE.MeshStandardMaterial({ color: P.wood }), wx, 1.25, -3.93);
+    b.box(wx, 1.25 + .6, -3.88, .05, 1.2, .05, P.wood); b.box(wx, 1.25 + 1.0, -3.88, 1.1, .05, .05, P.wood);
+    b.rb(wx, 1.17, -3.8, 1.4, .1, .3, P.wood);
+    b.cyl(wx - .35, 1.27, -3.8, .06, .14, P.cream); b.cyl(wx + .35, 1.27, -3.8, .06, .1, P.cream);
+  }
+
+  // ---- 主角：銅爐（心形窗，裡面是愛心形狀的火焰）----
+  const FX = 0, FZ = -2.2, FY = 0;
+  const copper = new THREE.MeshStandardMaterial({ color: '#e0915a', metalness: .25, roughness: .35, emissive: '#5a2210', emissiveIntensity: .25 });
+  const copperD = new THREE.MeshStandardMaterial({ color: '#b86a3c', metalness: .25, roughness: .4 });
+  const goldM = new THREE.MeshStandardMaterial({ color: P.gold, metalness: .35, roughness: .25, emissive: '#8a5a10', emissiveIntensity: .45 });
+  add(new THREE.CylinderGeometry(1.25, 1.35, .25, 40), new THREE.MeshStandardMaterial({ color: '#5a3a33', roughness: .8 }), FX, .125, FZ);
+  for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2 + Math.PI / 4; add(new THREE.CylinderGeometry(.07, .11, .35, 10), copperD, FX + Math.cos(a) * .7, .42, FZ + Math.sin(a) * .7); }
+  const body = add(new THREE.SphereGeometry(1, 40, 28), copper, FX, 1.45, FZ); body.scale.set(1, .95, .85);
+  add(new THREE.TorusGeometry(.98, .045, 10, 64), goldM, FX, 1.45, FZ).scale.set(1, 1, .86);
+  add(new THREE.TorusGeometry(.6, .04, 10, 48), goldM, FX, 2.3, FZ).rotation.x = Math.PI / 2;
+  // 心形窗：金框、裡面發光
+  const winY = 1.4, winZ = FZ + .83;
+  const glowTex = tex(256, 256, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h * .55, 0, w / 2, h * .55, w * .55); gr.addColorStop(0, '#fff3c4'); gr.addColorStop(.35, '#ffb36b'); gr.addColorStop(.75, '#f0506a'); gr.addColorStop(1, '#9c1e4a'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+  const hw = new THREE.Mesh(new THREE.ShapeGeometry(heartShape(.82), 32), glowM('#ffffff', { map: glowTex })); hw.position.set(FX, winY, winZ - .02); S.add(hw);
+  { const uv = hw.geometry.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, (uv.getX(i) + .82) / 1.64, (uv.getY(i) + .82) / 1.64); }
+  const frameShape = heartShape(.96); frameShape.holes.push(heartShape(.82));
+  add(new THREE.ExtrudeGeometry(frameShape, { depth: .06, bevelEnabled: true, bevelThickness: .02, bevelSize: .015, bevelSegments: 2, curveSegments: 24 }), goldM, FX, winY, winZ - .03);
+  // 愛心火焰：一顆顆從底部往上飄、變大再變小
+  const flameGeo = heartGeo(.17, .05), flames = [];
+  const flameCols = ['#ff6a88', '#ff9a6b', '#ffd27a', '#ff4f74', '#ffb3c6'];
+  for (let i = 0; i < 22; i++) { const m = new THREE.Mesh(flameGeo, glowM(flameCols[i % 5], { transparent: true })); m.position.set(FX, winY, winZ + .02); S.add(m); flames.push({ m, off: i / 22, x: (Math.random() - .5) * .7, sp: .6 + Math.random() * .5, sz: .6 + Math.random() * .7 }); }
+  const fireL = new THREE.PointLight(0xff7a8a, 9, 7, 1.6); fireL.position.set(FX, winY, winZ + .5); S.add(fireL);
+  const warmL = new THREE.PointLight(0xffb36b, 5, 6, 1.6); warmL.position.set(FX, 2.6, FZ + 1.2); S.add(warmL);
+  // 煙囪管：通到天花板，上面有一圈一圈的金環
+  add(new THREE.CylinderGeometry(.22, .3, .3, 20), copperD, FX, 2.45, FZ);
+  add(new THREE.CylinderGeometry(.17, .17, 1.0, 20), copper, FX, 3.0, FZ);
+  for (const y of [2.7, 3.0, 3.3]) add(new THREE.TorusGeometry(.18, .025, 8, 24), goldM, FX, y, FZ).rotation.x = Math.PI / 2;
+  // 爐子前面的小階梯
+  add(new THREE.BoxGeometry(1.6, .12, .5), new THREE.MeshStandardMaterial({ color: '#6b4430' }), FX, .06, FZ + 1.35);
+
+  // ---- 天花板的紙愛心彩帶 ----
+  const garland = [], paperCols = [P.rose, P.pink, P.cream, P.gold, '#ffffff'];
+  const smallHeart = heartGeo(.09, .015);
+  for (const [x1, z1, x2, z2] of [[-3.8, -3.6, 3.8, -3.6], [-3.8, -1.2, 3.8, -.6], [-3.8, .8, 3.8, 1.4]]) {
+    for (let i = 1; i < 18; i++) { const t = i / 18, x = x1 + (x2 - x1) * t, z = z1 + (z2 - z1) * t, y = 3.2 - Math.sin(t * Math.PI) * .45; const m = add(smallHeart, new THREE.MeshStandardMaterial({ color: paperCols[i % 5], side: THREE.DoubleSide, roughness: .9 }), x, y, z); m.castShadow = false; garland.push({ m, ph: i * .7 }); }
+  }
+  // ---- 左邊：寫信的小桌子、信封籃；右邊：發光的愛心瓶罐架 ----
+  b.rb(-2.6, .7, -.8, 1.3, .07, .7, P.wood);
+  for (const [dx, dz] of [[-.55, -.28], [.55, -.28], [-.55, .28], [.55, .28]]) b.cyl(-2.6 + dx, 0, -.8 + dz, .035, .7, '#5c3a28');
+  b.box(-2.75, .77, -.8, .45, .01, .32, P.cream, .15); b.box(-2.3, .77, -.75, .3, .02, .2, '#f6e1c8', -.2);
+  b.cyl(-2.25, .77, -1.0, .05, .1, '#3b2a20'); b.cyl(-2.22, .87, -1.0, .006, .25, '#fff4ea', 0, .3);
+  b.cyl(-2.9, .77, -1.0, .05, .14, P.cream);
+  const deskFlame = add(new THREE.SphereGeometry(.025, 8, 6).scale(1, 1.8, 1), glowM('#ffcf6b'), -2.9, .95, -1.0); deskFlame.castShadow = false;
+  const deskL = new THREE.PointLight(0xffb060, 1.5, 2.5, 2); deskL.position.set(-2.9, 1.1, -1.0); S.add(deskL);
+  b.cyl(-2.1, 0, .4, .3, .35, '#c9a074'); for (let i = 0; i < 6; i++) b.box(-2.1 + (i % 3 - 1) * .12, .3 + Math.floor(i / 3) * .04, .4 + (i % 2 ? .06 : -.06), .22, .02, .15, i % 2 ? P.cream : '#f6e1c8', i * .3);
+  b.box(3.65, 0, -1.4, .45, 2.2, 1.6, P.wood);
+  const jars = [];
+  for (let k = 0; k < 3; k++) { b.box(3.5, .45 + k * .6, -1.4, .4, .04, 1.5, '#5c3a28'); for (let j = 0; j < 4; j++) { const z = -1.95 + j * .37, y = .49 + k * .6; add(new THREE.CylinderGeometry(.1, .1, .24, 16), new THREE.MeshStandardMaterial({ color: '#ffffff', transparent: true, opacity: .35, roughness: .1 }), 3.48, y + .12, z).castShadow = false; const hm = add(heartGeo(.07, .03), glowM([P.rose, '#ffd27a', P.pink][(j + k) % 3]), 3.48, y + .12, z); hm.rotation.y = -Math.PI / 2; hm.castShadow = false; jars.push({ m: hm, ph: j + k * 2 }); } }
+  // 盆栽
+  b.cyl(-3.3, 0, -3.3, .25, .42, P.brick); for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2; b.ico(-3.3 + Math.cos(a) * .2, .7 + (i % 3) * .2, -3.3 + Math.sin(a) * .2, .2, P.leaf); }
+  b.cyl(3.3, 0, -3.3, .22, .38, P.brick); for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; b.ico(3.3 + Math.cos(a) * .18, .62 + (i % 3) * .18, -3.3 + Math.sin(a) * .18, .18, P.leaf); }
+
+  // ---- 送進爐子的信封（平常藏起來）、燒掉時噴出的愛心和金光 ----
+  const env = new THREE.Group(); env.visible = false; S.add(env);
+  const envM = new THREE.MeshStandardMaterial({ color: '#fff4ea', roughness: .7 });
+  add(new THREE.BoxGeometry(.42, .28, .01), envM, 0, 0, 0, env);
+  const flap = add(new THREE.ShapeGeometry(new THREE.Shape([new THREE.Vector2(-.21, .14), new THREE.Vector2(.21, .14), new THREE.Vector2(0, -.02)])), new THREE.MeshStandardMaterial({ color: '#f6e1c8', side: THREE.DoubleSide }), 0, 0, .006, env);
+  const seal = add(heartGeo(.05, .015), glowM('#f0506a'), 0, -.01, .012, env);
+  const burst = [], burstGeo = heartGeo(.08, .03);
+  for (let i = 0; i < 26; i++) { const m = new THREE.Mesh(i % 3 ? burstGeo : new THREE.SphereGeometry(.035, 8, 6), glowM(i % 3 ? flameCols[i % 5] : '#ffe08a', { transparent: true })); m.visible = false; S.add(m); burst.push({ m, a: Math.random() * Math.PI * 2, v: .6 + Math.random() * 1.2, up: .8 + Math.random() * 1.6 }); }
+
+  // ---- 守爐人 ----
+  const keeper = chibi({ stand: true, top: '#c2665a', trim: '#a9544a', collar: '#fff4ea', hair: '#6b4430', style: 'long', hold: 'heart', pants: '#5a3a4a' });
+  keeper.position.set(1.7, 0, -.55); keeper.scale.setScalar(1.4); keeper.rotation.y = Math.atan2(0 - 1.7, 4.5 + .55); S.add(keeper);
+
+  const room = K.done([{ name: '守爐人', head: new THREE.Vector3(1.7, 2.0, -.55), lines: [
+    '歡迎來到愛焚爐，我是守爐人。',
+    '一般的焚化爐，是用火在燃燒；我們的爐子，是用愛心在燃燒的。',
+    '有放不下的煩惱、說不出口的話、想跟過去說再見的事，都可以寫成一封信。',
+    '點一下爐子，把信送進去。信不會被任何人看到，只會被愛輕輕地燒掉。',
+    '用愛燃燒後，將自身化為清淨機，淨化這個世界。'
+  ] }], new THREE.Vector3(0, 2.05, 5.4), new THREE.Vector3(0, 1.45, -1.8));
+  room.props = [{ name: '愛焚爐', head: new THREE.Vector3(FX, 1.4, FZ + .9), act: openLoveLetter }];
+  room.tipMore = ['，也可以點「愛焚爐」寫一封信', ', or tap the furnace to write a letter'];
+  room.push = 1.9;
+  // 寄信動畫：信從眼前飛進心形窗 → 爐子噴出愛心和金光 → 說那句話
+  room.sendLetter = done => {
+    const now = performance.now() / 1000;
+    if (reduced) { done(); return; }
+    room.fly = { t0: now, done };
+  };
+  let lastT = 0;
+  room.update = t => {
+    const dt = Math.min(.1, Math.max(0, t - lastT)); lastT = t;
+    const now = performance.now() / 1000;
+    chibiTick(keeper, t, dt);
+    const boost = room.flare ? Math.max(0, 1 - (now - room.flare) / 2.2) : 0;
+    flames.forEach(f => {
+      const k = (t * .35 * f.sp + f.off) % 1;
+      f.m.position.set(FX + f.x * (1 - k) + Math.sin(t * 3 + f.off * 9) * .06, winY - .5 + k * 1.0, winZ + .03 + f.off * .02);
+      const s = f.sz * Math.sin(k * Math.PI) * (1 + boost * .8); f.m.scale.setScalar(Math.max(.001, s));
+      f.m.rotation.z = Math.sin(t * 2 + f.off * 7) * .25; f.m.material.opacity = Math.min(1, Math.sin(k * Math.PI) * 1.4);
+    });
+    fireL.intensity = 8 + Math.sin(t * 7) * 1.2 + Math.sin(t * 13) * .6 + boost * 18;
+    hw.material.color.setScalar(1 + boost * .4);
+    garland.forEach(gm => gm.m.rotation.y = Math.sin(t * .8 + gm.ph) * .5);
+    jars.forEach(j => j.m.scale.setScalar(1 + Math.sin(t * 2 + j.ph) * .1));
+    deskFlame.scale.y = 1 + Math.sin(t * 11) * .15;
+    // 信封飛行
+    if (room.fly) {
+      const p = Math.min(1, (now - room.fly.t0) / 1.7), cam = room.cam;
+      const a = cam.position.clone().add(new THREE.Vector3(0, -.45, -1.1)), c = new THREE.Vector3(FX, winY, winZ), m = a.clone().lerp(c, .5).add(new THREE.Vector3(.4, .9, 0));
+      const e = p * p * (3 - 2 * p), q1 = a.clone().lerp(m, e), q2 = m.clone().lerp(c, e);
+      env.visible = true; env.position.copy(q1.lerp(q2, e)); env.rotation.set(-.3 + e * .3, Math.sin(e * 6) * .3, Math.sin(e * 9) * .25 + e * 1.2);
+      env.scale.setScalar(1 - e * .75);
+      if (p >= 1) {
+        env.visible = false; const d = room.fly.done; room.fly = null; room.flare = now;
+        burst.forEach(bp => { bp.m.visible = true; bp.t0 = now; });
+        setTimeout(d, 1300);
+      }
+    }
+    burst.forEach(bp => {
+      if (!bp.m.visible) return;
+      const k = (now - bp.t0) / 2;
+      if (k >= 1) { bp.m.visible = false; return; }
+      bp.m.position.set(FX + Math.cos(bp.a) * bp.v * k, winY + bp.up * k - .5 * k * k + .2, winZ + .2 + Math.sin(bp.a) * bp.v * k * .5 + k * .6);
+      bp.m.scale.setScalar(1.2 - k * .6); bp.m.material.opacity = 1 - k; bp.m.rotation.z = k * 4;
+    });
+  };
+  return room;
+}
+
+/* ---------- 寫信的小視窗 ---------- */
+function openLoveLetter() {
+  $('#loveLetter').hidden = false;
+  $('#llText').value = ''; $('#llErr').textContent = '';
+  setTimeout(() => $('#llText').focus({ preventScroll: true }), 50);
+}
+function closeLoveLetter() { $('#loveLetter').hidden = true; }
+function sendLoveLetter() {
+  const text = $('#llText').value.trim();
+  if (!text) { $('#llErr').textContent = '寫一點點也好，再送進爐子裡'; return; }
+  $('#llText').value = '';
+  closeLoveLetter(); hideTip(); hideMarks();
+  const room = SC.room;
+  room.sendLetter(() => {
+    const m = $('#loveMsg'); m.hidden = false; m.classList.remove('on'); void m.offsetWidth; m.classList.add('on');
+    setTimeout(() => {
+      m.hidden = true;
+      $('#scDlg').hidden = false;
+      play([{ who: NARR(), text: '你的信，被愛輕輕地燒掉了。' }, { who: '守爐人', text: '用愛燃燒後，將自身化為清淨機，淨化這個世界。' }], () => explore(SC.isl));
+    }, 3600);
+  });
+}
+
+/* ---------- 公園（3D）：黃昏的祝福樹 ----------
+   設計：太陽在樹的後面（逆光），整片暖金色的霧；中間的祝福樹是金色的，葉子會閃，
+   樹冠裡有一團一團的光暈，金色的小方塊光點慢慢往上飄，偶爾有金葉子飄落；
+   樹根旁邊有雲霧，樹枝上掛著彩色的祈願小卡。旁邊站著小編，點他會講解 */
+function goldTree(S, cx, cz, rnd) {
+  const T = new THREE.Group(); T.position.set(cx, .16, cz); S.add(T);
+  const barkM = new THREE.MeshStandardMaterial({ color: '#c08f4a', emissive: '#7a4a12', emissiveIntensity: .45, roughness: .45, metalness: .35 });
+  const tips = [], up = new THREE.Vector3(0, 1, 0);
+  const limb = (start, dir, len, r, depth) => {
+    const end = start.clone().addScaledVector(dir, len);
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r * .7, r, len, 10), barkM);
+    m.position.copy(start).addScaledVector(dir, len / 2); m.quaternion.setFromUnitVectors(up, dir); m.castShadow = true; T.add(m);
+    const j = new THREE.Mesh(new THREE.SphereGeometry(r * .7, 10, 8), barkM); j.position.copy(end); T.add(j);
+    if (!depth) { tips.push(end); return; }
+    const n = depth >= 3 ? 4 : depth === 2 ? 3 : 2;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + rnd() * .9, spread = depth >= 3 ? 1.0 : .85;
+      const nd = dir.clone().add(new THREE.Vector3(Math.cos(a) * spread, .15 + rnd() * .35, Math.sin(a) * spread * .8)).normalize();
+      limb(end, nd, len * (.66 + rnd() * .12), r * .58, depth - 1);
+    }
+  };
+  // 樹根：往外張開
+  for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + .3, c = Math.cos(a), sn = Math.sin(a), d = new THREE.Vector3(-c * .53, .42, -sn * .53); const m = new THREE.Mesh(new THREE.CylinderGeometry(.16, .045, d.length(), 8), barkM); m.position.set(c * .38, .13, sn * .38); m.quaternion.setFromUnitVectors(up, d.normalize()); m.castShadow = true; T.add(m); }
+  limb(new THREE.Vector3(0, -.1, 0), new THREE.Vector3(.05, 1, -.03).normalize(), 1.6, .3, 4);
+  // 金色的葉子：一千多片，會閃
+  const leafG = new THREE.IcosahedronGeometry(.075, 0), leafM = new THREE.MeshStandardMaterial({ color: '#ffffff', emissive: '#ffae2e', emissiveIntensity: .55, metalness: .45, roughness: .32 });
+  const per = 34, leaves = new THREE.InstancedMesh(leafG, leafM, tips.length * per), mtx = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), col = new THREE.Color();
+  const golds = ['#ffd76a', '#ffc94a', '#ffe9a0', '#f7b733', '#fff1c1'];
+  let k = 0;
+  for (const tp of tips) for (let i = 0; i < per; i++) {
+    const r = Math.cbrt(rnd()) * .75, th = rnd() * Math.PI * 2, ph = Math.acos(2 * rnd() - 1);
+    const p = new THREE.Vector3(tp.x + r * Math.sin(ph) * Math.cos(th), tp.y + r * Math.cos(ph) * .7 + .08, tp.z + r * Math.sin(ph) * Math.sin(th));
+    e.set(rnd() * 6, rnd() * 6, rnd() * 6); q.setFromEuler(e); const s = .7 + rnd() * .8;
+    mtx.compose(p, q, new THREE.Vector3(s, s * .55, s)); leaves.setMatrixAt(k, mtx); leaves.setColorAt(k, col.set(golds[Math.floor(rnd() * golds.length)])); k++;
+  }
+  leaves.castShadow = true; T.add(leaves);
+  // 光暈：樹冠裡一團一團，還有整棵樹後面一大團
+  const haloTex = canvasTex(128, 128, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, 'rgba(255,236,170,1)'); gr.addColorStop(.35, 'rgba(255,200,90,.45)'); gr.addColorStop(1, 'rgba(255,190,80,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); }, false);
+  const halos = [];
+  const halo = (x, y, z, s, o) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex, transparent: true, opacity: o, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); sp.position.set(x, y, z); sp.scale.setScalar(s); T.add(sp); halos.push({ sp, o, ph: rnd() * 6 }); return sp; };
+  tips.forEach((tp, i) => { if (i % 4 === 0) halo(tp.x, tp.y + .1, tp.z, 1.4 + rnd() * .6, .28); });
+  halo(0, 3.6, -.4, 9, .4); halo(0, 2.8, -.2, 5, .25);
+  // 樹枝上掛的祈願小卡（彩色）
+  const tags = [], tagCols = ['#f6b6c4', '#a9dcc6', '#fbe39a', '#c9b6e4', '#ffffff', '#f08a6c'];
+  tips.filter((_, i) => i % 7 === 3).slice(0, 12).forEach((tp, i) => {
+    const g = new THREE.Group(); g.position.set(tp.x, tp.y - .35, tp.z); T.add(g);
+    const str = new THREE.Mesh(new THREE.CylinderGeometry(.004, .004, .3, 4), new THREE.MeshBasicMaterial({ color: '#c9a35a' })); str.position.y = .15; g.add(str);
+    const card = new THREE.Mesh(new THREE.BoxGeometry(.13, .19, .012), new THREE.MeshStandardMaterial({ color: tagCols[i % tagCols.length], emissive: tagCols[i % tagCols.length], emissiveIntensity: .25 })); card.position.y = -.08; card.castShadow = true; g.add(card);
+    tags.push({ g, ph: rnd() * 6 });
+  });
+  return { T, tips, leaves, halos, tags };
+}
+function buildBlessPark() {
+  const P = { grass: '#a9c98a', stone: '#e9dcc4', stone2: '#dccab0', gold: '#e8bf5a', walnut: '#6b4430', terra: '#c8674a', pink: '#f6b6c4', cream: '#fff6e8', leaf: '#7da35e', leaf2: '#93b86f', autumn: '#e8a447', autumn2: '#d98a3c' };
+  const K = roomKit({ walls: false, bg: '#f3d9b5', sky: 0xffe2b8, ground: 0x8a7a50, hemi: 1.25, keyColor: 0xffc98a, keyI: 1.9, keyPos: new THREE.Vector3(-2, 7, -14), fill: false, seed: 88 });
+  const b = K.b, S = K.S, rnd = mulberry32(2024);
+  S.traverse(o => { if (o.isDirectionalLight) { Object.assign(o.shadow.camera, { left: -12, right: 12, top: 12, bottom: -12, far: 50 }); o.target.position.set(0, 0, 0); } });
+  const front = new THREE.DirectionalLight(0xffe7c4, .7); front.position.set(4, 6, 10); S.add(front);
+  S.fog = new THREE.Fog('#f2d3a6', 16, 42);
+  const tex = (w, h, draw, rep = false) => canvasTex(w, h, draw, rep);
+  const std = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: .75, ...o });
+  const add = (geo, mat, x, y, z, parent = S) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; parent.add(m); return m; };
+
+  // ---- 天空：薰衣草藍到金橘色，太陽在樹後面 ----
+  const skyTex = tex(1024, 512, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#7c86c4'); gr.addColorStop(.35, '#c6a7c8'); gr.addColorStop(.52, '#f6c48f'); gr.addColorStop(.6, '#ffe2b0'); gr.addColorStop(1, '#fff1d6');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    const sun = g.createRadialGradient(w * .5, h * .56, 0, w * .5, h * .56, 230); sun.addColorStop(0, 'rgba(255,252,235,1)'); sun.addColorStop(.1, 'rgba(255,240,200,.95)'); sun.addColorStop(.45, 'rgba(255,205,130,.4)'); sun.addColorStop(1, 'rgba(255,205,130,0)');
+    g.fillStyle = sun; g.fillRect(0, 0, w, h);
+    g.fillStyle = 'rgba(255,236,215,.75)'; for (const [cx, cy, s] of [[150, 150, 1], [400, 110, .7], [700, 140, .9], [900, 100, .6]]) for (const [dx, dy, r] of [[0, 0, 34], [36, -8, 26], [70, 2, 22], [-30, 6, 22]]) { g.beginPath(); g.ellipse(cx + dx * s, cy + dy * s, r * s * 1.6, r * s * .55, 0, 0, 7); g.fill(); }
+  });
+  add(new THREE.SphereGeometry(55, 32, 16), new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide, fog: false, toneMapped: false }), 0, 0, 0).castShadow = false;
+  for (const [x, z, r, c] of [[-24, -34, 15, '#c9a98a'], [0, -40, 19, '#bfa080'], [22, -33, 14, '#cdb092'], [-9, -45, 18, '#d6bc9c'], [12, -46, 16, '#d3b998']]) { const h = add(new THREE.SphereGeometry(r, 28, 14), std(c), x, -r * .35, z); h.scale.y = .62; h.castShadow = false; }
+
+  // ---- 地面：草地、圓形石頭平台（金色邊）、往前的石板路 ----
+  const grassTex = tex(256, 256, (g, w, h) => { g.fillStyle = P.grass; g.fillRect(0, 0, w, h); const r = mulberry32(4); for (let i = 0; i < 280; i++) { g.fillStyle = r() < .5 ? 'rgba(110,150,80,.35)' : 'rgba(240,230,170,.35)'; g.fillRect(r() * w, r() * h, 3, 6); } }, true);
+  grassTex.repeat.set(16, 16);
+  add(new THREE.PlaneGeometry(100, 100).rotateX(-Math.PI / 2), std('#ffffff', { map: grassTex, roughness: .95 }), 0, 0, 0).castShadow = false;
+  const TX = 0, TZ = -1.2;
+  const platTex = tex(512, 512, (g, w, h) => {
+    const c = w / 2; g.fillStyle = P.stone; g.fillRect(0, 0, w, h);
+    for (let ring = 0; ring < 7; ring++) { const r0 = ring * 34 + 20, n = 8 + ring * 7; for (let i = 0; i < n; i++) { g.fillStyle = (i + ring) % 3 ? P.stone : P.stone2; g.beginPath(); g.arc(c, c, r0 + 32, i / n * Math.PI * 2 + .01, (i + 1) / n * Math.PI * 2 - .01); g.arc(c, c, r0 + 2, (i + 1) / n * Math.PI * 2 - .01, i / n * Math.PI * 2 + .01, true); g.fill(); } }
+    g.strokeStyle = '#e8bf5a'; g.lineWidth = 3; for (const r of [96, 180]) { g.beginPath(); g.arc(c, c, r, 0, 7); g.stroke(); }
+  });
+  add(new THREE.CylinderGeometry(3, 3.15, .16, 64), [std(P.stone2), std('#ffffff', { map: platTex, roughness: .8 }), std(P.stone2)], TX, .08, TZ);
+  add(new THREE.TorusGeometry(3.05, .045, 8, 96), std(P.gold, { metalness: .6, roughness: .3, emissive: '#7a5410', emissiveIntensity: .3 }), TX, .16, TZ).rotation.x = Math.PI / 2;
+  const pathTex = tex(128, 512, (g, w, h) => { g.fillStyle = '#d8c7a8'; g.fillRect(0, 0, w, h); const r = mulberry32(8); for (let y = 0; y < h; y += 40) for (let x = 0; x < w; x += 64) { g.fillStyle = r() < .5 ? P.stone : P.stone2; g.beginPath(); g.roundRect(x + 3 + (y / 40 % 2) * 16, y + 3, 54, 34, 8); g.fill(); } }, true);
+  pathTex.repeat.set(1, 3);
+  add(new THREE.PlaneGeometry(2.2, 9).rotateX(-Math.PI / 2), std('#ffffff', { map: pathTex, roughness: .9 }), 0, .01, 6.3).castShadow = false;
+
+  // ---- 祝福樹 ----
+  const tree = goldTree(S, TX, TZ, rnd);
+  tree.T.scale.setScalar(1.22);
+  const treeL = new THREE.PointLight(0xffc45a, 14, 11, 1.5); treeL.position.set(TX, 3.4, TZ + .4); S.add(treeL);
+  const rootL = new THREE.PointLight(0xffd88a, 4, 5, 1.8); rootL.position.set(TX, .6, TZ + .8); S.add(rootL);
+  // 樹根旁的雲霧
+  const mistTex = tex(128, 128, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, 'rgba(255,250,240,.95)'); gr.addColorStop(.5, 'rgba(255,245,225,.5)'); gr.addColorStop(1, 'rgba(255,240,220,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+  const mists = [];
+  for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2, r = 1.2 + rnd() * 1.7; const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: mistTex, transparent: true, opacity: .55, depthWrite: false })); sp.position.set(TX + Math.cos(a) * r, .35 + rnd() * .2, TZ + Math.sin(a) * r); sp.scale.set(2 + rnd(), 1 + rnd() * .4, 1); S.add(sp); mists.push({ sp, a, r, ph: rnd() * 6 }); }
+  // 金色小方塊光點，慢慢往上飄、一閃一閃
+  const sqTex = tex(64, 64, (g, w, h) => { g.shadowColor = '#ffd67a'; g.shadowBlur = 14; g.fillStyle = '#fff3c4'; g.fillRect(20, 20, 24, 24); });
+  const sparkN = 160, sparkG = new THREE.BufferGeometry(), sparkP = new Float32Array(sparkN * 3), sparkC = new Float32Array(sparkN * 3), sparks = [];
+  for (let i = 0; i < sparkN; i++) sparks.push({ a: rnd() * Math.PI * 2, r: .4 + rnd() * 4.2, y: rnd() * 6, v: .12 + rnd() * .25, ph: rnd() * 6 });
+  sparkG.setAttribute('position', new THREE.BufferAttribute(sparkP, 3)); sparkG.setAttribute('color', new THREE.BufferAttribute(sparkC, 3));
+  S.add(new THREE.Points(sparkG, new THREE.PointsMaterial({ map: sqTex, size: .16, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })));
+  // 飄落的金葉子
+  const falling = [], fallM = new THREE.MeshStandardMaterial({ color: '#ffd76a', emissive: '#ffae2e', emissiveIntensity: .6, metalness: .4, roughness: .3, side: THREE.DoubleSide });
+  for (let i = 0; i < 14; i++) { const m = add(new THREE.PlaneGeometry(.1, .065), fallM, 0, 0, 0); m.castShadow = false; falling.push({ m, x: TX + (rnd() - .5) * 4, z: TZ + (rnd() - .5) * 3, y: 1 + rnd() * 4, v: .25 + rnd() * .2, ph: rnd() * 6 }); }
+
+  // ---- 花圃（繞著平台）、灌木 ----
+  const flowerCols = ['#f6b6c4', '#fff1c4', '#c9b6e4', '#ffffff', '#f08a6c', '#ffd76a'];
+  for (let i = 0; i < 64; i++) { const a = i / 64 * Math.PI * 2; if (Math.sin(a) > .9) continue; const r = 3.35 + (i % 3) * .14; add(new THREE.SphereGeometry(.08, 8, 6), std(flowerCols[i % 6]), TX + Math.cos(a) * r, .13, TZ + Math.sin(a) * r).castShadow = false; if (i % 2) add(new THREE.IcosahedronGeometry(.14, 0), std(P.leaf2, { flatShading: true }), TX + Math.cos(a) * (r + .18), .1, TZ + Math.sin(a) * (r + .18)); }
+  // ---- 長椅（面向祝福樹）、路燈 ----
+  for (const [x, z, ry] of [[-3.1, 2.4, .75], [3.1, 2.4, -.75]]) {
+    const bn = new THREE.Group(); bn.position.set(x, 0, z); bn.rotation.y = ry; S.add(bn);
+    for (let k2 = 0; k2 < 3; k2++) add(new THREE.BoxGeometry(1.4, .06, .13), std('#b98552'), 0, .46, -.15 + k2 * .15, bn);
+    for (let k2 = 0; k2 < 2; k2++) add(new THREE.BoxGeometry(1.4, .1, .05), std('#b98552'), 0, .68 + k2 * .17, -.26, bn);
+    for (const s of [-1, 1]) add(new THREE.BoxGeometry(.06, .5, .45), std('#3f3a3a'), s * .6, .24, -.05, bn);
+  }
+  const lampBulbs = [];
+  for (const [x, z] of [[-2.7, 3.4], [2.7, 3.4], [-4.6, -2.2], [4.6, -2.2]]) {
+    add(new THREE.CylinderGeometry(.05, .08, 2.4, 10), std('#3f3a3a'), x, 1.2, z);
+    add(new THREE.BoxGeometry(.3, .38, .3), std('#3f3a3a', { transparent: true, opacity: .9 }), x, 2.55, z);
+    lampBulbs.push(add(new THREE.SphereGeometry(.12, 12, 10), new THREE.MeshBasicMaterial({ color: '#ffe3a0', toneMapped: false }), x, 2.55, z));
+    add(new THREE.ConeGeometry(.24, .18, 4), std('#3f3a3a'), x, 2.83, z).rotation.y = Math.PI / 4;
+  }
+  // ---- 木頭立牌：祝福樹 ----
+  const signTex = tex(512, 220, (g, w, h) => { g.fillStyle = '#7a5032'; g.beginPath(); g.roundRect(0, 0, w, h, 30); g.fill(); g.strokeStyle = '#e8bf5a'; g.lineWidth = 6; g.beginPath(); g.roundRect(14, 14, w - 28, h - 28, 22); g.stroke(); g.fillStyle = '#fff3d6'; g.font = '900 96px "Noto Serif TC", serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('祝福樹', w / 2, h * .46); g.fillStyle = '#e8bf5a'; g.font = '700 30px "Noto Serif TC", serif'; g.fillText('BLESSING TREE', w / 2, h * .8); });
+  const SG = new THREE.Group(); SG.position.set(-1.55, 0, 3.0); SG.rotation.y = .25; S.add(SG);
+  for (const s of [-1, 1]) add(new THREE.CylinderGeometry(.04, .05, 1.1, 8), std('#6b4430'), s * .42, .55, 0, SG);
+  add(new THREE.PlaneGeometry(1.05, .45), std('#ffffff', { map: signTex, transparent: true }), 0, 1.0, .03, SG);
+  // ---- 周圍的樹（綠色、秋天的橘黃色）----
+  const ring = [[-7, -4, P.leaf], [-8.5, 0, P.autumn], [-6.5, 4.5, P.leaf2], [-10, -8, P.autumn2], [7, -4, P.autumn], [8.5, .5, P.leaf], [6.8, 5, P.autumn2], [10, -8, P.leaf2], [-3.5, -7.5, P.leaf2], [3.8, -8, P.autumn], [0, -10, P.leaf], [-12, 3, P.leaf], [12, 3, P.autumn]];
+  for (const [x, z, c] of ring) { add(new THREE.CylinderGeometry(.15, .22, 1.5, 8), std('#8a6040'), x, .75, z); for (const [dx, dy, dz, r] of [[0, 2, 0, 1], [.55, 1.7, .2, .7], [-.5, 1.75, -.2, .72], [.1, 2.6, -.1, .65]]) add(new THREE.IcosahedronGeometry(r, 1), std(c, { flatShading: true }), x + dx, dy, z + dz); }
+  for (let i = 0; i < 18; i++) { const a = rnd() * Math.PI * 2, r = 5.5 + rnd() * 3; if (Math.sin(a) > .6) continue; add(new THREE.IcosahedronGeometry(.35 + rnd() * .2, 1), std(rnd() < .5 ? P.leaf : P.leaf2, { flatShading: true }), Math.cos(a) * r, .25, TZ + Math.sin(a) * r); }
+
+  // ---- 小編 ----
+  const ed = chibi({ stand: true, top: '#f08a6c', trim: '#e07658', collar: '#fff6e8', hair: '#4a3228', style: 'bun', accent: '#ffd76a', hold: 'book', accent2: '#3e6b5a', pants: '#5b6f8a' });
+  ed.position.set(1.95, 0, 2.7); ed.scale.setScalar(1.5); ed.rotation.y = Math.atan2(0 - 1.95, 9 - 2.7); S.add(ed);
+
+  const room = K.done([{ name: '小編', head: new THREE.Vector3(1.95, 2.1, 2.7), lines: [
+    '嗨！我是小編，歡迎來到祝福樹。',
+    '樹上掛著的，是大家正在祝福的事情。看到有感覺的，就幫它按個愛心，或留一句祝福的話。',
+    '你的愛心和留言，大家都看得到喔。',
+    '如果有想要被祝福的事情，可以告訴小編，小編會盡量安排的！'
+  ] }], new THREE.Vector3(0, 2.3, 10.2), new THREE.Vector3(0, 2.9, -1.2));
+  room.props = [{ name: '祝福樹', head: new THREE.Vector3(TX, 1.5, TZ + .3), act: openBlessTree }];
+  room.tipMore = ['，也可以點「祝福樹」送上祝福', ', or tap the Blessing Tree'];
+  room.push = 1.3;
+  let lastT = 0;
+  room.update = t => {
+    const dt = Math.min(.1, Math.max(0, t - lastT)); lastT = t;
+    chibiTick(ed, t, dt);
+    tree.leaves.material.emissiveIntensity = .5 + Math.sin(t * 1.3) * .08;
+    tree.halos.forEach(h => h.sp.material.opacity = h.o * (.8 + Math.sin(t * 1.4 + h.ph) * .2));
+    tree.tags.forEach(tg => { tg.g.rotation.z = Math.sin(t * 1.2 + tg.ph) * .12; tg.g.rotation.y = Math.sin(t * .7 + tg.ph) * .4; });
+    sparks.forEach((s, i) => { const y = (s.y + t * s.v) % 6.2; sparkP[i * 3] = TX + Math.cos(s.a + t * .05) * s.r; sparkP[i * 3 + 1] = .2 + y; sparkP[i * 3 + 2] = TZ + Math.sin(s.a + t * .05) * s.r * .8; const k2 = .55 + Math.sin(t * 3 + s.ph) * .45; sparkC[i * 3] = k2; sparkC[i * 3 + 1] = k2 * .88; sparkC[i * 3 + 2] = k2 * .6; });
+    sparkG.attributes.position.needsUpdate = true; sparkG.attributes.color.needsUpdate = true;
+    falling.forEach(f => { f.y -= f.v * dt; if (f.y < .2) { f.y = 3.5 + Math.random() * 1.5; f.x = TX + (Math.random() - .5) * 4; f.z = TZ + (Math.random() - .5) * 3; } f.m.position.set(f.x + Math.sin(t * 1.5 + f.ph) * .3, f.y, f.z + Math.cos(t * 1.1 + f.ph) * .2); f.m.rotation.set(t * 2 + f.ph, t * 1.3, t + f.ph); });
+    mists.forEach(m => { m.sp.position.x = TX + Math.cos(m.a + t * .03) * m.r; m.sp.position.z = TZ + Math.sin(m.a + t * .03) * m.r; m.sp.material.opacity = .45 + Math.sin(t * .6 + m.ph) * .12; });
+    treeL.intensity = 13 + Math.sin(t * 1.4) * 1.5;
+  };
+  return room;
+}
+
+/* =========================================================
+   祝福樹：事件（只有管理者能新增）＋大家按愛心、留言；資料存在部落格的資料庫
+   在 claude.ai 預覽時連不到資料庫，會顯示說明
+   ========================================================= */
+const BT = { events: [], open: {}, state: 'idle' };
+const btVisitor = (() => { let v = lsGet('policyIsland.visitor'); if (!v) { v = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now()).replace(/[^a-zA-Z0-9-]/g, ''); lsSet('policyIsland.visitor', v); } return v; })();
+const btAgo = ms => { const s = (Date.now() - ms) / 1000; return s < 60 ? '剛剛' : s < 3600 ? `${Math.floor(s / 60)} 分鐘前` : s < 86400 ? `${Math.floor(s / 3600)} 小時前` : s < 86400 * 30 ? `${Math.floor(s / 86400)} 天前` : new Date(ms).toLocaleDateString('zh-TW'); };
+function openBlessTree() {
+  $('#blessTree').hidden = false;
+  btLoad();
+  setTimeout(() => $('#btClose').focus({ preventScroll: true }), 30);
+}
+function closeBlessTree() { $('#blessTree').hidden = true; }
+async function btLoad() {
+  BT.state = 'loading'; btRender();
+  try {
+    const res = await fetch('/api/bless?visitor=' + encodeURIComponent(btVisitor), { cache: 'no-store' });
+    if (!res.ok) throw new Error(res.status);
+    BT.events = (await res.json()).events || []; BT.state = 'ok';
+  } catch (e) { BT.state = 'offline'; }
+  btRender();
+}
+function btRender() {
+  const box = $('#btBody');
+  if (BT.state === 'loading' && !BT.events.length) { box.innerHTML = '<p class="bt-msg">正在搖一搖祝福樹……</p>'; return; }
+  if (BT.state === 'offline') { box.innerHTML = '<p class="bt-msg">祝福樹的留言和愛心要在網站上才看得到喔。<br>（這裡是預覽，連不到大家的祝福）</p>'; return; }
+  if (!BT.events.length) { box.innerHTML = '<p class="bt-msg">小編還沒有掛上祝福的事情，過幾天再來看看吧！</p>'; return; }
+  box.innerHTML = BT.events.map(ev => {
+    const open = !!BT.open[ev.id];
+    return `<article class="bt-ev" data-id="${ev.id}">
+      <h3>${esc(ev.title)}</h3>${ev.body ? `<p class="bt-desc">${esc(ev.body)}</p>` : ''}
+      <div class="bt-row">
+        <button class="bt-heart${ev.liked ? ' on' : ''}" data-like="${ev.id}" aria-pressed="${!!ev.liked}" aria-label="${ev.liked ? '收回愛心' : '送上愛心'}"><span class="bt-h" aria-hidden="true">♥</span><b>${ev.likes}</b></button>
+        <button class="bt-more" data-open="${ev.id}" aria-expanded="${open}">${ev.comments.length ? `${ev.comments.length} 則祝福` : '寫下第一句祝福'}<span aria-hidden="true">${open ? '︿' : '﹀'}</span></button>
+        <span class="bt-date">${btAgo(ev.created_at)}</span>
+      </div>
+      ${open ? `<div class="bt-cmts">
+        ${ev.comments.length ? `<ol>${ev.comments.map(c => `<li><b>${esc(c.name)}</b><p>${esc(c.body)}</p><small>${btAgo(c.created_at)}</small></li>`).join('')}</ol>` : ''}
+        <form class="bt-form" data-form="${ev.id}">
+          <input name="name" maxlength="30" required placeholder="你的名字" value="${esc(lsGet('policyIsland.btName') || '')}" aria-label="你的名字">
+          <textarea name="body" maxlength="500" required rows="2" placeholder="寫一句祝福的話" aria-label="祝福的話"></textarea>
+          <input name="website" tabindex="-1" autocomplete="off" class="bt-hp" aria-hidden="true">
+          <button type="submit">送出祝福 ✦</button>
+          <p class="bt-err" role="status"></p>
+        </form>
+      </div>` : ''}
+    </article>`;
+  }).join('');
+  box.querySelectorAll('[data-like]').forEach(b => b.onclick = () => btLike(+b.dataset.like, b));
+  box.querySelectorAll('[data-open]').forEach(b => b.onclick = () => { BT.open[b.dataset.open] = !BT.open[b.dataset.open]; btRender(); });
+  box.querySelectorAll('[data-form]').forEach(f => f.onsubmit = e => { e.preventDefault(); btComment(+f.dataset.form, f); });
+}
+async function btLike(id, btn) {
+  const ev = BT.events.find(e => e.id === id); if (!ev) return;
+  // 先在畫面上變，再跟資料庫確認
+  ev.liked = !ev.liked; ev.likes += ev.liked ? 1 : -1; btRender();
+  if (ev.liked) btBurst(id);
+  try {
+    const res = await fetch('/api/bless/like', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ eventId: id, visitor: btVisitor }) });
+    const d = await res.json(); if (!res.ok) throw new Error(d.error);
+    ev.liked = d.liked; ev.likes = d.likes; btRender();
+  } catch (e) { ev.liked = !ev.liked; ev.likes += ev.liked ? 1 : -1; btRender(); }
+}
+function btBurst(id) {
+  const b = $(`#btBody [data-like="${id}"]`); if (!b) return;
+  for (let i = 0; i < 7; i++) { const s = document.createElement('i'); s.className = 'bt-pop'; s.textContent = i % 2 ? '✦' : '♥'; s.style.setProperty('--x', (Math.random() * 60 - 30) + 'px'); s.style.animationDelay = i * 40 + 'ms'; b.appendChild(s); setTimeout(() => s.remove(), 1200); }
+}
+async function btComment(id, f) {
+  const fd = new FormData(f), err = f.querySelector('.bt-err'), btn = f.querySelector('button');
+  const name = String(fd.get('name') || '').trim(), body = String(fd.get('body') || '').trim();
+  if (!name || !body) { err.textContent = '請寫下名字和祝福的話'; return; }
+  btn.disabled = true; err.textContent = '';
+  try {
+    const res = await fetch('/api/bless/comment', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ eventId: id, name, body, website: fd.get('website') }) });
+    const d = await res.json(); if (!res.ok) throw new Error(d.error || '送出失敗');
+    lsSet('policyIsland.btName', name);
+    const ev = BT.events.find(e => e.id === id); if (ev && d.comment) ev.comments.push(d.comment);
+    btRender();
+  } catch (e) { err.textContent = e.message === 'Failed to fetch' ? '現在連不上，等一下再試試' : e.message; btn.disabled = false; }
 }
 
 /* ---------- 家裡（3D）：晚上的客廳，一家人都在 ----------

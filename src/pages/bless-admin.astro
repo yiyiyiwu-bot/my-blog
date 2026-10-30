@@ -1,0 +1,155 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="祝福樹管理">
+  <meta slot="head" name="robots" content="noindex" />
+  <div class="wrap post-header">
+    <h1 class="post-title">祝福樹管理</h1>
+    <p class="post-meta">新增、修改祝福事件；大家會在人生小島的公園裡，替這些事件按愛心、留下祝福</p>
+  </div>
+
+  <div class="wrap ba">
+    <div class="ba-login" id="ba-login">
+      <input type="password" id="ba-token" placeholder="請輸入審核密碼（跟留言管理一樣）" autocomplete="current-password" />
+      <button type="button" id="ba-login-btn">登入</button>
+      <p class="ba-error" id="ba-login-error" hidden>密碼不對，再試一次</p>
+    </div>
+
+    <div id="ba-content" hidden>
+      <form class="ba-card ba-new" id="ba-new">
+        <h2>新增一個祝福事件</h2>
+        <label>標題<input name="title" maxlength="80" required placeholder="例如：小美下週要考研究所" /></label>
+        <label>說明（可以不填）<textarea name="body" maxlength="1000" rows="3" placeholder="想讓大家知道的事情"></textarea></label>
+        <button type="submit">掛上祝福樹</button>
+      </form>
+      <p class="ba-status" id="ba-status" role="status"></p>
+      <ol class="ba-list" id="ba-list"></ol>
+    </div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  /* is:global：清單是用程式產生的，要用全域樣式才套得到（class 都用 ba- 開頭，不會影響別的頁面） */
+  .ba [hidden] { display: none !important; }
+  .ba { max-width: 760px; margin: 0 auto 64px; }
+  .ba-login { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ba-login input { flex: 1; min-width: 220px; padding: 10px 12px; border: 1px solid #d8c9a8; border-radius: 10px; font-size: 16px; }
+  .ba button { padding: 10px 16px; border: 0; border-radius: 10px; background: #8a6420; color: #fff; font-weight: 700; cursor: pointer; }
+  .ba button:hover { background: #a87a28; }
+  .ba button.ghost { background: #f3ead7; color: #6b4c16; }
+  .ba button.danger { background: #f6e1dc; color: #a33a26; }
+  .ba-error { color: #a33a26; }
+  .ba-card { background: linear-gradient(160deg, #fffaf0, #fbf0d9); border: 1px solid #ecd9ae; border-radius: 16px; padding: 18px 20px; box-shadow: 0 6px 18px rgba(138, 100, 32, .08); }
+  .ba-new { display: grid; gap: 10px; margin-bottom: 12px; }
+  .ba-new h2 { margin: 0; font-size: 20px; }
+  .ba label { display: grid; gap: 4px; font-weight: 600; font-size: 14px; color: #6b4c16; }
+  .ba input:not([type=password]), .ba textarea { padding: 9px 11px; border: 1px solid #e0cfa6; border-radius: 10px; font: inherit; font-size: 16px; background: #fff; }
+  .ba-status { min-height: 1.4em; color: #6b4c16; }
+  .ba-list { list-style: none; padding: 0; display: grid; gap: 14px; }
+  .ba-event.hidden { opacity: .6; }
+  .ba-event-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .ba-pill { font-size: 13px; background: #fff; border-radius: 999px; padding: 3px 10px; color: #8a6420; border: 1px solid #ecd9ae; }
+  .ba-edit { display: grid; gap: 8px; }
+  .ba-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .ba-comments { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; }
+  .ba-comments li { background: #fff; border-radius: 10px; padding: 8px 12px; display: flex; gap: 10px; align-items: flex-start; }
+  .ba-comments p { margin: 0; flex: 1; white-space: pre-wrap; }
+  .ba-comments b { color: #8a6420; margin-right: 6px; }
+  .ba-comments small { color: #9b8a6b; display: block; }
+  .ba-comments button { padding: 4px 10px; font-size: 13px; }
+</style>
+
+<script>
+  const TOKEN_KEY = 'moderateToken';
+  const $ = (id: string) => document.getElementById(id)!;
+  let token = sessionStorage.getItem(TOKEN_KEY) || '';
+
+  interface Comment { id: number; name: string; body: string; created_at: number }
+  interface BlessEvent { id: number; title: string; body: string; created_at: number; hidden: number; likes: number; comments: Comment[] }
+
+  async function call(action: string, extra: Record<string, unknown> = {}) {
+    const res = await fetch('/api/bless/admin', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ token, action, ...extra }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) { logout(); throw new Error('unauthorized'); }
+    if (!res.ok) throw new Error(data.error || '出錯了');
+    render(data.events || []);
+    return data;
+  }
+
+  function logout() {
+    sessionStorage.removeItem(TOKEN_KEY);
+    $('ba-content').hidden = true;
+    $('ba-login').hidden = false;
+    $('ba-login-error').hidden = false;
+  }
+
+  const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls = '', text = '') => {
+    const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e;
+  };
+  const say = (t: string) => { $('ba-status').textContent = t; };
+
+  function render(events: BlessEvent[]) {
+    const list = $('ba-list');
+    list.innerHTML = '';
+    if (!events.length) { list.appendChild(el('li', 'ba-card', '祝福樹上還沒有事件。用上面的表單掛上第一個吧！')); return; }
+    for (const ev of events) {
+      const li = el('li', 'ba-card ba-event' + (ev.hidden ? ' hidden' : ''));
+      const head = el('div', 'ba-event-head');
+      head.append(el('span', 'ba-pill', `♥ ${ev.likes}`), el('span', 'ba-pill', `留言 ${ev.comments.length}`), el('span', 'ba-pill', new Date(ev.created_at).toLocaleDateString('zh-TW')));
+      if (ev.hidden) head.append(el('span', 'ba-pill', '隱藏中（大家看不到）'));
+
+      const form = el('form', 'ba-edit');
+      const t = el('input'); t.value = ev.title; t.maxLength = 80; t.required = true; t.setAttribute('aria-label', '標題');
+      const b = el('textarea'); b.value = ev.body; b.maxLength = 1000; b.rows = 2; b.setAttribute('aria-label', '說明');
+      form.append(t, b);
+
+      const actions = el('div', 'ba-actions');
+      const save = el('button', '', '儲存修改'); save.type = 'submit';
+      const hide = el('button', 'ghost', ev.hidden ? '重新顯示' : '先隱藏'); hide.type = 'button';
+      const del = el('button', 'danger', '刪除事件'); del.type = 'button';
+      actions.append(save, hide, del);
+      form.append(actions);
+      form.addEventListener('submit', async (e) => { e.preventDefault(); await call('update', { id: ev.id, title: t.value, body: b.value }); say('已儲存'); });
+      hide.addEventListener('click', async () => { await call('hide', { id: ev.id, hidden: !ev.hidden }); say(ev.hidden ? '已重新顯示' : '已隱藏'); });
+      del.addEventListener('click', async () => {
+        if (!confirm(`確定要刪除「${ev.title}」嗎？它的愛心和留言也會一起刪掉，不能復原。`)) return;
+        await call('delete', { id: ev.id }); say('已刪除');
+      });
+
+      const cl = el('ol', 'ba-comments');
+      for (const c of ev.comments) {
+        const ci = el('li');
+        const p = el('p'); p.append(el('b', '', c.name), document.createTextNode(c.body), el('small', '', new Date(c.created_at).toLocaleString('zh-TW')));
+        const x = el('button', 'danger', '刪除'); x.type = 'button';
+        x.addEventListener('click', async () => { if (!confirm('確定要刪除這則留言嗎？')) return; await call('deleteComment', { id: c.id }); say('已刪除留言'); });
+        ci.append(p, x); cl.append(ci);
+      }
+      li.append(head, form, cl);
+      list.appendChild(li);
+    }
+  }
+
+  async function login(t: string) {
+    token = t;
+    try {
+      await call('list');
+      sessionStorage.setItem(TOKEN_KEY, t);
+      $('ba-login').hidden = true;
+      $('ba-content').hidden = false;
+    } catch { /* logout() already showed the error */ }
+  }
+
+  $('ba-login-btn').addEventListener('click', () => { const t = ($('ba-token') as HTMLInputElement).value.trim(); if (t) login(t); });
+  $('ba-token').addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') $('ba-login-btn').click(); });
+  ($('ba-new') as HTMLFormElement).addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = e.target as HTMLFormElement, fd = new FormData(f);
+    try { await call('create', { title: fd.get('title'), body: fd.get('body') }); f.reset(); say('已掛上祝福樹！'); } catch (err) { say((err as Error).message); }
+  });
+  if (token) login(token);
+</script>
