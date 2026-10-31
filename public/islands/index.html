@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@700&display=swap&text=%E5%A5%87%E8%B9%9F%E6%AF%8F%E4%B8%80%E6%AC%A1%E5%AD%B8%E7%BF%92%E9%83%BD%E6%98%AF">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap&text=%E5%A5%87%E8%B9%9F%E6%AF%8F%E4%B8%80%E6%AC%A1%E5%AD%B8%E7%BF%92%E9%83%BD%E6%98%AF">
 <style>
 /* 全螢幕 3D 場景，介面以毛玻璃卡片浮在四周；單一暖色黏土風格（刻意不做深色版） */
 :root{
@@ -243,23 +243,26 @@ body.in-room #stage{filter:none;transform:none;transition:none}
 body.miracle-on .css2d,body.miracle-on .map-bubble{opacity:0;transition:opacity .5s}
 .css2d{transition:opacity .6s}
 .miracle{position:fixed;inset:0;z-index:40;background:radial-gradient(ellipse 75% 65% at 50% 48%,rgba(70,45,10,.18) 0%,rgba(55,35,8,.5) 62%,rgba(35,22,5,.72) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px,1.6vh,16px);pointer-events:none;overflow:hidden;opacity:0}
-.miracle.on{animation:mrShow 4.8s ease both}
+.miracle.on{animation:mrShow 3.8s ease both}
+.miracle.out{animation:none!important;opacity:0!important;transition:opacity .3s ease}
 @keyframes mrShow{0%{opacity:0}14%{opacity:1}80%{opacity:1}100%{opacity:0}}
 .mr-glow{position:absolute;left:50%;top:50%;width:min(130vmin,1100px);height:min(95vmin,800px);transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(255,236,170,.5),rgba(255,214,120,.28) 40%,rgba(255,200,90,.1) 68%,rgba(255,200,90,0));filter:blur(4px)}
-.mr-rays{position:absolute;left:50%;top:50%;width:170vmax;height:170vmax;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,rgba(255,240,190,.32) 0deg 4deg,rgba(255,240,190,0) 4deg 15deg);-webkit-mask:radial-gradient(circle,#000 0,rgba(0,0,0,.6) 18%,transparent 48%);mask:radial-gradient(circle,#000 0,rgba(0,0,0,.6) 18%,transparent 48%)}
+.mr-rays{position:absolute;left:50%;top:50%;width:170vmax;height:170vmax;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,rgba(255,240,190,.2) 0deg 3deg,rgba(255,240,190,0) 3deg 15deg);-webkit-mask:radial-gradient(circle,#000 0,rgba(0,0,0,.6) 18%,transparent 48%);mask:radial-gradient(circle,#000 0,rgba(0,0,0,.6) 18%,transparent 48%)}
 .miracle.on .mr-rays{animation:mrSpin 14s linear infinite}
 @keyframes mrSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 .mr-title,.mr-sub{position:relative;margin:0;text-align:center;color:#fffbea;font-family:"LXGW WenKai TC",var(--serif)}
-.mr-title{font-weight:700;font-size:clamp(54px,11vw,108px);line-height:1.1;letter-spacing:.24em;padding-left:.24em;
-  -webkit-text-stroke:.6px rgba(214,150,40,.55);text-shadow:0 1px 2px rgba(110,60,0,.55),0 0 10px #fff3c4,0 0 26px #ffe08a,0 0 52px rgba(255,200,80,.95),0 0 100px rgba(255,180,60,.75)}
-.mr-sub{font-weight:700;font-size:clamp(16px,3vw,28px);letter-spacing:.36em;padding-left:.36em;
-  text-shadow:0 1px 2px rgba(110,60,0,.6),0 0 8px #fff3c4,0 0 20px #ffd76a,0 0 40px rgba(255,190,70,.85)}
-.miracle.on .mr-title{animation:mrTitle 4.8s cubic-bezier(.2,.8,.3,1) both}
-.miracle.on .mr-sub{animation:mrSub 4.8s cubic-bezier(.2,.8,.3,1) both}
+.mr-title{font-weight:400;font-size:clamp(40px,7.5vw,72px);line-height:1.15;letter-spacing:.42em;padding-left:.42em;
+  -webkit-text-stroke:.4px rgba(214,150,40,.5);text-shadow:0 1px 2px rgba(110,60,0,.5),0 0 8px #fff3c4,0 0 20px rgba(255,224,138,.9),0 0 44px rgba(255,200,80,.6)}
+.mr-sub{font-weight:400;font-size:clamp(14px,2.1vw,19px);letter-spacing:.5em;padding-left:.5em;display:flex;align-items:center;gap:.9em;
+  text-shadow:0 1px 2px rgba(110,60,0,.55),0 0 6px #fff3c4,0 0 16px rgba(255,215,106,.8)}
+.mr-sub::before,.mr-sub::after{content:"";width:clamp(28px,6vw,60px);height:1px;background:linear-gradient(90deg,rgba(255,240,200,0),rgba(255,240,200,.95));box-shadow:0 0 6px rgba(255,214,110,.8)}
+.mr-sub::after{transform:scaleX(-1)}
+.miracle.on .mr-title{animation:mrTitle 3.8s cubic-bezier(.2,.8,.3,1) both}
+.miracle.on .mr-sub{animation:mrSub 3.8s cubic-bezier(.2,.8,.3,1) both}
 @keyframes mrTitle{0%{transform:scale(.86);filter:blur(10px);opacity:0}20%{transform:scale(1);filter:blur(0);opacity:1}100%{transform:scale(1.04);opacity:1}}
 @keyframes mrSub{0%,12%{transform:translateY(10px);filter:blur(6px);opacity:0}32%{transform:none;filter:blur(0);opacity:1}100%{opacity:1}}
 .mr-sparks{position:absolute;inset:0}
-.mr-sparks i{position:absolute;width:calc(10px * var(--s,1));height:calc(10px * var(--s,1));transform:translate(-50%,-50%) rotate(45deg);background:#fff9de;box-shadow:0 0 10px 3px rgba(255,220,120,.9);opacity:0;animation:mrTwinkle 2.4s ease-in-out infinite}
+.mr-sparks i{position:absolute;width:calc(5px * var(--s,1));height:calc(5px * var(--s,1));transform:translate(-50%,-50%) rotate(45deg);background:#fff9de;box-shadow:0 0 8px 2px rgba(255,220,120,.85);opacity:0;animation:mrTwinkle 2.4s ease-in-out infinite}
 @keyframes mrTwinkle{0%,100%{opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(.4)}50%{opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(1)}}
 .miracle-toast{position:fixed;left:0;right:0;margin:0 auto;width:max-content;max-width:calc(100vw - 32px);box-sizing:border-box;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:41;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 20px;border-radius:16px;background:linear-gradient(135deg,#fffaf0,#fdf0d3);border:1px solid #f0d58f;box-shadow:0 0 0 5px rgba(255,220,140,.25),0 12px 30px rgba(60,35,5,.3);color:#4a3412;text-align:center;pointer-events:none}
 .miracle-toast b{font:900 16px var(--sans);color:#a07a2c}
@@ -291,6 +294,9 @@ body.miracle-on .css2d,body.miracle-on .map-bubble{opacity:0;transition:opacity 
 .spot span{position:absolute;left:50%;top:calc(50% + 12px);transform:translateX(-50%);white-space:nowrap;background:rgba(24,18,14,.75);color:#fff;font:700 11px var(--sans);padding:2px 8px;border-radius:999px;opacity:0;transition:opacity .2s}
 .spot:hover span,.spot:focus-visible span,.spot.prop span{opacity:1}
 .spot.prop{left:0;top:0;width:150px;height:110px}
+.spot.prop.obj{width:64px;height:64px}
+.spot.prop.obj span{opacity:0}
+.spot.prop.obj:hover span,.spot.prop.obj:focus-visible span{opacity:1}
 .spot.prop.who{width:100px;height:180px}
 .spot.prop.tagged{width:auto;height:auto;border-radius:999px;padding:4px 11px;background:#fffaf2;color:var(--ink);box-shadow:0 4px 12px rgba(40,25,10,.28);font:800 13px var(--sans);white-space:nowrap;transition:background .2s,color .2s}
 .spot.prop.tagged::after{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-5px;border:5px solid transparent;border-bottom:0;border-top-color:#fffaf2}
@@ -444,6 +450,17 @@ body.miracle-on .css2d,body.miracle-on .map-bubble{opacity:0;transition:opacity 
 .gm-btns{display:flex;gap:10px;flex-wrap:wrap}
 @media (max-width:600px){ .gm-name{display:none} .gm-hud{gap:6px;padding-left:10px;padding-right:10px} .gm-chip{padding:4px 8px;font-size:12px} .gm-bar span{display:none} .gm-card h2{font-size:28px} .gm-rules{font-size:14px} }
 @media (prefers-reduced-motion:reduce){ .gm-card{animation:none} }
+/* 還沒開放：遮住場景的對話框 */
+.lock{position:absolute;inset:0;z-index:9;display:grid;place-items:center;padding:16px;box-sizing:border-box;background:rgba(30,26,22,.42);backdrop-filter:blur(9px) saturate(.8);-webkit-backdrop-filter:blur(9px) saturate(.8)}
+.lock-card{width:min(380px,100%);box-sizing:border-box;text-align:center;padding:28px 26px 24px;border-radius:24px;background:linear-gradient(170deg,#fffaf0,#f6ead6);color:#3d2f22;box-shadow:0 0 0 1px #ecd9b6,0 24px 60px rgba(30,20,10,.45);animation:cardIn .45s cubic-bezier(.2,.9,.3,1.15) both}
+.lock-ic{width:52px;height:52px;fill:none;stroke:#b98a3c;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;margin-bottom:6px}
+.lock-ic circle{fill:#b98a3c;stroke:none}
+.lock-eyebrow{font:800 12px var(--sans);letter-spacing:3px;color:#b98a3c}
+.lock-card b{display:block;margin:4px 0 10px;font:900 26px var(--serif);letter-spacing:4px}
+.lock-card p{margin:0 0 20px;font:700 18px/1.7 var(--serif);color:#5a4632;letter-spacing:2px}
+.lock-btn{border:0;border-radius:999px;padding:11px 26px;background:#3d2f22;color:#fffaf0;font:800 15px var(--sans);cursor:pointer}
+.lock-btn:hover{background:#b98a3c}
+@media (prefers-reduced-motion:reduce){ .lock-card{animation:none} }
 /* 愛焚爐：寫信的信紙、燒完後的那句話 */
 .ll{position:absolute;inset:0;z-index:8;display:grid;place-items:center;padding:16px;box-sizing:border-box;background:radial-gradient(80% 70% at 50% 45%,rgba(255,140,150,.25),rgba(40,15,20,.6));backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .ll-paper{position:relative;width:min(520px,100%);max-height:calc(100% - 24px);overflow:auto;box-sizing:border-box;padding:26px 26px 22px;border-radius:6px 6px 18px 18px;color:#5a2f2a;
@@ -658,7 +675,7 @@ body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, bod
 
 <div id="legend" hidden></div>
 <div id="mapBubble" class="map-bubble" hidden aria-live="polite"></div>
-<div id="miracle" class="miracle" hidden aria-live="polite"><div class="mr-rays" aria-hidden="true"></div><div class="mr-glow" aria-hidden="true"></div><div class="mr-sparks" aria-hidden="true"></div><h2 class="mr-title">奇蹟</h2><p class="mr-sub">每一次學習都是奇蹟</p></div>
+<div id="miracle" class="miracle" hidden aria-live="polite"><div class="mr-glow" aria-hidden="true"></div><div class="mr-sparks" aria-hidden="true"></div><h2 class="mr-title">奇蹟</h2><p class="mr-sub">每一次學習都是奇蹟</p></div>
 <div id="miracleToast" class="miracle-toast" hidden role="status"><b>✦ 收到祝福卡「奇蹟」</b><span>已經放進點滴在心頭教室的卡夾</span></div>
 <div class="game" id="game" hidden role="dialog" aria-modal="true" aria-label="小遊戲：啟蒙">
   <canvas id="gmCanvas"></canvas>
@@ -732,6 +749,14 @@ body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, bod
     <div class="fam-head"><b id="famTitle">你想當誰？</b><button class="btn" id="famClose" aria-label="關閉"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="fam-stage" id="famStage"></div>
     <p class="fam-tip">點一位家人，用他的眼睛看這個家</p>
+  </div>
+  <div class="lock" id="lockCard" hidden role="dialog" aria-modal="true" aria-labelledby="lockTitle">
+    <div class="lock-card">
+      <div class="lock-eyebrow">人生小島</div>
+      <b id="lockTitle"></b>
+      <p id="lockText"></p>
+      <button class="lock-btn" id="lockBack">回到島上</button>
+    </div>
   </div>
   <div class="ll" id="loveLetter" hidden role="dialog" aria-modal="true" aria-labelledby="llTitle">
     <div class="ll-paper">
@@ -1240,6 +1265,7 @@ function init() {
   initBinder();
   $('#btClose').onclick = closeBlessTree;
   $('#llClose').onclick = closeLoveLetter;
+  $('#lockBack').onclick = () => exitScene();
   $('#llSend').onclick = sendLoveLetter;
   $('#loveLetter').addEventListener('click', e => { if (e.target.id === 'loveLetter') closeLoveLetter(); });
   $('#blessTree').addEventListener('click', e => { if (e.target.id === 'blessTree') closeBlessTree(); });
@@ -2616,9 +2642,23 @@ function showMiracle(done) {
     for (let i = 0; i < 28; i++) { const s = document.createElement('i'); const a = Math.random() * Math.PI * 2, r = 14 + Math.random() * 30; s.style.left = 50 + Math.cos(a) * r + '%'; s.style.top = 50 + Math.sin(a) * r * .7 + '%'; s.style.animationDelay = (Math.random() * 2.4).toFixed(2) + 's'; s.style.setProperty('--s', (.5 + Math.random()).toFixed(2)); sp.appendChild(s); }
     m.dataset.ready = '1';
   }
-  m.hidden = false; m.classList.remove('on'); void m.offsetWidth; m.classList.add('on');
+  m.hidden = false; m.classList.remove('on', 'out'); void m.offsetWidth; m.classList.add('on');
   document.body.classList.add('miracle-on');
-  setTimeout(() => { m.hidden = true; m.classList.remove('on'); document.body.classList.remove('miracle-on'); done && done(); }, 4800);
+  let ended = false;
+  const finish = () => { m.hidden = true; m.classList.remove('on', 'out'); document.body.classList.remove('miracle-on'); done && done(); };
+  const end = early => {
+    if (ended) return; ended = true; clearTimeout(timer); onAnyAction(null);
+    if (early) { m.classList.add('out'); setTimeout(finish, 300); } else finish();
+  };
+  const timer = setTimeout(() => end(false), 3800);
+  onAnyAction(() => end(true));
+}
+// 使用者一有動作（點、摸螢幕、滾輪、按鍵）就呼叫 fn；傳 null 取消
+function onAnyAction(fn) {
+  const evs = ['pointerdown', 'wheel', 'keydown', 'touchstart'];
+  if (onAnyAction.fn) evs.forEach(e => removeEventListener(e, onAnyAction.fn, true));
+  onAnyAction.fn = fn;
+  if (fn) evs.forEach(e => addEventListener(e, fn, { capture: true, passive: true }));
 }
 function miracleStart() {
   const card = BLESS.find(c => c.id === 'miracle');
@@ -2669,6 +2709,7 @@ function flyMiracleCard(card, done) {
   const mid = start.clone().lerp(end, .5).add(new THREE.Vector3(0, 2.2, 0));
   MIR.card = { t0: performance.now(), start, mid, end, done };
   MIR.mesh.visible = true; dirty = true;
+  onAnyAction(() => { onAnyAction(null); const c = MIR.card; if (!c) return; MIR.card = null; MIR.mesh.visible = false; MIR.flash.position.copy(c.end); MIR.flash.visible = true; MIR.flashT = performance.now(); miracleToast(); setTimeout(c.done, 1800); dirty = true; });
 }
 // 每一格：卡片先在眼前轉一圈亮相，再沿著弧線飛進教室，越飛越小；到了閃一下
 function updateMiracleCard(now) {
@@ -2683,7 +2724,7 @@ function updateMiracleCard(now) {
     const k = Math.min(1, (t - hold) / flyT), e = k * k * (3 - 2 * k);
     pos = c.start.clone().lerp(c.mid, e).lerp(c.mid.clone().lerp(c.end, e), e); s = 1 - e * .8; card.rotation.y = e * Math.PI * 4;
     if (k >= 1) {
-      g.visible = false; MIR.card = null;
+      g.visible = false; MIR.card = null; onAnyAction(null);
       MIR.flash.position.copy(c.end); MIR.flash.visible = true; MIR.flashT = now;
       miracleToast(); setTimeout(c.done, 2600);
     }
@@ -3197,6 +3238,8 @@ function showScene(isl, replay) {
   const ch = entry ? GAME.chapters[entry.story] : null;
   SC.entry = entry; SC.ch = ch;
   SC.room = getRoom(isl);
+  // 手機直放時，有設定 portraitLook 的房間一開始先稍微轉向主角
+  if (!replay && SC.room && SC.room.portraitLook && innerWidth < innerHeight) SC.lookX = SC.room.portraitLook;
   document.body.classList.toggle('in-room', !!SC.room);
   $('#scene').classList.toggle('room', !!SC.room);
   $('#scene').classList.toggle('art', !!(SC.room && SC.room.art));
@@ -3210,7 +3253,14 @@ function showScene(isl, replay) {
   $('#scHint').hidden = !ch; $('#scHint').setAttribute('aria-pressed', 'false');
   renderHand();
   hideMarks(); hideTip(); $('#scDlg').hidden = false;
-  if (SC.room && SC.room.npcs && sc.type === 'class' && !replay) {
+  if (LOCKED[isl.d.id]) {
+    // 還沒開放：場景模糊，中間一個對話框擋住
+    $('#scDlg').hidden = true; setMain('');
+    $('#lockTitle').textContent = L(isl.d.name);
+    $('#lockText').textContent = LOCKED[isl.d.id];
+    $('#lockCard').hidden = false;
+    setTimeout(() => $('#lockBack').focus({ preventScroll: true }), 30);
+  } else if (SC.room && SC.room.npcs && sc.type === 'class' && !replay) {
     // 點滴在心頭教室：導師先說話，說完留在教室裡看看
     setMain(titleCard(tr('人生的起點', 'WHERE LIFE STARTS'), L(isl.d.name)));
     play(GAME.teacher.map(t => ({ who: t.who, text: t.text, kind: 'teacher' })), () => explore(isl));
@@ -3295,9 +3345,9 @@ function explore(isl) {
 function addProps(r, box) {
   for (const p of r.props || []) {
     const b = document.createElement('button');
-    b.className = 'spot prop' + (p.who ? ' who' : '') + (p.tag ? ' tagged' : '');
+    b.className = 'spot prop' + (p.who ? ' who' : '') + (p.tag ? ' tagged' : '') + (p.obj ? ' obj' : '');
     b.innerHTML = `<i aria-hidden="true"></i><span>${esc(p.name)}</span>`;
-    b.setAttribute('aria-label', p.tag ? tr(`選${p.name}`, `Pick ${p.name}`) : p.who ? tr(`跟${p.name}聊聊`, `Talk to ${p.name}`) : tr(`打開${p.name}`, `Open ${p.name}`));
+    b.setAttribute('aria-label', p.obj ? tr(`看看${p.name}`, `Look at ${p.name}`) : p.tag ? tr(`選${p.name}`, `Pick ${p.name}`) : p.who ? tr(`跟${p.name}聊聊`, `Talk to ${p.name}`) : tr(`打開${p.name}`, `Open ${p.name}`));
     if (p.tag) b.innerHTML = `<b>${esc(p.name)}</b>`;
     b.onclick = () => p.act();
     p.el = b; box.appendChild(b);
@@ -3492,8 +3542,8 @@ const SPOTS = {
     { name: '遊戲屋', x: .745, y: .39, panel: 'arcade', note: '遊樂園的遊戲屋，裡面的小遊戲會越來越多。挑一個玩玩看吧！' }
   ],
   sch: [
-    { name: '黑板', x: .6, y: .3, panel: 'board', title: '好好學習　天天向上',
-      lines: ['明天 08:10　期中考', '範圍：迴圈、陣列、函式', '帶：准考證、2B 鉛筆、橡皮擦', '值日生：小雨'], doodle: '（角落有人畫了一個笑臉 ☺）' },
+    { name: '黑板', x: .6, y: .3, panel: 'board', title: '踏實期中考',
+      lines: ['口訣：踏於外實於內，務實是外踏實是內，兩相權衡是智慧。', '考試用具：不抱僥倖、量力而為、知足、快樂的心', '值日生：小編'], doodle: '（角落有人畫了一個笑臉 ☺）' },
     { name: '時鐘', x: .584, y: .2, panel: 'clock', note: '秒針一直在走。距離明天的期中考，又少了一點點時間。' },
     { name: '書櫃', x: .85, y: .4, panel: 'shelf', note: '書櫃裡有一排很特別的書，每一本的書背上都寫著兩個字。抽一本出來看看吧。' },
     { name: '桌上的筆記', x: .713, y: .565, panel: 'notebook', title: '期中考前的讀書計畫',
@@ -3527,7 +3577,7 @@ function openPanel(spot) {
   });
   setTimeout(() => $('#pnClose').focus({ preventScroll: true }), 30);
 }
-function closePanel() { clearInterval(panelTimer); $('#scPanel').hidden = true; closeFamily(); closeBinder(); closeBlessTree(); closeLoveLetter(); }
+function closePanel() { clearInterval(panelTimer); $('#scPanel').hidden = true; closeFamily(); closeBinder(); closeBlessTree(); closeLoveLetter(); $('#lockCard').hidden = true; }
 function addSpots(isl, box) {
   for (const spot of SPOTS[isl.d.id] || []) {
     const b = document.createElement('button');
@@ -3996,7 +4046,9 @@ const artTalk = on => {
 // 出現選項、結果、卡片時，圖淡下去讓字清楚
 const artDim = on => { const box = $('#scArt'); if (box) box.classList.toggle('dim', on && !$('#scene').classList.contains('split')); };
 // 有立體書插圖的地點用插圖；其他地點用 3D 室內
-const ROOMS = { sch: artRoom('sch'), hom: buildFamilyHome, wrk: artRoom('wrk'), bch: artRoom('bch'), st: artRoom('st'), park: buildBlessPark, love: buildLoveFurnace, fun: buildAmuseRoom, exam: buildExamRoom, cls: buildClsRoom };
+// 還沒開放的地點：走進去會看到這句話（想開放時，把那一行刪掉就好）
+const LOCKED = { exam: '還沒到時候開放', bch: '還沒到時候開放' };
+const ROOMS = { sch: buildAfternoonClass, hom: buildFamilyHome, wrk: buildMorningOffice, bch: artRoom('bch'), st: buildBlueStreet, park: buildBlessPark, love: buildLoveFurnace, fun: buildAmuseRoom, exam: buildExamRoom, cls: buildClsRoom };
 const roomCache = {};
 function getRoom(isl) {
   const make = ROOMS[isl.d.id];
@@ -4027,20 +4079,22 @@ function renderRoom(now) {
   placeMarks(r);
 }
 function blackboardTex() {
-  return canvasTex(1024, 384, (g, w, h) => {
+  // 黑板上的字：踏實期中考（粉筆字：白、黃、粉紅）
+  return canvasTex(1280, 448, (g, w, h) => {
     g.fillStyle = '#2f5a45'; g.fillRect(0, 0, w, h);
     g.globalAlpha = .07; g.fillStyle = '#fff';
-    for (let i = 0; i < 40; i++) g.fillRect(Math.random() * w, Math.random() * h, 120, 6);
-    g.globalAlpha = .92; g.fillStyle = '#f4f1e8';
-    g.font = '900 118px "Noto Serif TC", serif'; g.fillText('期中考', 60, 150);
-    g.font = '700 46px "Noto Serif TC", serif'; g.fillText('明天 08:10 第一節', 66, 230);
-    g.fillStyle = '#f8e38a'; g.font = '600 34px ui-monospace, monospace';
-    g.fillText('for (i = 0; i < n; i++) {', 540, 110);
-    g.fillText('  sum += i;', 540, 160);
-    g.fillText('}', 540, 210);
-    g.fillStyle = '#f6b5c4'; g.font = '700 44px "Noto Serif TC", serif'; g.fillText('加油！', 760, 320);
+    for (let i = 0; i < 46; i++) g.fillRect(Math.random() * w, Math.random() * h, 140, 6);
+    g.globalAlpha = .94; g.textBaseline = 'alphabetic';
+    g.fillStyle = '#f4f1e8'; g.font = '900 96px "Noto Serif TC", serif'; g.fillText('踏實期中考', 64, 120);
     g.strokeStyle = '#f4f1e8'; g.lineWidth = 5; g.globalAlpha = .7;
-    g.beginPath(); g.moveTo(60, 290); g.bezierCurveTo(200, 270, 330, 320, 460, 285); g.stroke();
+    g.beginPath(); g.moveTo(64, 146); g.bezierCurveTo(220, 136, 400, 156, 560, 140); g.stroke();
+    g.globalAlpha = .94;
+    g.font = '700 40px "Noto Serif TC", serif';
+    g.fillStyle = '#f8e38a'; g.fillText('口訣：', 64, 212);
+    g.fillStyle = '#f4f1e8'; g.fillText('踏於外實於內，務實是外踏實是內，', 184, 212); g.fillText('兩相權衡是智慧。', 184, 266);
+    g.fillStyle = '#f8e38a'; g.fillText('考試用具：', 64, 334);
+    g.fillStyle = '#f4f1e8'; g.fillText('不抱僥倖、量力而為、知足、快樂的心', 264, 334);
+    g.fillStyle = '#f6b5c4'; g.font = '700 38px "Noto Serif TC", serif'; g.fillText('值日生：小編', 980, 410);
   }, false);
 }
 function buildClassroomRoom() {
@@ -5070,6 +5124,468 @@ function sendLoveLetter() {
   });
 }
 
+/* ---------- 街上（3D）：雨後的藍調時刻 ----------
+   設計：剛下過雨的傍晚，天空是深藍到紫到一點點橘，街道濕濕的，水窪映著店家的燈；
+   兩邊是一樓店面（咖啡店、花店、麵包店、書店、便利商店），上面是住家：亮著燈的窗、陽台、冷氣機；
+   台灣街頭的直式招牌、橫過馬路的串燈、紅綠郵筒、機車；咖啡店的女生坐在路邊喝咖啡 */
+function buildBlueStreet() {
+  const P = { asphalt: '#3a3d48', side: '#8f8a86', curb: '#b8b2aa', warm: '#ffcf8a', coral: '#db6a41', cream: '#fbf3e6', wood: '#8a5a3c', leaf: '#5f8a55', leaf2: '#78a165' };
+  const K = roomKit({ walls: false, bg: '#2a3157', sky: 0x8a95d6, ground: 0x3a2f3a, hemi: .7, keyColor: 0xb8c4ff, keyI: .8, keyPos: new THREE.Vector3(-6, 12, 4), fill: false, seed: 41 });
+  const b = K.b, S = K.S;
+  S.traverse(o => { if (o.isDirectionalLight) Object.assign(o.shadow.camera, { left: -10, right: 10, top: 14, bottom: -14, far: 50 }); });
+  S.fog = new THREE.Fog('#3a3a66', 14, 34);
+  const tex = (w, h, draw, rep = false) => canvasTex(w, h, draw, rep);
+  const glowM = (c, o = {}) => new THREE.MeshBasicMaterial({ color: c, toneMapped: false, ...o });
+  const std = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: .8, ...o });
+  const add = (geo, mat, x, y, z, parent = S) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; parent.add(m); return m; };
+  const RW = 2.1, SW = 1.7, BX = RW + SW; // 路寬一半、人行道寬、房子開始的位置
+
+  // ---- 天空：深藍→紫→地平線一點點橘；街底有城市的剪影 ----
+  const skyTex = tex(1024, 512, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#141a42'); gr.addColorStop(.45, '#3b3a78'); gr.addColorStop(.62, '#7a5a8e'); gr.addColorStop(.72, '#e39a86'); gr.addColorStop(.8, '#f2b98e'); gr.addColorStop(1, '#2a2440');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    const r = mulberry32(14); g.fillStyle = '#fff'; for (let i = 0; i < 60; i++) { g.globalAlpha = .2 + r() * .6; g.fillRect(r() * w, r() * h * .4, 1.5, 1.5); } g.globalAlpha = 1;
+  });
+  add(new THREE.SphereGeometry(60, 32, 16), new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide, fog: false, toneMapped: false }), 0, 0, 0).castShadow = false;
+  const cityTex = tex(1024, 256, (g, w, h) => {
+    const r = mulberry32(5); let x = 0;
+    while (x < w) { const bw = 30 + r() * 60, bh = h * (.3 + r() * .65); g.fillStyle = r() < .5 ? '#232448' : '#1c1d3c'; g.fillRect(x, h - bh, bw, bh); for (let wy = h - bh + 8; wy < h - 4; wy += 12) for (let wx = x + 5; wx < x + bw - 5; wx += 9) if (r() < .35) { g.fillStyle = r() < .85 ? '#ffd98a' : '#9fd4ff'; g.fillRect(wx, wy, 4, 6); } x += bw + 2; }
+  });
+  add(new THREE.PlaneGeometry(26, 6.5), new THREE.MeshBasicMaterial({ map: cityTex, transparent: true, fog: false, toneMapped: false }), 0, 3.2, -24).castShadow = false;
+
+  // ---- 地面：濕濕的柏油路（反光）、斑馬線、人行道磚、路緣 ----
+  const roadTex = tex(256, 1024, (g, w, h) => { g.fillStyle = '#353844'; g.fillRect(0, 0, w, h); const r = mulberry32(2); for (let i = 0; i < 900; i++) { g.fillStyle = r() < .5 ? 'rgba(255,255,255,.04)' : 'rgba(0,0,0,.08)'; g.fillRect(r() * w, r() * h, 2, 2); } g.fillStyle = '#e8d27a'; for (let y = 0; y < h; y += 96) g.fillRect(w / 2 - 3, y, 6, 52); }, true);
+  roadTex.repeat.set(1, 3);
+  add(new THREE.PlaneGeometry(RW * 2, 34).rotateX(-Math.PI / 2), std('#ffffff', { map: roadTex, roughness: .28, metalness: .25 }), 0, 0, -8).castShadow = false;
+  for (let i = 0; i < 7; i++) add(new THREE.PlaneGeometry(.38, 1.5).rotateX(-Math.PI / 2), std('#e9e6df', { roughness: .4 }), -1.6 + i * .53, .006, 3.4).castShadow = false;
+  const paveTex = tex(256, 256, (g, w, h) => { g.fillStyle = '#8f8a86'; g.fillRect(0, 0, w, h); const r = mulberry32(9); for (let y = 0; y < h; y += 32) for (let x = (y / 32 % 2) * 32; x < w; x += 64) { g.fillStyle = ['#9a948f', '#86817c', '#a29b94'][Math.floor(r() * 3)]; g.fillRect(x + 2, y + 2, 60, 28); } }, true);
+  paveTex.repeat.set(1.5, 16);
+  for (const s of [-1, 1]) {
+    add(new THREE.BoxGeometry(SW, .14, 34), std('#ffffff', { map: paveTex, roughness: .5 }), s * (RW + SW / 2), .07, -8);
+    add(new THREE.BoxGeometry(.12, .16, 34), std(P.curb, { roughness: .6 }), s * (RW + .06), .08, -8);
+  }
+  // 水窪：亮亮的深色＋店家燈光的倒影（直直拉長的光）
+  const reflTex = tex(64, 256, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, 'rgba(255,255,255,.95)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(w * .3, 0, w * .4, h); const g2 = g.createRadialGradient(w / 2, 10, 0, w / 2, 10, w / 2); g2.addColorStop(0, 'rgba(255,255,255,.9)'); g2.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = g2; g.fillRect(0, 0, w, h); });
+  const puddles = [];
+  for (const [x, z, w, d] of [[-.8, 1.4, 1.6, .9], [1.1, -2.2, 1.3, .8], [-1.1, -6, 1.8, 1.1], [.9, -10, 1.4, .8], [-.5, -14, 1.6, 1]]) {
+    const pm = add(new THREE.CircleGeometry(1, 32).rotateX(-Math.PI / 2), std('#3b3f52', { roughness: .02, metalness: .5, transparent: true, opacity: .55 }), x, .008, z); pm.scale.set(w, 1, d); pm.castShadow = false; puddles.push(pm);
+  }
+  const reflections = [];
+  const refl = (x, z, col, len) => { const m = add(new THREE.PlaneGeometry(.35, len).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: reflTex, color: col, transparent: true, opacity: .55, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }), x, .012, z + len / 2); m.castShadow = false; reflections.push(m); };
+
+  // ---- 店家：一樓店面＋樓上住家，面向街道 ----
+  const lights = [];
+  const signTex = (txt, bg, fg, vertical) => tex(vertical ? 128 : 512, vertical ? 512 : 128, (g, w, h) => {
+    g.fillStyle = bg; g.beginPath(); g.roundRect(0, 0, w, h, 14); g.fill();
+    g.strokeStyle = fg; g.globalAlpha = .55; g.lineWidth = 6; g.beginPath(); g.roundRect(8, 8, w - 16, h - 16, 10); g.stroke(); g.globalAlpha = 1;
+    g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; g.shadowColor = fg; g.shadowBlur = 12;
+    if (vertical) { const n = txt.length, fs = Math.min(92, 420 / n); g.font = `900 ${fs}px "Noto Serif TC", serif`; [...txt].forEach((ch, i) => g.fillText(ch, w / 2, h / 2 + (i - (n - 1) / 2) * fs * 1.08)); }
+    else { g.font = '900 64px "Noto Serif TC", serif'; g.fillText(txt, w / 2, h / 2 + 2); }
+  });
+  const interiorTex = (base, kind) => tex(256, 192, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, base); gr.addColorStop(1, '#fff1d6'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    g.fillStyle = 'rgba(90,50,20,.45)';
+    if (kind === 'books') for (let y = 30; y < h; y += 46) { g.fillRect(10, y + 30, w - 20, 5); for (let x = 14; x < w - 14; x += 9) { g.fillStyle = ['#c8674a', '#3e7c8c', '#ddb04e', '#7d9bb5', '#8a5a3c'][(x + y) % 5]; g.fillRect(x, y, 7, 30); } g.fillStyle = 'rgba(90,50,20,.45)'; }
+    else if (kind === 'bread') { g.fillRect(0, h * .62, w, h * .38); for (let x = 20; x < w - 10; x += 34) { g.fillStyle = '#d99a4a'; g.beginPath(); g.ellipse(x, h * .58, 14, 9, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(x + 10, h * .38, 12, 8, 0, 0, 7); g.fill(); } }
+    else if (kind === 'store') { g.fillStyle = '#e9f2ff'; g.fillRect(0, 0, w, h); for (let y = 24; y < h; y += 40) { g.fillStyle = '#9fb4cf'; g.fillRect(8, y + 26, w - 16, 4); for (let x = 12; x < w - 12; x += 12) { g.fillStyle = ['#f08a6c', '#7fc4ef', '#fbe39a', '#a9dcc6', '#f6b6c4'][(x / 12 + y) % 5 | 0]; g.fillRect(x, y + 8, 9, 18); } } }
+    else if (kind === 'flowers') { for (let i = 0; i < 70; i++) { g.fillStyle = ['#f6b6c4', '#fff1c4', '#f08a6c', '#c9b6e4', '#ffffff'][i % 5]; g.beginPath(); g.arc((i * 37) % w, h * .45 + ((i * 53) % (h * .5)), 7, 0, 7); g.fill(); } g.fillStyle = 'rgba(70,110,60,.6)'; g.fillRect(0, h * .85, w, h * .15); }
+    else { g.fillRect(0, h * .7, w, h * .3); g.fillStyle = 'rgba(80,45,20,.35)'; for (let x = 18; x < w; x += 52) { g.beginPath(); g.arc(x, h * .52, 12, 0, 7); g.fill(); g.fillRect(x - 3, h * .58, 6, 30); } g.fillStyle = 'rgba(255,240,200,.8)'; for (let x = 30; x < w; x += 70) { g.beginPath(); g.arc(x, 18, 8, 0, 7); g.fill(); } }
+  });
+  const shops = [
+    { side: -1, z: 1.6, w: 3.4, floors: 2, wall: '#d9c2a5', name: '點滴咖啡', vsign: '咖啡', signBg: '#4a2e22', signFg: '#ffd27a', kind: 'cafe', glow: '#ffcf8a', awning: ['#3e6b5a', '#f3ead7'] },
+    { side: -1, z: -2.2, w: 3.2, floors: 3, wall: '#c7b8a6', name: '小花園', vsign: '花店', signBg: '#f6e4ea', signFg: '#c0505e', kind: 'flowers', glow: '#ffd9e0', awning: ['#f6b6c4', '#ffffff'] },
+    { side: -1, z: -6, w: 3.6, floors: 2, wall: '#b8c3c9', name: '小島書店', vsign: '書', signBg: '#24324a', signFg: '#fbe39a', kind: 'books', glow: '#ffe1a8' },
+    { side: -1, z: -10, w: 3.4, floors: 3, wall: '#d6c9b6', name: '', vsign: '旅社', signBg: '#5a2f2a', signFg: '#ff9a8a', kind: 'cafe', glow: '#ffc890' },
+    { side: 1, z: 1.4, w: 3.6, floors: 2, wall: '#e2d2bc', name: '日日麵包', vsign: '麵包', signBg: '#f3e2c4', signFg: '#8a4a1a', kind: 'bread', glow: '#ffd59a', awning: ['#db6a41', '#fbf3e6'] },
+    { side: 1, z: -2.6, w: 3.4, floors: 3, wall: '#a99a8c', name: '島嶼便利商店', vsign: '便利商店', signBg: '#e9f6ff', signFg: '#2a7fb8', kind: 'store', glow: '#e6f3ff' },
+    { side: 1, z: -6.6, w: 3.2, floors: 2, wall: '#c9b29a', name: '', vsign: '牙醫', signBg: '#e8f4ee', signFg: '#2f7f5a', kind: 'cafe', glow: '#fff0d0' },
+    { side: 1, z: -10.4, w: 3.6, floors: 3, wall: '#bcb0a2', name: '', vsign: '茶', signBg: '#2a3a2a', signFg: '#b8e08a', kind: 'cafe', glow: '#ffd59a' }
+  ];
+  const winTexOn = tex(64, 64, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#ffe2a8'); gr.addColorStop(1, '#ffb86b'); g.fillStyle = gr; g.fillRect(0, 0, w, h); g.fillStyle = 'rgba(120,60,20,.35)'; g.fillRect(w * .1, h * .1, w * .25, h * .9); });
+  const winOn = glowM('#ffffff', { map: winTexOn }), winOff = std('#2a3150', { roughness: .2, metalness: .3 });
+  const rnd = mulberry32(31);
+  for (const sh of shops) {
+    const x = sh.side * BX, ry = sh.side < 0 ? Math.PI / 2 : -Math.PI / 2;
+    const G = new THREE.Group(); G.position.set(x, 0, sh.z); G.rotation.y = ry; S.add(G);
+    const W = sh.w, H1 = 2.3, HU = 1.5, H = H1 + HU * (sh.floors - 1);
+    b.sub(x, 0, sh.z, 1, ry, d => {
+      d.box(0, 0, -1.6, W, H, 3.2, sh.wall);
+      d.box(0, H, -1.6, W + .14, .12, 3.34, shade(sh.wall, -.12));
+      d.box(0, H1 - .08, .04, W, .16, .1, shade(sh.wall, -.18));
+      d.box(-W / 2 + .06, 0, .03, .12, H1, .1, shade(sh.wall, -.1)); d.box(W / 2 - .06, 0, .03, .12, H1, .1, shade(sh.wall, -.1));
+      d.box(W * .32, 0, .02, .7, 1.95, .04, '#3b2a20');
+      for (let f = 1; f < sh.floors; f++) {
+        const y = H1 + HU * (f - 1);
+        d.box(0, y + .1, .35, W - .2, .06, .7, shade(sh.wall, -.15));
+        for (let k = 0; k < 9; k++) d.box(-W / 2 + .2 + k * (W - .4) / 8, y + .16, .68, .025, .42, .025, '#3b3b44');
+        d.box(0, y + .58, .68, W - .3, .03, .03, '#3b3b44');
+        d.box(W / 2 - .45, y + .9, .14, .5, .32, .28, '#e6e6e2');
+        if (rnd() < .7) for (let p = 0; p < 3; p++) { d.cyl(-W / 2 + .4 + p * .3, y + .16, .5, .08, .14, P.coral); d.ico(-W / 2 + .4 + p * .3, y + .38, .5, .12, P.leaf2); }
+      }
+    });
+    // 一樓的大窗：裡面亮著，看得到店裡
+    add(new THREE.PlaneGeometry(W * .52, 1.5), glowM('#ffffff', { map: interiorTex(sh.glow, sh.kind) }), -W * .14, 1.05, .05, G).castShadow = false;
+    add(new THREE.PlaneGeometry(.55, 1.2), glowM(sh.glow, { transparent: true, opacity: .55 }), W * .32, 1.0, .05, G).castShadow = false;
+    if (sh.name) add(new THREE.PlaneGeometry(Math.min(W * .8, 2.6), .44), glowM('#ffffff', { map: signTex(sh.name, sh.signBg, sh.signFg) }), 0, H1 + .3, .07, G).castShadow = false;
+    // 雨棚（條紋）
+    if (sh.awning) { const aw = add(new THREE.BoxGeometry(W * .9, .05, .9), std('#ffffff', { map: tex(256, 64, (g, w, h) => { for (let i = 0; i < 8; i++) { g.fillStyle = sh.awning[i % 2]; g.fillRect(i * w / 8, 0, w / 8 + 1, h); } }) }), 0, 2.05, .4, G); aw.rotation.x = .35; }
+    // 樓上的窗戶：有的亮、有的暗
+    for (let f = 1; f < sh.floors; f++) for (let k = 0; k < 2; k++) {
+      const wx = -W / 4 + k * W / 2.2 - .2, wy = H1 + HU * (f - 1) + .78;
+      add(new THREE.PlaneGeometry(.62, .78), rnd() < .65 ? winOn : winOff, wx, wy, .015, G).castShadow = false;
+      b.sub(x, 0, sh.z, 1, ry, d => { d.box(wx, wy - .42, .04, .72, .05, .08, '#e6e0d6'); d.box(wx, wy + .4, .04, .72, .05, .08, '#e6e0d6'); });
+    }
+    // 直式招牌：從牆上伸出來，正面朝著街道兩頭
+    const vsTex = signTex(sh.vsign, sh.signBg, sh.signFg, true);
+    const vs = new THREE.Group(); vs.position.set(-W / 2 + .35, H1 + .2, .55); vs.rotation.y = Math.PI / 2; G.add(vs);
+    add(new THREE.PlaneGeometry(.42, Math.min(1.6, .32 + sh.vsign.length * .3)), glowM('#ffffff', { map: vsTex, side: THREE.DoubleSide }), 0, Math.min(1.6, .32 + sh.vsign.length * .3) / 2, 0, vs).castShadow = false;
+    // 店裡的光照到人行道上
+    const pl = new THREE.PointLight(new THREE.Color(sh.glow), 2.2, 4.5, 1.6); pl.position.set(0, 1.2, .9); G.add(pl); lights.push(pl);
+    const wp = new THREE.Vector3(); pl.getWorldPosition(wp);
+    if (Math.abs(sh.z) < 12) refl(sh.side * (RW - .5), sh.z, new THREE.Color(sh.glow), 1.4);
+  }
+
+  // ---- 路燈（左右交錯）、串燈 ----
+  const lampBulbs = [];
+  for (const [s, z] of [[-1, 4], [1, 0], [-1, -4], [1, -8], [-1, -12]]) {
+    const x = s * (RW + .35);
+    b.cyl(x, .14, z, .05, 3.2, '#2e3038'); b.box(x - s * .3, 3.25, z, .7, .05, .06, '#2e3038');
+    b.cyl(x - s * .62, 3.08, z, .12, .14, '#2e3038');
+    lampBulbs.push(add(new THREE.SphereGeometry(.1, 12, 10), glowM('#fff1c9'), x - s * .62, 3.04, z));
+    const lp = new THREE.PointLight(0xffd59a, 3.2, 6.5, 1.5); lp.position.set(x - s * .62, 2.9, z); S.add(lp);
+    refl(x - s * .62 - s * .3, z, new THREE.Color('#ffd59a'), 2.2);
+  }
+  const bulbs = [];
+  for (const [z1, z2] of [[2.6, 2.2], [-1, -1.4], [-4.6, -5]]) {
+    for (let i = 0; i <= 14; i++) { const t = i / 14, x = -BX + t * BX * 2, z = z1 + (z2 - z1) * t, y = 3.9 - Math.sin(t * Math.PI) * .55; bulbs.push(add(new THREE.SphereGeometry(.045, 8, 6), glowM(['#ffd98a', '#ffb3c6', '#bfe6ff'][i % 3]), x, y, z)); }
+  }
+
+  // ---- 街頭小物：咖啡座、紅綠郵筒、機車、腳踏車、行道樹、長椅、紅綠燈 ----
+  const CX = -(RW + .85), CZ = 1.3;
+  b.cyl(CX, .14, CZ, .3, .04, '#2e3038'); b.cyl(CX, .18, CZ, .03, .52, '#2e3038'); b.cyl(CX, .7, CZ, .36, .04, '#f3ead7');
+  b.cyl(CX + .18, .74, CZ + .05, .06, .09, P.cream); b.cyl(CX + .18, .74, CZ + .05, .085, .01, P.cream);
+  const steamN = 8, steamG = new THREE.BufferGeometry(), steamP = new Float32Array(steamN * 3); steamG.setAttribute('position', new THREE.BufferAttribute(steamP, 3));
+  const steam = new THREE.Points(steamG, new THREE.PointsMaterial({ color: '#ffffff', size: .05, transparent: true, opacity: .35, depthWrite: false })); S.add(steam);
+  for (const dz of [-.55, .55]) { b.cyl(CX + .05, .14, CZ + dz, .2, .04, '#2e3038'); b.cyl(CX + .05, .18, CZ + dz, .025, .32, '#2e3038'); b.cyl(CX + .05, .5, CZ + dz, .22, .05, '#3e6b5a'); }
+  // A字立牌菜單
+  b.box(CX + .1, .14, CZ + 1.25, .42, .62, .05, '#2e2a26', 0, -.15); add(new THREE.PlaneGeometry(.36, .5), glowM('#ffffff', { map: tex(128, 176, (g, w, h) => { g.fillStyle = '#2e2a26'; g.fillRect(0, 0, w, h); g.fillStyle = '#fbf3e6'; g.font = '900 26px "Noto Serif TC", serif'; g.textAlign = 'center'; g.fillText('今日', w / 2, 34); g.font = '700 18px "Noto Serif TC", serif'; ['拿鐵 80', '手沖 120', '鬆餅 95'].forEach((t, i) => g.fillText(t, w / 2, 76 + i * 30)); }) }), CX + .1 + .45, .45, CZ + 1.25).rotation.y = Math.PI / 2 - .15;
+  // 台灣的紅綠郵筒
+  for (const [dz, c] of [[0, '#2f8a4a'], [.42, '#d23a2e']]) { b.box(-(RW + .4), .14, -7.8 + dz, .36, .9, .36, c); b.dome(-(RW + .4), 1.04, -7.8 + dz, .2, c); b.box(-(RW + .21), .82, -7.8 + dz, .02, .05, .2, '#1e1e1e'); }
+  // 機車
+  b.sub(RW + .5, .14, -.6, 1, .35, d => {
+    for (const z of [-.45, .45]) { d.tor(0, .2, z, .17, '#1e1e24', 0, Math.PI / 2); d.cyl(0, .2, z, .07, .1, '#9aa0a8', Math.PI / 2); }
+    d.rb(0, .3, 0, .34, .2, .9, '#7fb8d6'); d.rb(0, .48, -.15, .3, .14, .5, '#3b2a20'); d.box(0, .3, .42, .32, .55, .12, '#7fb8d6', 0, -.25);
+    d.cyl(0, .82, .38, .02, .02, '#333'); d.box(0, .86, .4, .5, .03, .03, '#333'); d.sph(0, .7, .52, .06, '#fff7d6');
+  });
+  // 腳踏車
+  b.sub(-(RW + .45), .14, -3.4, 1, .1, d => { for (const z of [-.42, .42]) d.tor(0, .3, z, .26, '#2e3038', 0, Math.PI / 2); d.box(0, .3, 0, .03, .03, .9, '#c8674a'); d.box(0, .6, -.1, .03, .32, .03, '#c8674a', 0, .4); d.box(0, .92, .3, .36, .03, .03, '#2e3038'); d.rb(0, .62, -.25, .1, .05, .2, '#3b2a20'); d.box(0, .62, .5, .26, .18, .22, '#d9b48a'); });
+  // 行道樹（種在方形花台裡）、長椅、貓
+  for (const [s, z] of [[1, 3.2], [-1, -.4], [1, -4.6], [-1, -8.9], [1, -12.6]]) {
+    const x = s * (RW + SW - .55);
+    b.box(x, .14, z, .7, .28, .7, '#6b6560'); b.box(x, .42, z, .62, .02, .62, '#4a3a2a');
+    b.cyl(x, .42, z, .07, 1.3, '#5a4030');
+    for (const [dx, dy, dz, r] of [[0, 1.95, 0, .62], [.35, 1.7, .15, .42], [-.3, 1.75, -.15, .45], [.05, 2.35, -.05, .42]]) b.ico(x + dx, dy, z + dz, r, (dx + dz) > 0 ? P.leaf : P.leaf2);
+  }
+  b.sub(RW + SW - .4, .14, -8.4, 1, -Math.PI / 2, d => { for (let k = 0; k < 3; k++) d.box(0, .42, -.14 + k * .14, 1.3, .05, .12, '#9a6a44'); for (let k = 0; k < 2; k++) d.box(0, .62 + k * .15, -.24, 1.3, .09, .04, '#9a6a44'); for (const s of [-1, 1]) d.box(s * .55, 0, -.05, .05, .44, .4, '#2e3038'); });
+  const cat = new THREE.Group(); cat.position.set(RW + SW - .35, .62, -8.0); cat.rotation.y = -Math.PI / 2 - .4; S.add(cat);
+  const catM = std('#2b2422'); const cb2 = add(new THREE.SphereGeometry(.15, 14, 10), catM, 0, .05, 0, cat); cb2.scale.set(1.3, .65, 1); const ch2 = add(new THREE.SphereGeometry(.09, 12, 10), catM, .17, .1, .05, cat);
+  for (const s of [-1, 1]) add(new THREE.ConeGeometry(.03, .06, 8), catM, .18 + s * .035, .18, .05, cat);
+  for (const s of [-1, 1]) add(new THREE.SphereGeometry(.014, 6, 5), glowM('#c8f07a'), .25, .11, .05 + s * .035, cat);
+  // 紅綠燈（斑馬線旁）
+  for (const s of [-1, 1]) { b.cyl(s * (RW + .25), .14, 4.6, .045, 2.4, '#2e3038'); b.box(s * (RW + .25), 2.3, 4.6, .22, .55, .18, '#2e3038'); }
+  const tl = [];
+  for (const s of [-1, 1]) tl.push(add(new THREE.SphereGeometry(.06, 10, 8), glowM('#5cff9a'), s * (RW + .25), 2.42, 4.5));
+
+  // ---- 人：咖啡店的女生（坐在路邊）、兩位路人 ----
+  const girl = chibi({ top: '#e8c7a6', trim: '#d9b48a', collar: '#fbf3e6', hair: '#3b2a20', style: 'long', hold: 'mug', pants: '#55688f' });
+  girl.position.set(CX + .05, .52, CZ + .55); girl.rotation.y = Math.atan2(0 - CX, 9.8 - CZ) * .85; girl.scale.setScalar(1.12); S.add(girl);
+  const walkers2 = [
+    chibi({ stand: true, top: '#7d9bb5', collar: '#e9eef6', hair: '#2b2422', style: 'short', hold: 'book', accent: '#c8674a', pants: '#3f4f72' }),
+    chibi({ stand: true, top: '#f6b6c4', trim: '#e88fa4', hair: '#5a3a2a', style: 'bun', accent: '#ddb04e', hold: 'flowers', pants: '#8a6a7a' })
+  ];
+  walkers2[0].position.set(RW + .9, .14, -3.6); walkers2[0].rotation.y = -.5; walkers2[0].scale.setScalar(1.45);
+  walkers2[1].position.set(-(RW + .9), .14, -3.6); walkers2[1].rotation.y = .6; walkers2[1].scale.setScalar(1.4);
+  walkers2.forEach(w => S.add(w));
+
+  const room = K.done([{ name: '咖啡店的女生', head: new THREE.Vector3(CX + .05, 1.62, CZ + .55), lines: [
+    '剛下過雨，空氣好清新。',
+    '我最喜歡坐在路邊喝杯咖啡，看看來來往往的人，還有地上水窪裡的燈。',
+    '這裡的故事還在寫，之後再來找我聊聊吧！'
+  ] }], new THREE.Vector3(0, 2.15, 9.8), new THREE.Vector3(0, 1.65, -6));
+  room.push = 1.2;
+  room.portraitLook = -.3;
+  let lastT = 0;
+  room.update = t => {
+    const dt = Math.min(.1, Math.max(0, t - lastT)); lastT = t;
+    chibiTick(girl, t, dt); walkers2.forEach(w => chibiTick(w, t, dt));
+    bulbs.forEach((m, i) => m.scale.setScalar(.85 + Math.sin(t * 2 + i * 1.7) * .2));
+    reflections.forEach((m, i) => m.material.opacity = .48 + Math.sin(t * 1.3 + i) * .1);
+    lights.forEach((l, i) => l.intensity = 2.1 + Math.sin(t * (i % 3 ? 1.1 : 7) + i) * (i % 3 ? .1 : .25));
+    for (let i = 0; i < steamN; i++) { const k = (t * .3 + i / steamN) % 1; steamP[i * 3] = CX + .18 + Math.sin(t * 2 + i) * .02 * k; steamP[i * 3 + 1] = .86 + k * .4; steamP[i * 3 + 2] = CZ + .05 + Math.cos(t * 1.5 + i) * .02 * k; }
+    steamG.attributes.position.needsUpdate = true; steam.material.opacity = .3;
+    const cycle = t % 10; tl.forEach(m => m.material.color.set(cycle < 6 ? '#5cff9a' : cycle < 7 ? '#ffd24a' : '#ff5a4a'));
+    ch2.rotation.y = Math.sin(t * .5) * .3;
+  };
+  return room;
+}
+
+/* ---------- 辦公室（3D）：明亮的早晨 ----------
+   設計：整面落地窗外是晴朗的城市，晨光斜斜灑在地毯上；木條裝飾牆、白板上的便利貼和圖表；
+   右後方是玻璃隔間的老闆辦公室；主管站在白板前（點他的「！」進故事），兩位同事在座位上 */
+function buildMorningOffice() {
+  const P = { wall: '#f4f2ee', carpet: '#9aa3ab', wood: '#c9a074', walnut: '#7a5238', desk: '#e9e2d6', dark: '#3a3f4a', leaf: '#5f8a55', leaf2: '#7aa465', coral: '#db6a41', teal: '#3e7c8c', mustard: '#ddb04e', blue: '#7d9bb5' };
+  const K = roomKit({ floor: '#9aa3ab', wall: P.wall, ceil: '#f7f7f5', w: 9, d: 9, h: 3.3, seed: 52,
+    sky: 0xeaf2ff, ground: 0x8a8070, hemi: 1.6, keyColor: 0xfff1d6, keyI: 2.2, keyPos: new THREE.Vector3(-3, 6, -12), fill: false });
+  const b = K.b, S = K.S;
+  S.traverse(o => { if (o.isDirectionalLight) { Object.assign(o.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, far: 40 }); o.target.position.set(0, 0, 2); } });
+  const fill = new THREE.DirectionalLight(0xffffff, .55); fill.position.set(3, 5, 8); S.add(fill);
+  const tex = (w, h, draw, rep = false) => canvasTex(w, h, draw, rep);
+  const glowM = (c, o = {}) => new THREE.MeshBasicMaterial({ color: c, toneMapped: false, ...o });
+  const add = (geo, mat, x, y, z, parent = S) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; parent.add(m); return m; };
+
+  // ---- 地毯（方塊地毯）、天花板的長條燈 ----
+  const carpet = tex(256, 256, (g, w, h) => { const r = mulberry32(3); for (let y = 0; y < h; y += 64) for (let x = 0; x < w; x += 64) { g.fillStyle = ['#9aa3ab', '#929ba3', '#a2abb2', '#8f989f'][Math.floor(r() * 4)]; g.fillRect(x, y, 64, 64); g.strokeStyle = 'rgba(0,0,0,.06)'; for (let k = 0; k < 8; k++) { g.beginPath(); const yy = y + 4 + k * 8; g.moveTo(x, yy); g.lineTo(x + 64, yy); g.stroke(); } } }, true);
+  carpet.repeat.set(5, 5);
+  add(new THREE.PlaneGeometry(9, 9).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ map: carpet, roughness: 1 }), 0, .003, 0).castShadow = false;
+  for (const x of [-2.6, 0, 2.6]) for (const z of [-2.6, 0, 2.6]) { b.box(x, 3.2, z, 1.8, .06, .2, '#dadada'); add(new THREE.BoxGeometry(1.7, .02, .14), glowM('#ffffff'), x, 3.19, z).castShadow = false; }
+
+  // ---- 落地窗：晴朗的城市早晨 ----
+  const cityTex = tex(1024, 512, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#6fb3e3'); gr.addColorStop(.6, '#bfe0f5'); gr.addColorStop(1, '#eaf5fb');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    g.fillStyle = 'rgba(255,255,255,.9)'; for (const [cx, cy, s] of [[160, 90, 1], [520, 60, .8], [860, 110, 1.1]]) for (const [dx, dy, r] of [[0, 0, 30], [34, -8, 24], [64, 2, 22], [-28, 6, 20]]) { g.beginPath(); g.ellipse(cx + dx * s, cy + dy * s, r * s * 1.5, r * s * .7, 0, 0, 7); g.fill(); }
+    const r = mulberry32(8);
+    for (const [col, hmin, hmax, wmin] of [['#a9c3d6', .25, .55, 50], ['#7f9db5', .35, .75, 60]]) { let x = -20; while (x < w) { const bw = wmin + r() * 70, bh = h * (hmin + r() * (hmax - hmin)); g.fillStyle = col; g.fillRect(x, h - bh, bw, bh); g.fillStyle = 'rgba(255,255,255,.35)'; for (let wy = h - bh + 8; wy < h; wy += 14) g.fillRect(x + 4, wy, bw - 8, 3); x += bw + 6; } }
+  });
+  add(new THREE.PlaneGeometry(8.6, 2.75), glowM('#ffffff', { map: cityTex }), 0, 1.55, -4.43).castShadow = false;
+  for (let i = 0; i <= 6; i++) b.box(-4.3 + i * 8.6 / 6, .15, -4.38, .07, 2.95, .08, P.dark);
+  b.box(0, .12, -4.36, 8.7, .06, .14, P.dark); b.box(0, 2.95, -4.36, 8.7, .08, .14, P.dark);
+  // 晨光：窗戶的光斑落在地毯上
+  const sunTex = tex(128, 128, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, 'rgba(255,244,214,.85)'); gr.addColorStop(1, 'rgba(255,244,214,0)'); g.fillStyle = gr; g.fillRect(8, 0, w - 16, h); });
+  for (let i = 0; i < 6; i++) add(new THREE.PlaneGeometry(1.25, 3.2).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: sunTex, transparent: true, opacity: .35, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }), -3.6 + i * 1.43 + .5, .01, -2.6).castShadow = false;
+
+  // ---- 左牆：木條裝飾牆＋公司名、時鐘、海報 ----
+  for (let i = 0; i < 26; i++) b.box(-4.43, 0, -3.9 + i * .3, .06, 3.2, .16, i % 2 ? P.wood : '#bf9468');
+  const logo = add(new THREE.PlaneGeometry(2.2, .5), new THREE.MeshStandardMaterial({ map: tex(512, 116, (g, w, h) => { g.clearRect(0, 0, w, h); g.fillStyle = '#2f3a4a'; g.font = '900 64px "Noto Serif TC", serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('島嶼醫學會', w / 2, h / 2); }), transparent: true }), -4.38, 2.3, -.2); logo.rotation.y = Math.PI / 2; logo.castShadow = false;
+  b.cyl(-4.38, 1.7, 1.9, .25, .04, '#ffffff', 0, Math.PI / 2); b.tor(-4.36, 1.7, 1.9, .25, P.dark, 0, Math.PI / 2);
+  b.box(-4.33, 1.7, 1.9, .01, .17, .02, P.dark); b.box(-4.33, 1.7, 1.95, .01, .02, .12, P.dark);
+
+  // ---- 白板（便利貼、圖表）、主管站在前面 ----
+  const wbTex = tex(512, 320, (g, w, h) => {
+    g.fillStyle = '#ffffff'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#2f3a4a'; g.font = '800 30px "Noto Serif TC", serif'; g.fillText('醫學教學網站 上線計畫', 24, 44);
+    g.strokeStyle = '#3e7c8c'; g.lineWidth = 4; g.beginPath(); g.moveTo(30, 260); [[90, 230], [150, 240], [210, 190], [270, 170], [330, 120]].forEach(([x, y]) => g.lineTo(x, y)); g.stroke();
+    g.strokeStyle = '#9aa3ab'; g.lineWidth = 2; g.beginPath(); g.moveTo(30, 100); g.lineTo(30, 280); g.lineTo(350, 280); g.stroke();
+    [['#fbe39a', 380, 70, '需求確認'], ['#f6b6c4', 440, 120, '影片 ✕'], ['#a9dcc6', 380, 175, '按鈕修正'], ['#bfe0f5', 440, 230, '上線 ?']].forEach(([c, x, y, t]) => { g.fillStyle = c; g.fillRect(x - 46, y - 32, 92, 64); g.fillStyle = '#3b2a20'; g.font = '700 18px "Noto Serif TC", serif'; g.textAlign = 'center'; g.fillText(t, x, y + 6); g.textAlign = 'left'; });
+    g.fillStyle = '#c8674a'; g.font = '800 22px "Noto Serif TC", serif'; g.fillText('截止：下個月！', 30, 310);
+  });
+  const WBX = -2.4, WBZ = -2.6;
+  b.box(WBX, .8, WBZ, 2.1, 1.35, .05, '#d9dde2'); add(new THREE.PlaneGeometry(2.0, 1.25), new THREE.MeshStandardMaterial({ map: wbTex, roughness: .35 }), WBX, 1.475, WBZ + .03).castShadow = false;
+  for (const s of [-1, 1]) { b.box(WBX + s * .9, 0, WBZ, .04, .8, .04, '#9aa3ab'); b.box(WBX + s * .9, 0, WBZ, .06, .03, .5, '#9aa3ab'); }
+  b.box(WBX, .78, WBZ + .06, 1.6, .03, .08, '#9aa3ab'); for (const [dx, c] of [[-.2, P.coral], [0, P.teal], [.2, P.dark]]) b.cyl(WBX + dx, .81, WBZ + .07, .015, .02, c, 0, Math.PI / 2);
+
+  // ---- 右後方：玻璃隔間的老闆辦公室 ----
+  const BX = 2.9, BZ = -3.1;
+  const glassM = new THREE.MeshStandardMaterial({ color: '#cfe6f2', transparent: true, opacity: .22, roughness: .05, metalness: .2, depthWrite: false });
+  add(new THREE.BoxGeometry(.05, 2.7, 2.6), glassM, BX - 1.55, 1.35, BZ + .1).castShadow = false;
+  add(new THREE.BoxGeometry(3.1, 2.7, .05), glassM, BX, 1.35, BZ + 1.4).castShadow = false;
+  b.box(BX - 1.55, 0, BZ + .1, .07, 2.75, .07, P.dark); b.box(BX - 1.55, 2.7, BZ + .1, .07, .07, 2.6, P.dark); b.box(BX, 2.7, BZ + 1.4, 3.1, .07, .07, P.dark); b.box(BX - 1.55, 0, BZ + 1.4, .07, 2.75, .07, P.dark);
+  add(new THREE.PlaneGeometry(.8, .22), new THREE.MeshStandardMaterial({ map: tex(256, 70, (g, w, h) => { g.fillStyle = '#2f3a4a'; g.fillRect(0, 0, w, h); g.fillStyle = '#e8bf5a'; g.font = '800 40px "Noto Serif TC", serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('董事長室', w / 2, h / 2 + 2); }) }), BX - .9, 2.2, BZ + 1.43).castShadow = false;
+  b.rb(BX + .3, .72, BZ - .2, 1.8, .08, .8, P.walnut); for (const s of [-1, 1]) b.box(BX + .3 + s * .82, 0, BZ - .2, .1, .72, .7, P.walnut);
+  b.box(BX + .1, .8, BZ - .3, .55, .35, .04, P.dark); b.box(BX + .6, .8, BZ - .1, .28, .02, .2, '#e9e2d6');
+  b.cyl(BX + .3, 0, BZ - .9, .3, .08, P.dark); b.cyl(BX + .3, .08, BZ - .9, .05, .35, P.dark); b.rb(BX + .3, .43, BZ - .9, .6, .14, .58, '#2a2a30'); b.rb(BX + .3, .55, BZ - 1.15, .6, .8, .12, '#2a2a30');
+  b.cyl(BX + 1.25, 0, BZ + .9, .25, .45, '#e9e2d6'); for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; b.ico(BX + 1.25 + Math.cos(a) * .22, .8 + (i % 3) * .25, BZ + .9 + Math.sin(a) * .22, .24, i % 2 ? P.leaf : P.leaf2); }
+
+  // ---- 中間：一排辦公桌（同事、你的位子）----
+  const desk = (x, z, ry, mine) => b.sub(x, 0, z, 1, ry, d => {
+    d.box(0, .74, 0, 1.5, .05, .75, P.desk); for (const s of [-1, 1]) d.box(s * .72, 0, 0, .05, .74, .7, '#c9c2b6');
+    d.box(0, .79, -.25, .62, .38, .03, P.dark); d.box(0, .79, -.22, .1, .04, .14, P.dark);
+    d.box(0, .8, .1, .45, .015, .15, '#d9d9d9'); d.box(.4, .79, .15, .08, .01, .12, '#d9d9d9');
+    d.box(0, .74, -.42, 1.5, .4, .03, '#b8c4c9');
+    d.cyl(0, 0, .6, .26, .06, P.dark); d.cyl(0, .06, .6, .04, .36, P.dark); d.rb(0, .42, .6, .5, .1, .48, mine ? P.coral : P.teal); d.rb(0, .5, mine ? .84 : .4, .5, .62, .1, mine ? P.coral : P.teal);
+    if (mine) { d.cyl(-.5, .77, .05, .05, .1, '#ffffff'); for (const [px, py, c] of [[-.18, .9, P.mustard], [.12, .95, '#f6b6c4'], [.24, .86, '#a9dcc6']]) d.box(px, py, -.235, .09, .09, .005, c); d.cyl(.55, .77, -.1, .07, .1, P.coral); d.ico(.55, .93, -.1, .09, P.leaf2); }
+    else { d.box(-.45, .77, .1, .2, .03, .28, '#f3ead7', .2); d.cyl(.5, .77, .0, .045, .1, '#ffffff'); }
+  });
+  desk(-.3, -.5, 0, false); desk(1.4, -.5, 0, false); desk(2.75, 2.0, -Math.PI / 2, true);
+  const screens = [];
+  for (const [x, z, ry] of [[-.3, -.5, 0], [1.4, -.5, 0], [2.75, 2.0, -Math.PI / 2]]) { const sc = add(new THREE.PlaneGeometry(.56, .32), glowM('#ffffff', { map: tex(128, 72, (g, w, h) => { g.fillStyle = '#eaf2fb'; g.fillRect(0, 0, w, h); g.fillStyle = '#3e7c8c'; g.fillRect(6, 6, w - 12, 10); g.fillStyle = '#b8c8d8'; for (let y = 22; y < h - 6; y += 9) g.fillRect(8, y, 40 + ((y * 7) % 60), 4); }) }), x + (ry ? .23 : 0), .98, z + (ry ? 0 : -.23)); sc.rotation.y = ry ? Math.PI / 2 : 0; sc.castShadow = false; screens.push(sc); }
+  // ---- 會議桌＋吊燈、飲水機、影印機、盆栽 ----
+  b.rb(-2.4, .72, 1.6, 1.9, .07, 1.0, P.wood); b.cyl(-2.4, 0, 1.6, .12, .72, P.dark);
+  for (const [dx, dz] of [[-.6, -.75], [0, -.75], [.6, -.75], [-.6, .75], [0, .75], [.6, .75]]) { b.cyl(-2.4 + dx, 0, 1.6 + dz, .2, .04, P.dark); b.cyl(-2.4 + dx, .04, 1.6 + dz, .03, .38, P.dark); b.rb(-2.4 + dx, .42, 1.6 + dz, .4, .08, .4, '#e9e2d6'); }
+  for (const dx of [-.5, .5]) { b.cyl(-2.4 + dx, 2.6, 1.6, .008, .6, P.dark); b.cone(-2.4 + dx, 2.4, 1.6, .2, .22, P.dark); add(new THREE.SphereGeometry(.06, 10, 8), glowM('#fff1c9'), -2.4 + dx, 2.4, 1.6).castShadow = false; }
+  b.box(4.15, 0, .9, .35, 1.1, .35, '#e9e2d6'); b.cyl(4.15, 1.1, .9, .12, .4, '#bfe0f5'); b.box(3.98, .7, .9, .02, .06, .06, '#3e7c8c');
+  b.box(4.05, 0, 2.3, .6, .9, .55, '#d9d9d9'); b.box(4.05, .9, 2.3, .62, .08, .57, '#b8b8b8'); b.box(3.78, .55, 2.3, .02, .1, .3, P.dark);
+  for (const [x, z] of [[-3.8, -3.8], [1.2, -3.9], [3.9, 3.6], [-3.9, 3.7]]) { b.cyl(x, 0, z, .25, .5, '#e9e2d6'); for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2; b.ico(x + Math.cos(a) * .2, .9 + (i % 3) * .25, z + Math.sin(a) * .2, .25, i % 2 ? P.leaf : P.leaf2); } }
+  // 牆上的標語海報（右牆）
+  const poster = add(new THREE.PlaneGeometry(1.2, .8), new THREE.MeshStandardMaterial({ map: tex(300, 200, (g, w, h) => { g.fillStyle = '#fbe39a'; g.fillRect(0, 0, w, h); g.fillStyle = '#2f3a4a'; g.font = '900 46px "Noto Serif TC", serif'; g.textAlign = 'center'; g.fillText('對得起', w / 2, 84); g.fillText('自己的良心', w / 2, 146); }) }), 4.43, 1.8, -.6); poster.rotation.y = -Math.PI / 2; poster.castShadow = false;
+
+  // ---- 人：老闆（玻璃辦公室裡）、主管（白板前）、兩位同事（座位上）----
+  const boss = chibi({ stand: true, top: '#2f3448', trim: '#2a2f40', collar: '#ffffff', hair: '#5a5560', style: 'elder', glasses: true, hold: 'mug', pants: '#2a2f40', skin: '#efc6a6' });
+  boss.position.set(BX - .2, 0, BZ + .5); boss.rotation.y = Math.atan2(0 - (BX - .2), 5 - (BZ + .5)); boss.scale.setScalar(1.6); S.add(boss);
+  const mgr = chibi({ stand: true, top: '#4a4f5c', trim: '#3a3f4a', collar: '#e9eef6', hair: '#2b2422', style: 'short', glasses: true, hold: 'book', accent: '#c8674a', pants: '#3a3f4a' });
+  mgr.position.set(WBX + 1.25, 0, WBZ + .7); mgr.rotation.y = Math.atan2(0 - (WBX + 1.25), 5 - (WBZ + .7)); mgr.scale.setScalar(1.6); S.add(mgr);
+  const lin = chibi({ top: '#f3d6e0', trim: '#e8b7c6', collar: '#ffffff', hair: '#4a3228', style: 'long', hold: 'mug', pants: '#55688f' });
+  lin.position.set(-.3, .5, .1); lin.rotation.y = .25; lin.scale.setScalar(1.1); S.add(lin);
+  const jie = chibi({ top: '#8fae8b', collar: '#e9eef6', hair: '#2b2422', style: 'short', hold: 'phone', pants: '#4a4f5c' });
+  jie.position.set(1.4, .5, .1); jie.rotation.y = -.3; jie.scale.setScalar(1.1); S.add(jie);
+  const people = [boss, mgr, lin, jie];
+
+  const room = K.done([{ name: '主管', story: 'med-website', head: new THREE.Vector3(WBX + 1.25, 2.05, WBZ + .7) }], new THREE.Vector3(0, 2.35, 6.2), new THREE.Vector3(0, 1.25, -2.6));
+  room.props = [
+    { name: '老闆', tag: true, head: new THREE.Vector3(BX - .2, 2.05, BZ + .5), act: () => roomTalk('老闆', ['早啊！今天也辛苦了。', '做事情，最重要的是對得起自己的良心。']) },
+    { name: '同事', tag: true, head: new THREE.Vector3(-.3, 1.62, .1), act: () => roomTalk('同事・小林', ['早安～我剛泡了咖啡，要不要來一杯？', '主管今天好像心情不太好，講話小心一點喔。']) },
+    { name: '同事', tag: true, head: new THREE.Vector3(1.4, 1.62, .1), act: () => roomTalk('同事・阿傑', ['欸，你那個網站的進度還好嗎？', '中午要不要一起去吃便當？']) }
+  ];
+  room.tipMore = ['，也可以點老闆和同事的名牌聊聊', ', or tap the boss and coworkers'];
+  room.push = 1.4;
+  let lastT = 0;
+  room.update = t => {
+    const dt = Math.min(.1, Math.max(0, t - lastT)); lastT = t;
+    people.forEach(p => chibiTick(p, t, dt));
+    screens.forEach((s, i) => s.material.color.setScalar(.95 + Math.sin(t * 3 + i * 2) * .05));
+  };
+  return room;
+}
+
+/* ---------- 學校（3D）：下課前的午後教室 ----------
+   設計：台灣高中教室，綠色黑板寫著期中考；左邊一排窗，午後的陽光斜斜照進來，
+   窗簾被風吹動，窗外是開花的樹，花瓣飄進教室；天花板的吊扇在轉；
+   同學穿白襯衫配深藍色；阿哲的「！」開始故事；黑板、時鐘、書櫃、桌上的筆記、窗戶都可以點來看 */
+function buildAfternoonClass() {
+  const P = { wall: '#f3efe4', wain: '#cfe0d6', floor: '#c9b08a', wood: '#b48560', desk: '#e6c99b', navy: '#2f3f63', shirt: '#f7f7f2', green: '#2f5a45', leaf: '#6f9a5c', blossom: '#f6b6c4', blossom2: '#f9d2dc', mustard: '#ddb04e', coral: '#db6a41', teal: '#3e7c8c' };
+  const K = roomKit({ floor: P.floor, wall: P.wall, ceil: '#f8f6f0', w: 9, d: 9, h: 3.3, seed: 63,
+    sky: 0xfff6ea, ground: 0xb8a888, hemi: 2.1, keyColor: 0xffe2b0, keyI: 3.0, keyPos: new THREE.Vector3(-12, 7, 1), fill: false });
+  const b = K.b, S = K.S;
+  S.traverse(o => { if (o.isDirectionalLight) { Object.assign(o.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, far: 40 }); o.target.position.set(1, 0, 0); } });
+  const tex = (w, h, draw, rep = false) => canvasTex(w, h, draw, rep);
+  const glowM = (c, o = {}) => new THREE.MeshBasicMaterial({ color: c, toneMapped: false, ...o });
+  const add = (geo, mat, x, y, z, parent = S) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; parent.add(m); return m; };
+
+  // ---- 地板（磨石子）、牆的下半部漆成淺綠 ----
+  const floorTex = tex(256, 256, (g, w, h) => { g.fillStyle = '#d6c7ad'; g.fillRect(0, 0, w, h); const r = mulberry32(4); for (let i = 0; i < 900; i++) { g.fillStyle = ['#b8a688', '#e8dcc6', '#a8987c', '#c9b8a0'][Math.floor(r() * 4)]; g.beginPath(); g.arc(r() * w, r() * h, 1 + r() * 2.2, 0, 7); g.fill(); } g.strokeStyle = 'rgba(120,100,70,.35)'; g.lineWidth = 2; g.strokeRect(0, 0, w, h); }, true);
+  floorTex.repeat.set(5, 5);
+  add(new THREE.PlaneGeometry(9, 9).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ map: floorTex, roughness: .55 }), 0, .003, 0).castShadow = false;
+  b.box(0, 0, -4.43, 8.9, 1.0, .04, P.wain); b.box(4.43, 0, 0, .04, 1.0, 8.9, P.wain); b.box(0, 0, 4.43, 8.9, 1.0, .04, P.wain);
+  b.box(0, 1.0, -4.41, 8.9, .04, .06, '#9fbfae'); b.box(4.41, 1.0, 0, .06, .04, 8.9, '#9fbfae');
+
+  // ---- 左邊一排窗：窗外開花的樹、陽光照進來 ----
+  const viewTex = tex(512, 256, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#8cc8ec'); gr.addColorStop(1, '#e6f4fa'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#9cc87e'; g.fillRect(0, h * .78, w, h * .22);
+    const r = mulberry32(6);
+    for (let i = 0; i < 7; i++) { const x = r() * w, y = h * (.25 + r() * .3); g.fillStyle = '#7a5a44'; g.fillRect(x - 3, y, 6, h - y); for (let k = 0; k < 14; k++) { g.fillStyle = ['#f6b6c4', '#f9d2dc', '#ffffff', '#f2a3b6'][k % 4]; g.beginPath(); g.arc(x + (r() - .5) * 90, y + (r() - .5) * 50, 14 + r() * 14, 0, 7); g.fill(); } }
+  });
+  const sunTex = tex(64, 256, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, 'rgba(255,238,200,.9)'); gr.addColorStop(1, 'rgba(255,238,200,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+  const curtains = [];
+  for (const z of [-2.6, 0, 2.6]) {
+    add(new THREE.PlaneGeometry(1.9, 1.6), glowM('#ffffff', { map: viewTex }), -4.42, 1.95, z).rotation.y = Math.PI / 2;
+    b.box(-4.38, 1.1, z, .06, .06, 2.0, '#e9e6df'); b.box(-4.38, 2.75, z, .06, .06, 2.0, '#e9e6df');
+    for (const dz of [-.97, 0, .97]) b.box(-4.38, 1.1, z + dz, .06, 1.7, .05, '#e9e6df');
+    b.box(-4.3, 1.08, z, .2, .04, 2.0, '#e9e6df');
+    const c = add(new THREE.PlaneGeometry(.5, 1.75, 1, 8), new THREE.MeshStandardMaterial({ color: '#f2efe6', side: THREE.DoubleSide, transparent: true, opacity: .9 }), -4.3, 1.95, z - .78); c.rotation.y = Math.PI / 2; c.castShadow = false; curtains.push({ c, ph: z });
+    // 地上的陽光
+    const sb = add(new THREE.PlaneGeometry(1.7, 3.2).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: sunTex, transparent: true, opacity: .4, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }), -2.6, .01, z + .2); sb.rotation.y = Math.PI / 2; sb.castShadow = false;
+  }
+  // 從窗外飄進來的金色光點（呼應島上愛焚爐噴出的金光）
+  const goldTex = tex(64, 64, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, 'rgba(255,248,215,1)'); gr.addColorStop(.18, 'rgba(255,205,80,1)'); gr.addColorStop(.5, 'rgba(255,170,30,.35)'); gr.addColorStop(1, 'rgba(255,160,20,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+  const petals = [];
+  for (let i = 0; i < 46; i++) { const m = new THREE.Sprite(new THREE.SpriteMaterial({ map: goldTex, color: '#ffbe3c', transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); m.scale.setScalar(.08 + (i % 4) * .025); S.add(m); petals.push({ m, off: i / 46, z: -3.6 + (i * 1.7) % 7.4, sp: .5 + (i % 5) * .12, ph: i * 1.7, base: .08 + (i % 4) * .025 }); }
+
+  // ---- 前面：黑板（期中考）、講桌、時鐘 ----
+  const board = add(new THREE.PlaneGeometry(4.3, 1.5), new THREE.MeshStandardMaterial({ map: blackboardTex(), roughness: .9 }), 0, 1.75, -4.4); board.castShadow = false;
+  b.box(0, .98, -4.38, 4.5, .07, .14, P.wood); b.box(0, 2.5, -4.4, 4.5, .07, .08, P.wood);
+  for (const [x, c] of [[-1.6, '#fff8f4'], [-1.45, '#fcea8b'], [-1.3, '#f2b5c6']]) b.box(x, 1.05, -4.33, .1, .025, .025, c);
+  b.rb(-.4, 0, -3.35, 1.7, .9, .72, P.wood); b.box(-.4, .9, -3.35, 1.8, .05, .82, '#a97a52');
+  b.box(-.85, .95, -3.3, .45, .06, .3, P.coral); b.box(-.85, 1.01, -3.3, .42, .05, .28, P.teal); b.cyl(.15, .95, -3.3, .06, .12, P.mustard);
+  b.cyl(3.45, 2.55, -4.44, .26, .05, '#fffaf0', Math.PI / 2); b.tor(3.45, 2.55, -4.39, .26, P.coral, Math.PI / 2);
+  b.box(3.45, 2.55, -4.37, .025, .17, .01, '#211d1d'); b.box(3.51, 2.54, -4.37, .12, .02, .01, '#211d1d');
+  // 黑板上方的標語、國旗位置的匾額
+  add(new THREE.PlaneGeometry(1.8, .36), new THREE.MeshStandardMaterial({ map: tex(512, 100, (g, w, h) => { g.fillStyle = '#7a3a2a'; g.fillRect(0, 0, w, h); g.fillStyle = '#ffe9b0'; g.font = '900 60px "Noto Serif TC", serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('致 中 和', w / 2, h / 2 + 3); }) }), 0, 2.9, -4.42).castShadow = false;
+  // 黑板左右的直式對聯（右邊上聯、左邊下聯）
+  const couplet = (txt, x) => add(new THREE.PlaneGeometry(.38, 1.42), new THREE.MeshStandardMaterial({ map: tex(128, 480, (g, w, h) => { g.fillStyle = '#7a3a2a'; g.fillRect(0, 0, w, h); g.strokeStyle = '#e8bf5a'; g.lineWidth = 4; g.strokeRect(8, 8, w - 16, h - 16); g.fillStyle = '#ffe9b0'; g.font = '900 78px "Noto Serif TC", serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; [...txt].forEach((ch, i) => g.fillText(ch, w / 2, 70 + i * 112)); }) }), x, 1.76, -4.42).castShadow = false;
+  couplet('天地位焉', 2.68); couplet('萬物育焉', -2.68);
+
+  // ---- 右牆：公佈欄、書櫃、門 ----
+  b.box(4.4, 1.2, -1.6, .04, 1.1, 2.2, '#c99b6b');
+  [[-2.4, 1.9, '#fcea8b'], [-2.0, 1.55, '#f2b5c6'], [-1.5, 1.85, '#ffffff'], [-1.05, 1.45, '#bfe3d8'], [-.85, 1.95, '#ffffff'], [-2.55, 1.4, '#fff8f4']].forEach(([z, y, c]) => b.box(4.37, y, z, .02, .3, .26, c));
+  b.box(4.25, 0, 1.4, .35, 1.35, 1.8, P.wood);
+  for (let k = 0; k < 3; k++) { b.box(4.1, .1 + k * .44, 1.4, .3, .03, 1.7, '#8a5a3c'); for (let j = 0; j < 9; j++) b.box(4.1, .14 + k * .44, .65 + j * .18, .26, .3 - (j % 3) * .04, .14, [P.coral, P.teal, P.mustard, '#7d9bb5', P.blossom][(k + j) % 5]); }
+  b.box(4.42, 0, 3.4, .04, 2.3, 1.05, P.wood); b.sph(4.36, 1.1, 3.0, .04, '#e8bf5a');
+
+  // ---- 吊扇（會轉）、日光燈 ----
+  const fans = [];
+  for (const [x, z] of [[-1.6, -1.2], [1.6, -1.2], [-1.6, 2.0], [1.6, 2.0]]) {
+    b.cyl(x, 2.85, z, .02, .45, '#e9e6df');
+    const f = new THREE.Group(); f.position.set(x, 2.82, z); S.add(f); fans.push(f);
+    add(new THREE.CylinderGeometry(.12, .12, .1, 14), new THREE.MeshStandardMaterial({ color: '#e9e6df' }), 0, 0, 0, f);
+    for (let k = 0; k < 3; k++) { const bl = add(new THREE.BoxGeometry(.85, .015, .14), new THREE.MeshStandardMaterial({ color: '#d9d4c8' }), 0, -.02, 0, f); bl.rotation.y = k * Math.PI * 2 / 3; bl.position.set(Math.cos(k * Math.PI * 2 / 3) * .45, -.02, -Math.sin(k * Math.PI * 2 / 3) * .45); }
+  }
+  for (const x of [-2.8, 0, 2.8]) for (const z of [-2.8, .4, 3.2]) { b.box(x, 3.18, z, 1.3, .05, .16, '#e9e6df'); add(new THREE.BoxGeometry(1.2, .02, .1), glowM('#ffffff'), x, 3.16, z).castShadow = false; }
+  // 日光燈真的會照亮教室
+  for (const [x, z] of [[-2.2, -1.6], [2.2, -1.6], [-2.2, 2.2], [2.2, 2.2]]) { const l = new THREE.PointLight(0xfff6e6, 4.2, 8, 1.3); l.position.set(x, 2.9, z); S.add(l); }
+  // 愛心燈：一圈掛在牆的上緣、一圈圍著黑板，會發光、一閃一閃
+  const heartLights = [], hg = heartGeo(.14, .04), hcols = ['#ff8fa3', '#ffd27a', '#ffb3c6', '#fff1c9'];
+  const hang = (x, y, z, ry) => { const m = new THREE.Mesh(hg, glowM(hcols[heartLights.length % 4])); m.position.set(x, y, z); m.rotation.y = ry; S.add(m); heartLights.push(m); };
+  for (let i = 0; i <= 18; i++) { const x = -4.2 + i * 8.4 / 18; if (Math.abs(x) < 1.2 || Math.abs(Math.abs(x) - 2.68) < .3) continue; hang(x, 3.0 - Math.sin(i / 18 * Math.PI * 3) ** 2 * .18, -4.36, 0); }
+  for (let i = 0; i <= 18; i++) { const z = -4.2 + i * 8.4 / 18; hang(4.36, 3.0 - Math.sin(i / 18 * Math.PI * 3) ** 2 * .18, z, -Math.PI / 2); }
+  for (let i = 0; i <= 18; i++) { const z = -4.2 + i * 8.4 / 18; if (Math.abs(((z + 2.6) % 2.6 + 2.6) % 2.6 - 1.3) < .2) continue; hang(-4.36, 3.0 - Math.sin(i / 18 * Math.PI * 3) ** 2 * .18, z, Math.PI / 2); }
+  for (let i = 0; i < 14; i++) hang(-2.15 + i * 4.3 / 13, 2.585, -4.34, 0);
+  for (const [x, z] of [[-2.6, -4.0], [2.6, -4.0], [0, -4.0], [4.0, 0], [-4.0, 1.3]]) { const l = new THREE.PointLight(0xffb8c8, 1.6, 4.5, 1.6); l.position.set(x, 2.8, z); S.add(l); }
+
+  // ---- 桌椅：三排四列 ----
+  const seats = [], turned = new Set(['1,1', '0,0', '0,2']); // 轉過來看你的同學，椅背也跟著轉
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) {
+    const x = (c - 1) * 2.1 + .3, z = -2.0 + r * 1.35;
+    b.box(x, .72, z, 1.0, .05, .56, P.desk); b.box(x, .52, z, .9, .2, .5, '#d9bb8a');
+    for (const [dx, dz] of [[-.44, -.22], [.44, -.22], [-.44, .22], [.44, .22]]) b.cyl(x + dx, 0, z + dz, .022, .72, '#5a5560');
+    b.box(x, .42, z + .58, .46, .04, .42, P.teal); b.box(x, .46, z + (turned.has(r + ',' + c) ? .36 : .8), .46, .42, .04, P.teal);
+    for (const [dx, dz] of [[-.2, .4], [.2, .4], [-.2, .76], [.2, .76]]) b.cyl(x + dx, 0, z + dz, .016, .42, '#5a5560');
+    b.box(x - .2, .77, z - .05, .3, .05, .22, [P.coral, P.teal, '#7d9bb5', P.mustard][(r + c) % 4]); b.box(x + .25, .77, z + .05, .16, .02, .06, '#211d1d');
+    seats.push({ x, z, r, c });
+  }
+  // 你的位子：最後一排靠走道，桌上攤開筆記本
+  const ME = seats.find(s => s.r === 2 && s.c === 1);
+  b.box(ME.x + .05, .775, ME.z - .02, .5, .01, .34, '#fffdf6', .15); b.box(ME.x + .05, .78, ME.z - .02, .01, .005, .32, '#c8a46a', .15);
+
+  // ---- 同學：阿哲（故事）、小美、阿德，還有兩位安靜讀書的 ----
+  const uniform = (o) => ({ top: P.shirt, collar: '#2f3f63', pants: P.navy, ...o });
+  const at = (r, c) => seats.find(s => s.r === r && s.c === c);
+  const kids = [
+    { id: 'zhe', s: at(1, 1), o: uniform({ hair: '#2b2422', style: 'short', hold: 'phone' }), turn: true },
+    { id: 'mei', s: at(0, 0), o: uniform({ hair: '#4a3228', style: 'long', accent: '#f6b6c4', hold: 'book' }), turn: true },
+    { id: 'de', s: at(0, 2), o: uniform({ hair: '#1d1a1a', style: 'short', glasses: true }), turn: true },
+    { id: 'a', s: at(2, 0), o: uniform({ hair: '#6b4a35', style: 'bun', accent: '#3e7c8c', hold: 'book' }) },
+    { id: 'b', s: at(2, 2), o: uniform({ hair: '#2b2422', style: 'short', hold: 'book' }) }
+  ].map(k => { const g = chibi(k.o); g.position.set(k.s.x, .44, k.s.z + .55); g.scale.setScalar(1.05); g.rotation.y = k.turn ? Math.PI + Math.atan2(k.s.x - .3, 4.4 - k.s.z) * -1 : Math.PI; S.add(g); return { ...k, g }; });
+  kids.forEach(k => { if (k.turn) k.g.rotation.y = Math.atan2(.3 - k.s.x, 5 - k.s.z); });
+  const K2 = id => kids.find(k => k.id === id);
+
+  const zhe = K2('zhe');
+  const room = K.done([{ name: '阿哲', story: 'exam-cheating', head: new THREE.Vector3(zhe.s.x, 1.4, zhe.s.z + .55) }], new THREE.Vector3(.4, 2.35, 5.4), new THREE.Vector3(-.2, 1.35, -3.0));
+  const spot = name => (SPOTS.sch || []).find(s => s.name === name);
+  room.props = [
+    { name: '小美', tag: true, head: new THREE.Vector3(K2('mei').s.x, 1.4, K2('mei').s.z + .55), act: () => roomTalk('小美', ['明天就要考了……我的迴圈還是一直跑不停，電腦都快當掉了。']) },
+    { name: '阿德', tag: true, head: new THREE.Vector3(K2('de').s.x, 1.4, K2('de').s.z + .55), act: () => roomTalk('阿德', ['欸，你有看班上群組嗎？好像有人在傳什麼東西，大家都怪怪的。', '阿哲剛剛一直在看你，好像有話要跟你說。']) },
+    { name: '黑板', obj: true, head: new THREE.Vector3(1.4, 2.1, -4.3), act: () => openPanel(spot('黑板')) },
+    { name: '時鐘', obj: true, head: new THREE.Vector3(3.45, 2.55, -4.3), act: () => openPanel(spot('時鐘')) },
+    { name: '書櫃', obj: true, head: new THREE.Vector3(4.05, 1.1, 1.4), act: () => openPanel(spot('書櫃')) },
+    { name: '桌上的筆記', obj: true, head: new THREE.Vector3(ME.x + .05, .82, ME.z), act: () => openPanel(spot('桌上的筆記')) },
+    { name: '窗戶', obj: true, head: new THREE.Vector3(-4.3, 1.95, 0), act: () => openPanel(spot('窗戶')) }
+  ];
+  room.tipMore = ['，發亮的小點和同學的名牌也可以點點看', ', and try the glowing dots and name tags'];
+  room.push = 1.3;
+  let lastT = 0;
+  room.update = t => {
+    const dt = Math.min(.1, Math.max(0, t - lastT)); lastT = t;
+    kids.forEach(k => chibiTick(k.g, t, dt));
+    fans.forEach((f, i) => f.rotation.y = t * (2.2 + i * .15));
+    heartLights.forEach((m, i) => m.scale.setScalar(.9 + Math.sin(t * 2.2 + i * .9) * .15));
+    curtains.forEach(cu => { cu.c.rotation.z = Math.sin(t * 1.1 + cu.ph) * .06; cu.c.position.x = -4.3 + Math.max(0, Math.sin(t * .9 + cu.ph)) * .12; });
+    petals.forEach(p => { const k = (t * .06 * p.sp + p.off) % 1; p.m.position.set(-4.2 + k * 6.5, 2.5 - k * 2.0 + Math.sin(t * 2 + p.ph) * .15, p.z + Math.sin(t + p.ph) * .3); p.m.scale.setScalar(p.base * (.75 + Math.sin(t * 4 + p.ph) * .3)); p.m.material.opacity = Math.min(1, k * 8, (1 - k) * 6); });
+  };
+  return room;
+}
+
 /* ---------- 公園（3D）：黃昏的祝福樹 ----------
    設計：太陽在樹的後面（逆光），整片暖金色的霧；中間的祝福樹是金色的，葉子會閃，
    樹冠裡有一團一團的光暈，金色的小方塊光點慢慢往上飄，偶爾有金葉子飄落；
@@ -5216,6 +5732,28 @@ function buildBlessPark() {
     '你的愛心和留言，大家都看得到喔。',
     '如果有想要被祝福的事情，可以告訴小編，小編會盡量安排的！'
   ] }], new THREE.Vector3(0, 2.3, 10.2), new THREE.Vector3(0, 2.9, -1.2));
+  // ---- 天上的愛心流星（流心）和一閃一閃的愛心星星 ----
+  const heartTex = tex(128, 128, (g, w, h) => {
+    const heart = (s, col, blur) => { g.save(); g.shadowColor = col; g.shadowBlur = blur; g.fillStyle = col; g.beginPath(); const x = w / 2, y = h / 2 + s * .1; g.moveTo(x, y + s * .5); g.bezierCurveTo(x - s, y - s * .15, x - s * .55, y - s, x, y - s * .45); g.bezierCurveTo(x + s * .55, y - s, x + s, y - s * .15, x, y + s * .5); g.fill(); g.restore(); };
+    heart(42, 'rgba(255,255,255,.9)', 22); heart(34, '#ffffff', 4);
+  });
+  const skyHeart = (col, op) => new THREE.SpriteMaterial({ map: heartTex, color: col, transparent: true, opacity: op, depthWrite: false, fog: false, toneMapped: false });
+  const heartCols = ['#ff6f91', '#ffc23d', '#fff4e0', '#ff4f7a', '#ffd86b'];
+  const meteors = [];
+  for (let i = 0; i < 18; i++) {
+    const col = heartCols[i % heartCols.length], head = new THREE.Sprite(skyHeart(col, 1)), trail = [];
+    S.add(head);
+    for (let k = 0; k < 9; k++) { const sp = new THREE.Sprite(skyHeart(col, 1)); S.add(sp); trail.push(sp); }
+    meteors.push({ head, trail, t0: -rnd() * 6, wait: 0, life: 1.6 });
+  }
+  const launch = (m, now) => {
+    const dir = rnd() < .5 ? -1 : 1;
+    m.from = new THREE.Vector3(-dir * (3 + rnd() * 9), 7.5 + rnd() * 4, -9 - rnd() * 7);
+    m.vel = new THREE.Vector3(dir * (4.5 + rnd() * 2.5), -(1.8 + rnd() * 1.6), 0);
+    m.size = .7 + rnd() * .55; m.t0 = now; m.life = 1.4 + rnd() * .8; m.wait = .1 + rnd() * 1.4;
+  };
+  const twinkles = [];
+  for (let i = 0; i < 46; i++) { const sp = new THREE.Sprite(skyHeart(heartCols[i % 5], .8)); const a = rnd() * Math.PI - Math.PI / 2; sp.position.set(Math.sin(a) * (6 + rnd() * 10), 6.5 + rnd() * 5.5, -10 - rnd() * 9); const sz = .36 + rnd() * .36; sp.scale.setScalar(sz); S.add(sp); twinkles.push({ sp, sz, ph: rnd() * 6, sp2: 1 + rnd() * 2 }); }
   room.props = [{ name: '祝福樹', head: new THREE.Vector3(TX, 1.5, TZ + .3), act: openBlessTree }];
   room.tipMore = ['，也可以點「祝福樹」送上祝福', ', or tap the Blessing Tree'];
   room.push = 1.3;
@@ -5231,6 +5769,18 @@ function buildBlessPark() {
     falling.forEach(f => { f.y -= f.v * dt; if (f.y < .2) { f.y = 3.5 + Math.random() * 1.5; f.x = TX + (Math.random() - .5) * 4; f.z = TZ + (Math.random() - .5) * 3; } f.m.position.set(f.x + Math.sin(t * 1.5 + f.ph) * .3, f.y, f.z + Math.cos(t * 1.1 + f.ph) * .2); f.m.rotation.set(t * 2 + f.ph, t * 1.3, t + f.ph); });
     mists.forEach(m => { m.sp.position.x = TX + Math.cos(m.a + t * .03) * m.r; m.sp.position.z = TZ + Math.sin(m.a + t * .03) * m.r; m.sp.material.opacity = .45 + Math.sin(t * .6 + m.ph) * .12; });
     treeL.intensity = 13 + Math.sin(t * 1.4) * 1.5;
+    // 流心：從天上斜斜劃過，後面拖著一串越來越小的愛心
+    meteors.forEach(m => {
+      if (!m.from) launch(m, t + rnd() * 4); else if (t - m.t0 > m.life + m.wait) launch(m, t);
+      const k = (t - m.t0) / m.life, on = k >= 0 && k <= 1;
+      const fade = on ? Math.min(1, k * 6, (1 - k) * 4) : 0;
+      m.head.visible = on; m.trail.forEach(sp => sp.visible = on);
+      if (!on) return;
+      const p = m.from.clone().addScaledVector(m.vel, t - m.t0);
+      m.head.position.copy(p); m.head.scale.setScalar(m.size); m.head.material.opacity = fade;
+      m.trail.forEach((sp, j) => { const back = (j + 1) * .07; sp.position.copy(p).addScaledVector(m.vel, -back); sp.scale.setScalar(m.size * (1 - (j + 1) / 11)); sp.material.opacity = fade * (1 - (j + 1) / 10) * .85; });
+    });
+    twinkles.forEach(w => { const k = .5 + Math.sin(t * w.sp2 + w.ph) * .5; w.sp.scale.setScalar(w.sz * (.6 + k * .6)); w.sp.material.opacity = .25 + k * .7; });
   };
   return room;
 }
