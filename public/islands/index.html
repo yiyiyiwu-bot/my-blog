@@ -299,6 +299,7 @@ body.miracle-on .css2d,body.miracle-on .map-bubble{opacity:0;transition:opacity 
 .spot.prop.obj:hover span,.spot.prop.obj:focus-visible span{opacity:1}
 .spot.prop.who{width:100px;height:180px}
 .spot.prop.tagged{width:auto;height:auto;border-radius:999px;padding:4px 11px;background:#fffaf2;color:var(--ink);box-shadow:0 4px 12px rgba(40,25,10,.28);font:800 13px var(--sans);white-space:nowrap;transition:background .2s,color .2s}
+.spot.prop.tagged::before{content:"";position:absolute;inset:-14px -12px}/* 名牌看起來小小的，但手指點的範圍大一圈 */
 .spot.prop.tagged::after{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-5px;border:5px solid transparent;border-bottom:0;border-top-color:#fffaf2}
 .spot.prop.tagged:hover,.spot.prop.tagged:focus-visible{background:var(--coral);color:#fff}
 .spot.prop.tagged:hover::after,.spot.prop.tagged:focus-visible::after{border-top-color:var(--coral)}
@@ -576,6 +577,17 @@ body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, bod
 .sc-place{display:inline-flex;align-items:center;gap:8px;font:700 15px var(--sans);text-shadow:0 1px 6px #0006}
 .sc-place i{width:12px;height:12px;border-radius:50%;box-shadow:0 0 0 2px #fff8}
 .sc-meta{font-size:13px;opacity:.82;text-shadow:0 1px 6px #0006}
+/* 街上的白天／晚上切換：小小的膠囊，亮著的那一半是現在的時段 */
+.sc-dn{margin-left:auto;display:inline-flex;align-items:center;gap:2px;min-height:44px;padding:4px;box-sizing:border-box;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(20,16,16,.45);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);cursor:pointer}
+.sc-dn span{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;color:rgba(255,255,255,.6);transition:background .3s,color .3s}
+.sc-dn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sc-dn .moon svg{fill:currentColor;stroke:none}
+.sc-dn[aria-pressed="false"] .sun{background:#ffd77a;color:#7a4a10}
+.sc-dn[aria-pressed="true"] .moon{background:#3b4a8a;color:#fff1c4}
+.sc-dn:hover span{color:#fff}
+.sc-dn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.sc-dn[hidden]{display:none}
+.sc-dn:not([hidden]) ~ .sc-hintbtn{margin-left:0}
 .sc-hintbtn{margin-left:auto;min-height:44px;padding:0 18px;border:0;border-radius:999px;background:var(--gold);color:var(--ink);font:700 14px var(--sans);cursor:pointer;box-shadow:0 4px 14px #0004}
 .sc-hintbtn:hover,.sc-hintbtn[aria-pressed="true"]{background:#f0d48a}
 .sc-main{overflow:auto;display:flex;padding:8px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
@@ -730,6 +742,7 @@ body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, bod
     <button class="sc-back" id="scBack"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span data-en="Back to islands">回到島上</span></button>
     <span class="sc-place" id="scPlace"></span>
     <span class="sc-meta" id="scMeta"></span>
+    <button class="sc-dn" id="scDN" hidden aria-pressed="false"><span class="sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></span><span class="moon"><svg viewBox="0 0 24 24"><path d="M19.5 14.6A7.8 7.8 0 0 1 9.4 4.5a7.8 7.8 0 1 0 10.1 10.1z"/></svg></span></button>
     <button class="sc-hintbtn" id="scHint" aria-pressed="false" data-en="Stop · Look · Listen">停看聽</button>
   </div>
   <div class="sc-main" id="scMain"></div>
@@ -2645,7 +2658,7 @@ function showMiracle(done) {
   m.hidden = false; m.classList.remove('on', 'out'); void m.offsetWidth; m.classList.add('on');
   document.body.classList.add('miracle-on');
   let ended = false;
-  const finish = () => { m.hidden = true; m.classList.remove('on', 'out'); document.body.classList.remove('miracle-on'); done && done(); };
+  const finish = () => { m.hidden = true; m.classList.remove('on', 'out'); document.body.classList.remove('miracle-on'); MAP.lastTalk = performance.now() + 3000; done && done(); };
   const end = early => {
     if (ended) return; ended = true; clearTimeout(timer); onAnyAction(null);
     if (early) { m.classList.add('out'); setTimeout(finish, 300); } else finish();
@@ -2777,7 +2790,8 @@ function initBinder() {
   $('#binder').addEventListener('click', e => { if (e.target.id === 'binder') closeBinder(); });
 }
 
-const MAP = { obj: null, bubbleUntil: 0, following: false, lastTalk: 0, lastCard: null };
+// lastTalk 先往後放 3 秒：剛進島 10 秒後居民才開始說話（奇蹟那段字結束時會再重算一次）
+const MAP = { obj: null, bubbleUntil: 0, following: false, lastTalk: performance.now() + 3000, lastCard: null };
 const pickOne = arr => arr[Math.floor(Math.random() * arr.length)];
 const mapScale = () => clamp(camera.position.distanceTo(controls.target) / 20, 1, 1.45);
 const objPos = o => o.kind === 'walker' ? o.ref.pos : o.ref.g.position;
@@ -2806,9 +2820,10 @@ function speak(o) {
   const r = o.ref;
   r.hop = 1; r.wait = Math.max(r.wait || 0, o.kind === 'walker' ? 2.4 : 3);
   if (o.kind === 'walker') {
-    const card = pickOne(BLESS.filter(c => c.id !== MAP.lastCard));
-    MAP.lastCard = card.id;
-    showBubble(card.short.join('\n'), false);
+    // 一張卡上有好幾句的話，一位居民只說其中一句
+    const line = pickOne(BLESS.flatMap(c => c.short).filter(t => t !== MAP.lastCard));
+    MAP.lastCard = line;
+    showBubble(line, false);
   } else {
     r.pose = { type: pickOne(['belly', 'down', 'wiggle']), t: 0 };
     showBubble(pickOne(DATA.chatter.pets), true);
@@ -2821,7 +2836,7 @@ function showBubble(text, heart) {
   b.hidden = false; b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
   MAP.bubbleUntil = performance.now() + Math.min(6500, 2600 + text.length * 90);
 }
-// 7 秒沒人點，就讓畫面裡的一位居民自己說話（有打開小視窗的話，就是那一位說）
+// 7 秒沒人點，就讓畫面裡的一位居民自己說話（剛進島時是 10 秒）（有打開小視窗的話，就是那一位說）
 function autoTalk(now) {
   if (SC.open || document.hidden || now - MAP.lastTalk < 7000) return;
   MAP.lastTalk = now;
@@ -3251,6 +3266,8 @@ function showScene(isl, replay) {
   const meta = entry && entry.meta ? entry.meta : sc.meta;
   $('#scMeta').textContent = meta ? L(meta) : '';
   $('#scHint').hidden = !ch; $('#scHint').setAttribute('aria-pressed', 'false');
+  const dn = $('#scDN'); dn.hidden = !(SC.room && SC.room.dayNight);
+  if (!dn.hidden) { dn.setAttribute('aria-pressed', String(SC.room.night)); dn.setAttribute('aria-label', SC.room.night ? '換成白天' : '換成晚上'); dn.title = dn.getAttribute('aria-label'); }
   renderHand();
   hideMarks(); hideTip(); $('#scDlg').hidden = false;
   if (LOCKED[isl.d.id]) {
@@ -3374,6 +3391,23 @@ function placeMarks(r) {
   }
 }
 
+// 找點到的人：從頭上的記號往下到肩膀那一塊（臉和上半身），重疊的話選離鏡頭最近的
+let _pf = null;
+function personAt(cx, cy) {
+  const r = SC.room;
+  _pf = _pf || new THREE.Vector3();
+  if (!r || r.art || !r.npcs) return null;
+  let best = null, bz = Infinity;
+  for (const p of r.npcs.concat((r.props || []).filter(p => p.tag || p.who))) {
+    if (!p.el || p.el.style.visibility === 'hidden') continue;
+    _pv.copy(p.head).project(r.cam); if (_pv.z > 1) continue;
+    _pf.copy(p.head); _pf.y -= .95; _pf.project(r.cam);
+    const hx = (_pv.x * .5 + .5) * innerWidth, top = (-_pv.y * .5 + .5) * innerHeight - 24, bot = (-_pf.y * .5 + .5) * innerHeight;
+    const half = Math.max(36, (bot - top) * .42);
+    if (cy >= top && cy <= bot && Math.abs(cx - hx) <= half && _pv.z < bz) { bz = _pv.z; best = p; }
+  }
+  return best;
+}
 function shuffled(n) { const a = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function showChoices(ch) {
   artDim(true);
@@ -3473,6 +3507,7 @@ function advance() {
 }
 function initScene() {
   $('#scBack').onclick = exitScene;
+  $('#scDN').onclick = toggleDayNight;
   $('#scDlg').addEventListener('click', advance);
   $('#scEnd').addEventListener('click', e => { e.stopPropagation(); endTalk(); });
   $('#pnClose').onclick = closePanel;
@@ -3497,6 +3532,12 @@ function initScene() {
   addEventListener('pointerup', endLook); addEventListener('pointercancel', endLook);
   // 拖曳完放開，不要被當成點一下
   $('#scene').addEventListener('click', e => { if (SC.dragMoved) { SC.dragMoved = false; e.stopPropagation(); e.preventDefault(); } }, true);
+  // 點到人物的臉或身體也可以聊天（不一定要點到頭上的「！」或名牌）
+  $('#scene').addEventListener('click', e => {
+    if (!lookable(e) || $('#scMarks').hidden) return;
+    const hit = personAt(e.clientX, e.clientY);
+    if (hit) hit.el.click();
+  });
   $('#scHint').onclick = () => {
     const on = $('#scHint').getAttribute('aria-pressed') !== 'true';
     $('#scHint').setAttribute('aria-pressed', on);
@@ -4050,6 +4091,21 @@ const artDim = on => { const box = $('#scArt'); if (box) box.classList.toggle('d
 const LOCKED = { exam: '還沒到時候開放', bch: '還沒到時候開放' };
 const ROOMS = { sch: buildAfternoonClass, hom: buildFamilyHome, wrk: buildMorningOffice, bch: artRoom('bch'), st: buildBlueStreet, park: buildBlessPark, love: buildLoveFurnace, fun: buildAmuseRoom, exam: buildExamRoom, cls: buildClsRoom };
 const roomCache = {};
+// 街上的白天／晚上：一開始跟著真實時間，按上面的小按鈕可以換
+let streetNightPick = null;
+const streetIsNight = () => { if (streetNightPick !== null) return streetNightPick; const h = new Date().getHours(); return h >= 18 || h < 6; };
+function toggleDayNight() {
+  if (!SC.room || !SC.room.dayNight) return;
+  streetNightPick = !SC.room.night;
+  const isl = SC.isl, lx = SC.lookX, ly = SC.lookY, old = roomCache[isl.d.id];
+  fade(true, () => {
+    // 重新蓋一次這條街（換成另一個時段），舊的收掉
+    delete roomCache[isl.d.id];
+    showScene(isl); SC.lookX = lx; SC.lookY = ly;
+    old.scene.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) [].concat(o.material).forEach(m => { if (m.map) m.map.dispose(); m.dispose(); }); });
+    fade(false);
+  });
+}
 function getRoom(isl) {
   const make = ROOMS[isl.d.id];
   if (!make) return null;
@@ -5130,8 +5186,8 @@ function sendLoveLetter() {
    台灣街頭的直式招牌、橫過馬路的串燈、紅綠郵筒、機車；咖啡店的女生坐在路邊喝咖啡 */
 function buildBlueStreet() {
   const P = { asphalt: '#3a3d48', side: '#8f8a86', curb: '#b8b2aa', warm: '#ffcf8a', coral: '#db6a41', cream: '#fbf3e6', wood: '#8a5a3c', leaf: '#5f8a55', leaf2: '#78a165' };
-  // 跟著真實時間：晚上 6 點到早上 6 點是夜景，其他時間是早上（測試時可以用 window.__streetNight 指定）
-  const hr = new Date().getHours(), NIGHT = window.__streetNight ?? (hr >= 18 || hr < 6);
+  // 一開始跟著真實時間（晚上 6 點到早上 6 點是夜景）；按上面的日／夜按鈕可以切換
+  const NIGHT = streetIsNight();
   const DN = (day, night) => NIGHT ? night : day;
   const K = roomKit(DN(
     { walls: false, bg: '#cfe6f5', sky: 0xeef6ff, ground: 0xa89a84, hemi: 1.55, keyColor: 0xffe2b4, keyI: 3.1, keyPos: new THREE.Vector3(-10, 7.5, 6), fill: false, seed: 41 },
@@ -5369,8 +5425,14 @@ function buildBlueStreet() {
     }
   }
 
+  // 金色光點：跟教室一樣，從左上方慢慢斜斜飄下來、一閃一閃（白天多一顆亮亮的芯，在藍天前面也看得到）
   const golds = [], gr2 = mulberry32(77);
-  for (let i = 0; i < 70; i++) { const m = new THREE.Sprite(new THREE.SpriteMaterial({ map: goldTex, color: DN('#ffb820', '#ffbe3c'), transparent: true, depthWrite: false, toneMapped: false, blending: DN(THREE.NormalBlending, THREE.AdditiveBlending) })); S.add(m); golds.push({ m, x: -4.5 + gr2() * 9, z: -14 + gr2() * 20, off: gr2(), sp: .5 + gr2() * .6, ph: gr2() * 6, base: DN(.12 + gr2() * .1, .15 + gr2() * .1) }); }
+  for (let i = 0; i < 56; i++) {
+    const m = new THREE.Sprite(new THREE.SpriteMaterial({ map: goldTex, color: '#ffbe3c', transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); S.add(m);
+    const core = NIGHT ? null : new THREE.Sprite(new THREE.SpriteMaterial({ map: goldTex, color: '#ffc23a', transparent: true, depthWrite: false, toneMapped: false }));
+    if (core) S.add(core);
+    golds.push({ m, core, off: i / 56, z: -5 + gr2() * 11.5, x0: -4.6 + gr2() * 2.4, sp: .5 + (i % 5) * .12, ph: i * 1.7, base: .1 + (i % 4) * .03 });
+  }
   const room = K.done([{ name: '咖啡店的女生', head: new THREE.Vector3(CX + .05, 1.62, CZ + .55), lines: [
     '剛下過雨，空氣好清新。',
     DN('早上坐在路邊喝杯咖啡，看看來來往往的人，曬曬太陽，是我最喜歡的時光。', '我最喜歡坐在路邊喝杯咖啡，看看來來往往的人，還有地上水窪裡的燈。'),
@@ -5378,6 +5440,7 @@ function buildBlueStreet() {
   ] }], new THREE.Vector3(0, 2.15, 9.8), new THREE.Vector3(0, 1.65, -6));
   room.push = 1.2;
   room.portraitLook = -.3;
+  room.dayNight = true; room.night = NIGHT;
   let lastT = 0;
   room.update = t => {
     const dt = Math.min(.1, Math.max(0, t - lastT)); lastT = t;
@@ -5394,7 +5457,12 @@ function buildBlueStreet() {
     steamG.attributes.position.needsUpdate = true; steam.material.opacity = .3;
     const cycle = t % 10; tl.forEach(m => m.material.color.set(cycle < 6 ? '#5cff9a' : cycle < 7 ? '#ffd24a' : '#ff5a4a'));
     ch2.rotation.y = Math.sin(t * .5) * .3;
-    golds.forEach(p => { const k = (t * .05 * p.sp + p.off) % 1; p.m.position.set(p.x + Math.sin(t * .8 + p.ph) * .4, 5.2 - k * 5, p.z + Math.cos(t * .6 + p.ph) * .3); p.m.scale.setScalar(p.base * (.75 + Math.sin(t * 4 + p.ph) * .3)); p.m.material.opacity = Math.min(1, k * 8, (1 - k) * 6); });
+    golds.forEach(p => {
+      const k = (t * .05 * p.sp + p.off) % 1, op = Math.min(1, k * 8, (1 - k) * 6), sc = p.base * (.75 + Math.sin(t * 4 + p.ph) * .3);
+      p.m.position.set(p.x0 + k * 7, 4.4 - k * 4 + Math.sin(t * 2 + p.ph) * .15, p.z + Math.sin(t + p.ph) * .3);
+      p.m.scale.setScalar(sc); p.m.material.opacity = op;
+      if (p.core) { p.core.position.copy(p.m.position); p.core.scale.setScalar(sc * .45); p.core.material.opacity = op * .9; }
+    });
   };
   return room;
 }
@@ -5603,7 +5671,7 @@ function buildAfternoonClass() {
   for (const [x, z] of [[-2.6, -4.0], [2.6, -4.0], [0, -4.0], [4.0, 0], [-4.0, 1.3]]) { const l = new THREE.PointLight(0xffb8c8, 1.6, 4.5, 1.6); l.position.set(x, 2.8, z); S.add(l); }
 
   // ---- 桌椅：三排四列 ----
-  const seats = [], turned = new Set(['1,1', '0,0', '0,2']); // 轉過來看你的同學，椅背也跟著轉
+  const seats = [], turned = new Set(['1,1', '0,0', '0,2', '1,0']); // 轉過來看你的同學，椅背也跟著轉
   for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) {
     const x = (c - 1) * 2.1 + .3, z = -2.0 + r * 1.35;
     b.box(x, .72, z, 1.0, .05, .56, P.desk); b.box(x, .52, z, .9, .2, .5, '#d9bb8a');
@@ -5617,13 +5685,14 @@ function buildAfternoonClass() {
   const ME = seats.find(s => s.r === 2 && s.c === 1);
   b.box(ME.x + .05, .775, ME.z - .02, .5, .01, .34, '#fffdf6', .15); b.box(ME.x + .05, .78, ME.z - .02, .01, .005, .32, '#c8a46a', .15);
 
-  // ---- 同學：阿哲（故事）、小美、阿德，還有兩位安靜讀書的 ----
+  // ---- 同學：阿哲（故事）、小美、阿德、戴戴，還有兩位安靜讀書的 ----
   const uniform = (o) => ({ top: P.shirt, collar: '#2f3f63', pants: P.navy, ...o });
   const at = (r, c) => seats.find(s => s.r === r && s.c === c);
   const kids = [
     { id: 'zhe', s: at(1, 1), o: uniform({ hair: '#2b2422', style: 'short', hold: 'phone' }), turn: true },
     { id: 'mei', s: at(0, 0), o: uniform({ hair: '#4a3228', style: 'long', accent: '#f6b6c4', hold: 'book' }), turn: true },
     { id: 'de', s: at(0, 2), o: uniform({ hair: '#1d1a1a', style: 'short', glasses: true }), turn: true },
+    { id: 'dai', s: at(1, 0), o: uniform({ hair: '#3b2a20', style: 'bob', accent: '#e8bf5a', hold: 'book' }), turn: true },
     { id: 'a', s: at(2, 0), o: uniform({ hair: '#6b4a35', style: 'bun', accent: '#3e7c8c', hold: 'book' }) },
     { id: 'b', s: at(2, 2), o: uniform({ hair: '#2b2422', style: 'short', hold: 'book' }) }
   ].map(k => { const g = chibi(k.o); g.position.set(k.s.x, .44, k.s.z + .55); g.scale.setScalar(1.05); g.rotation.y = k.turn ? Math.PI + Math.atan2(k.s.x - .3, 4.4 - k.s.z) * -1 : Math.PI; S.add(g); return { ...k, g }; });
@@ -5636,6 +5705,7 @@ function buildAfternoonClass() {
   room.props = [
     { name: '小美', tag: true, head: new THREE.Vector3(K2('mei').s.x, 1.4, K2('mei').s.z + .55), act: () => roomTalk('小美', ['明天就要考了……我的迴圈還是一直跑不停，電腦都快當掉了。']) },
     { name: '阿德', tag: true, head: new THREE.Vector3(K2('de').s.x, 1.4, K2('de').s.z + .55), act: () => roomTalk('阿德', ['欸，你有看班上群組嗎？好像有人在傳什麼東西，大家都怪怪的。', '阿哲剛剛一直在看你，好像有話要跟你說。']) },
+    { name: '戴戴', tag: true, head: new THREE.Vector3(K2('dai').s.x, 1.4, K2('dai').s.z + .55), act: () => roomTalk('戴戴', ['嗨！我是戴戴。我喜歡把聽到的好話抄在筆記本裡。', '島上的居民說的話，有很多是從我的筆記來的喔。', '不用緊張，考試也是一次學習，每一次學習都是奇蹟。']) },
     { name: '黑板', obj: true, head: new THREE.Vector3(1.4, 2.1, -4.3), act: () => openPanel(spot('黑板')) },
     { name: '時鐘', obj: true, head: new THREE.Vector3(3.45, 2.55, -4.3), act: () => openPanel(spot('時鐘')) },
     { name: '書櫃', obj: true, head: new THREE.Vector3(4.05, 1.1, 1.4), act: () => openPanel(spot('書櫃')) },
