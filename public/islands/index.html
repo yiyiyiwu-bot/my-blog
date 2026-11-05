@@ -1,5 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex"><style>[hidden]{display:none!important}</style>
-<title>點滴在心頭教室</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex"><style>[hidden]{display:none!important}</style><title>點滴在心頭教室</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap">
@@ -488,6 +487,13 @@ body.miracle-on .css2d,body.miracle-on .map-bubble{opacity:0;transition:opacity 
 /* 祝福樹：金色的留言和愛心卡片 */
 .bt{position:absolute;inset:0;z-index:8;display:grid;place-items:center;padding:16px;box-sizing:border-box;background:radial-gradient(80% 70% at 50% 40%,rgba(255,214,140,.28),rgba(40,26,10,.55));backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
 .bt-card{width:min(640px,100%);max-height:calc(100% - 24px);display:flex;flex-direction:column;box-sizing:border-box;background:linear-gradient(170deg,#fffaf0 0%,#fdf0d3 100%);color:#4a3412;border-radius:24px;border:1px solid #f0d58f;box-shadow:0 0 0 6px rgba(255,220,140,.25),0 24px 60px rgba(60,35,5,.45);overflow:hidden;animation:cardIn .45s cubic-bezier(.2,.9,.3,1.15) both}
+/* 按讚、留言後拿到卡片：蓋在祝福樹上面一下下，點一下或過幾秒就收起來 */
+.bt-gain{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;box-sizing:border-box;text-align:center;background:radial-gradient(60% 55% at 50% 45%,rgba(255,246,214,.98),rgba(253,236,196,.9) 60%,rgba(80,52,14,.55));cursor:pointer;transition:opacity .45s}
+.bt-gain .bcard{width:150px;max-width:40vw;box-shadow:0 14px 30px rgba(120,80,10,.35), inset 0 0 0 6px #fffaf0, inset 0 0 0 7px #d6c3a1}
+.bt-gain .bcard .zi{font-size:44px}
+.bt-gain p{margin:8px 0 0;font:900 19px var(--serif);color:#4a3412;letter-spacing:1px}
+.bt-gain small{max-width:340px;font:400 14px/1.7 var(--serif);color:#6b4710}
+.bt-gain.out{opacity:0}
 .bt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 20px 14px;background:radial-gradient(120% 140% at 15% 0%,#fff3c4 0%,#f6cf72 55%,#e3a93c 100%);color:#4a2e06;position:relative}
 .bt-head::after{content:"✦ ✧ ✦";position:absolute;right:70px;top:16px;color:#fff8de;letter-spacing:6px;opacity:.9;font-size:14px}
 .bt-eyebrow{display:block;font:800 11px var(--sans);letter-spacing:2px;color:#7a5410}
@@ -6018,7 +6024,23 @@ async function btLike(id, btn) {
     const res = await fetch('/api/bless/like', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ eventId: id, visitor: btVisitor }) });
     const d = await res.json(); if (!res.ok) throw new Error(d.error);
     ev.liked = d.liked; ev.likes = d.likes; btRender();
+    if (d.liked) btGive('like', id);
   } catch (e) { ev.liked = !ev.liked; ev.likes += ev.liked ? 1 : -1; btRender(); }
+}
+// 按讚得到「友誼」卡、留言得到「美德」卡；同一件事各送一次，放進下面「手上的卡片」
+const btGave = { like: new Set(), cmt: new Set() };
+function btGive(kind, id) {
+  if (btGave[kind].has(id)) return;
+  btGave[kind].add(id);
+  const cid = kind === 'like' ? 'youyi' : 'meide', c = GAME.cards[cid];
+  GS.hand.push(cid); renderHand([cid]);
+  const t = document.createElement('div');
+  t.className = 'bt-gain'; t.setAttribute('role', 'status');
+  t.innerHTML = `<div class="bcard"><span class="lb">祝福卡</span><span class="zi">${esc(c.name)}</span><span class="seal">點滴</span></div>` +
+    `<p>${kind === 'like' ? '謝謝你的愛心' : '謝謝你的祝福'}，你得到了「${esc(c.name)}」卡片</p><small>${esc(c.quote)}</small>`;
+  const close = () => { t.classList.add('out'); setTimeout(() => t.remove(), 450); };
+  t.onclick = close; setTimeout(close, 4200);
+  $('#blessTree').appendChild(t);
 }
 function btBurst(id) {
   const b = $(`#btBody [data-like="${id}"]`); if (!b) return;
@@ -6035,6 +6057,7 @@ async function btComment(id, f) {
     lsSet('policyIsland.btName', name);
     const ev = BT.events.find(e => e.id === id); if (ev && d.comment) ev.comments.push(d.comment);
     btRender();
+    btGive('cmt', id);
   } catch (e) { err.textContent = e.message === 'Failed to fetch' ? '現在連不上，等一下再試試' : e.message; btn.disabled = false; }
 }
 
