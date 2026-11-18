@@ -344,6 +344,10 @@ body.miracle-on .css2d,body.miracle-on .map-bubble{opacity:0;transition:opacity 
 .pn-note label{cursor:pointer;display:inline-flex;align-items:center;gap:8px}
 .pn-note input{width:18px;height:18px;accent-color:var(--coral)}
 .pn-note input:checked + span{text-decoration:line-through;color:var(--muted)}
+.pn-journal h3{font-size:24px;letter-spacing:6px;color:#4a3626}
+.pn-journal .jn-entry + .jn-entry{margin-top:32px}
+.pn-journal .jn-date{display:block;font:700 13px/32px var(--sans);color:#c8674a;letter-spacing:1px}
+.pn-journal .jn-entry p{margin:0;font-size:17px;line-height:32px;color:#3e3530}
 .pn-note .pn-letter{margin:0;font-size:17px;line-height:32px;color:#4a3626}
 .pn-view .sky{position:relative;height:200px;border-radius:14px;overflow:hidden;background:linear-gradient(#8ec5e8,#d9eef8 70%,#bfe0b0 70%,#9cc27a);border:10px solid #b48560;margin-bottom:12px}
 .pn-view .cl{position:absolute;height:26px;border-radius:999px;background:#fff;box-shadow:16px -10px 0 4px #fff,-14px -6px 0 2px #fff;animation:cloud 18s linear infinite}
@@ -883,7 +887,7 @@ const DATA = {
         { story:'exam-cheating', meta:'學生時期 · 19 歲|Student · age 19' } ] },
       summary:'明天就要期中考了，班上的群組好像有人拿到了考題。|The midterm is tomorrow, and the class chat has the answers.',
       items:[
-        { id:'sch1', model:'classroom', name:'程式設計教室|Coding Class', desc:'' },
+        { id:'sch1', model:'classroom', name:'踏實課教室|Classroom', desc:'' },
         { id:'sch2', model:'book', name:'圖書館|Library', desc:'' },
         { id:'sch3', model:'bikes', name:'單車棚|Bike Shed', desc:'' },
         { id:'sch4', model:'court', name:'球場|Court', desc:'' },
@@ -978,7 +982,7 @@ const DATA = {
 const GAME = {
   teacher: [
     { who:'導師「愛、光和良知」', text:'去人間好好體驗吧。記得，每一個選擇都算數。' },
-    { who:'導師「愛、光和良知」', text:'選項沒有絕對的對錯，提供給你的慣性另一個選項，在一次又一次的過程，學會祝福想要讓我們懂得的。' }
+    { narr:true, text:'選項沒有絕對的對錯，提供給你的慣性另一個選項，在一次又一次的過程，學會祝福想要讓我們懂得的。' }
   ],
   cards: {
     youyi: { name:'友誼', quote:'該相遇的必定相遇，該等待的必須等待，好聚才能好散，友誼因生命而豐富。' },
@@ -1029,37 +1033,33 @@ const GAME = {
       hint: { quote: '常人認知的一蹴可成是表象。俗語形容：「台上十分鐘，台下十年功。」才是踏實的箇中道理。', source: '戴戴筆記第四十五回（對應踏實）' },
       title: '期中考的「好康」',
       text:
-        '期中考前一天晚上，你修的程式設計課出事了：有人拿到了考題，班上的群組已經在偷偷傳答案。\n\n' +
+        '期中考前一天晚上，你修的踏實課出事了：有人拿到了考題，班上的群組已經在偷偷傳答案。\n\n' +
         '同學阿哲私訊你：「欸，大家都有了，你要不要？明天我們坐一起，我手機調靜音。」後面還附了一張眨眼的貼圖。\n\n' +
-        '你看著自己筆記上寫得亂七八糟的迴圈，心裡很清楚：這次考試，你真的沒把握。',
+        '你翻著自己寫得亂七八糟的筆記，還有好幾章根本沒讀，心裡很清楚：這次考試，你真的沒把握。',
       epilogue:
         '考完試的那堂課，教授站上講台：「我知道，這禮拜每個老師都警告過你們不要作弊，你們大概已經聽了六次了。」台下一陣笑聲。\n\n' +
         '「有人說作弊會害到其他同學，有人說會傷害學校的名聲。老實說，這些都不太對。我覺得用常態分配讓大家互相搶名次很糟糕，所以這門課不這樣算分——你考得好，不會害到任何人。學校的名聲也很穩，不會因為誰作弊就倒掉。」\n\n' +
         '「那為什麼不該作弊？因為你們現在，正在決定自己一輩子會變成什麼樣的人。人總以為自己每天都在做重大決定，其實大部分的時候，你只是在做你習慣做的事。」\n\n' +
-        '「如果現在就習慣走捷徑，等課越來越難、等你出了社會，身邊再也沒人可以偷看的時候，你還是會去找下一條捷徑。」他頓了一下：「說真的，我可不想搭一架由這門課作弊過的人寫程式的飛機。」\n\n' +
+        '「如果現在就習慣走捷徑，等課越來越難、等你出了社會，身邊再也沒人可以偷看的時候，你還是會去找下一條捷徑。」他頓了一下：「說真的，如果有一天你搭的飛機，是一個一路靠作弊過關的人設計的，你敢坐嗎？」\n\n' +
         '「作弊最好的結果，就是讓你這輩子去做一件你不會做、也不喜歡做的事。所以不要作弊——它真正傷害的，只有你自己。」',
       epilogueSource: { label: 'Professor Brian Harvey on why not to cheat', url: 'https://www.youtube.com/watch?v=hMloyp6NI4E' },
       choices: [
-        { text: '你點開了傳來的答案，手指停在螢幕上……最後你忍住了，把手機關機塞進書包最底層，熬夜自己把迴圈搞懂。',
+        { text: '好掙扎，抱著忐忑的心，又想抄但又覺得這樣不好，但最後還是忍住了。',
           result: '你寫得很慢，有兩題真的不會，只拿了 72 分。考完才聽說，群組裡傳的根本是舊版考題的答案，全班一半的人錯在同一題。\n\n' +
             '那兩題，你回家花了一整個晚上弄懂。後來，它們成了你最拿手的題型。',
           merit: 2, cards: ['tashi'] },
-        { text: '回阿哲：「我不要抄。可是考完我們一起讀，期末一起拚，好不好？」',
-          result: '阿哲回了一個翻白眼的貼圖。可是期末考前一個禮拜，他真的來找你了。你們在圖書館讀到閉館，被管理員趕出去好幾次。\n\n' +
-            '期末考，阿哲考了全班第五名。他請你喝了一整個學期的珍奶，到現在你們還是會互相傳程式碼抓錯。',
+        { text: '回阿哲：「我不要抄，雖然我沒有讀完，但作弊來的分數也不是我真的懂。」',
+          result: '阿哲回了一個翻白眼的貼圖。可是期末考前一個禮拜，他跑來找你：「上次你說的那句話，我想了很久。我們一起讀好不好？」你們在圖書館讀到閉館，被管理員趕出去好幾次。\n\n' +
+            '期末考，阿哲考了全班第五名。他請你喝了一整個學期的珍奶，到現在你們還是會互相傳筆記、幫對方抓錯。',
           merit: 2, cards: ['youyi', 'tashi'] },
         { text: '不點名任何人，只私訊助教：「好像有人拿到考題了，要不要換一份？」',
           result: '第二天走進教室，多了三個監考助教，發下來的是一份全新的考卷。群組裡一片哀號：「是誰啦！」\n\n' +
             '你默默低頭寫考卷。那一次，每個人拿到的分數，都是自己的。',
           merit: 2, cards: ['meide'] },
-        { text: '加入群組拿到答案，順手再用一份一百塊，賣給隔壁班。',
-          result: '你一個晚上賺了兩千塊，覺得自己真有生意頭腦，連考試都能變成一門生意。',
-          merit: -2, realm: 'ghost',
-          karma: '後來你進了公司，每份報告都想先「借」同事的來改一改。某天你改得最得意的那份，剛好是主管自己寫的。' },
-        { text: '心想：「大家都在抄，不抄就吃虧了。」也跟著抄。',
-          result: '你抄得太認真，連阿哲的學號都一起抄了上去。考卷發回來時，你的名字旁邊寫著別人的學號，教授在上面畫了一個大大的問號。',
-          merit: -1, realm: 'animal',
-          karma: '期末考你又想跟著抄，結果前面那位同學的答案也是抄來的——全錯。你們兩個的考卷錯得一模一樣，老師一眼就看出來了。' }
+        { text: '熬夜也把範圍讀完了。',
+          result: '你把手機調成勿擾，泡了一杯熱可可，從第一章一路讀到最後一章。窗外天都亮了，你才把最後一題練習寫完。\n\n' +
+            '考試那天，有一題你還是不太確定，但其他題目，你都知道自己為什麼這樣寫。拿到 80 分的時候，你覺得這是你考過最踏實的分數。',
+          merit: 2, cards: ['tashi'] }
       ]
     },
     'mobile-game': {
@@ -3331,7 +3331,7 @@ function showScene(isl, replay) {
   } else if (SC.room && SC.room.npcs && sc.type === 'class' && !replay) {
     // 點滴在心頭教室：導師先說話，說完留在教室裡看看
     setMain(titleCard(tr('人生的起點', 'WHERE LIFE STARTS'), L(isl.d.name)));
-    play(GAME.teacher.map(t => ({ who: t.who, text: t.text, kind: 'teacher' })), () => explore(isl));
+    play(GAME.teacher.map(t => t.narr ? { who: NARR(), text: t.text } : { who: t.who, text: t.text, kind: 'teacher' }), () => explore(isl));
   } else if (SC.room && SC.room.npcs && SC.room.opening && !replay) {
     // 有開場白的房間（家裡）：一進來先說幾段話，右上角的按鈕變成「跳過對話」，說完或跳過就自由看看
     endLabel('跳過對話', 'Skip');
@@ -3343,7 +3343,7 @@ function showScene(isl, replay) {
     startStory(ch, meta);
   } else if (sc.type === 'class') {
     setMain(titleCard(tr('人生的起點', 'WHERE LIFE STARTS'), L(isl.d.name)));
-    play(GAME.teacher.map(t => ({ who: t.who, text: t.text, kind: 'teacher' })), showCollection);
+    play(GAME.teacher.map(t => t.narr ? { who: NARR(), text: t.text } : { who: t.who, text: t.text, kind: 'teacher' }), showCollection);
   } else {
     setMain(titleCard(sc.meta ? L(sc.meta) : '', L(isl.d.name)));
     play([{ who: NARR(), text: tr(`「${L(isl.d.name)}」的故事還在寫，之後再來看看。`, 'This story is still being written. Come back later.') }], () => endPanel(isl, null));
@@ -3645,13 +3645,17 @@ const SPOTS = {
       lines: ['口訣：踏於外實於內，務實是外踏實是內，兩相權衡是智慧。', '考試用具：不抱僥倖、量力而為、知足、快樂的心', '值日生：小編'], doodle: '（角落有人畫了一個笑臉 ☺）' },
     { name: '時鐘', x: .584, y: .2, panel: 'clock', note: '秒針一直在走。距離明天的期中考，又少了一點點時間。' },
     { name: '書櫃', x: .85, y: .4, panel: 'shelf', note: '書櫃裡有一排很特別的書，每一本的書背上都寫著兩個字。抽一本出來看看吧。' },
-    { name: '桌上的筆記', x: .713, y: .565, panel: 'notebook', title: '期中考前的讀書計畫',
-      code: ['for (i = 0; i < n; i++) {', '  sum += i;', '}   ← 為什麼一直跑不停？？'],
-      todo: ['把迴圈重新看一遍', '寫兩題考古題', '不要偷看群組', '早點睡覺'] },
+    // 桌上的筆記：戴戴的筆記，一個主題、底下按日期一則一則
+    { name: '桌上的筆記', x: .713, y: .565, panel: 'journal', title: '踏實', entries: [
+      { date: '2025年3月戴戴筆記', text: '有自知之明、不報僥倖、量力而為、知足' },
+      { date: '2025年4月戴戴筆記', text: '踏於外實於內，務實是外踏實是內，兩相權衡是智慧' },
+      { date: '2026年1月戴戴筆記', text: '不妨去文章區找一下' }
+    ] },
     { name: '窗戶', x: .25, y: .3, panel: 'view', note: '窗外的天空好藍，雲慢慢地飄過去。考完試，想去公園走一走。' }
   ]
 };
 const PANELS = {
+  journal: s => `<div class="pn-note pn-journal"><h3>${esc(s.title)}</h3>${s.entries.map(e => `<div class="jn-entry"><span class="jn-date">${esc(e.date)}</span><p>${esc(e.text)}</p></div>`).join('')}</div>`,
   stories: s => `<div class="st-list">${s.person.stories.map(e => {
     const ch = GAME.chapters[e.story], seen = GS.done.has(e.story);
     return `<button class="st-card${seen ? ' seen' : ''}" data-story="${esc(e.story)}"><span class="st-badge">${seen ? tr('✓ 看過了', '✓ Read') : tr('新故事', 'New')}</span><b>${esc(e.title || ch.title)}</b>${e.intro ? `<p>${esc(e.intro)}</p>` : ''}</button>`;
@@ -4326,8 +4330,8 @@ function buildClassroomRoom() {
   // 可以說話的同學（head 是驚嘆號要浮在的位置）；trigger 的那一位會開始故事
   const npcs = [
     { name: '阿哲', story: 'exam-cheating', head: new THREE.Vector3(0, 1.24, -.35) },
-    { name: '小美', head: new THREE.Vector3(-2.3, 1.24, -1.65), lines: ['明天就要考了……我的迴圈還是一直跑不停，電腦都快當掉了。'] },
-    { name: '阿德', head: new THREE.Vector3(2.3, 1.24, -1.65), lines: ['欸，你有看班上群組嗎？好像有人在傳什麼東西，大家都怪怪的。', '阿哲剛剛一直在看你，好像有話要跟你說。'] }
+    { name: '小美', head: new THREE.Vector3(-2.3, 1.24, -1.65), lines: ['明天就要考了……我的筆記還有好幾頁看不懂，頭都快爆炸了。'] },
+    { name: '小編', head: new THREE.Vector3(2.3, 1.24, -1.65), lines: ['欸，你有看班上群組嗎？好像有人在傳什麼東西，大家都怪怪的。', '阿哲剛剛一直在看你，好像有話要跟你說。'] }
   ];
   return { scene: S, cam, npcs, base: new THREE.Vector3(1.1, 1.45, 3.9), look: new THREE.Vector3(-.3, 1.2, -3.2) };
 }
@@ -5781,7 +5785,7 @@ function buildAfternoonClass() {
   const ME = seats.find(s => s.r === 2 && s.c === 1);
   b.box(ME.x + .05, .775, ME.z - .02, .5, .01, .34, '#fffdf6', .15); b.box(ME.x + .05, .78, ME.z - .02, .01, .005, .32, '#c8a46a', .15);
 
-  // ---- 同學：阿哲（故事）、小美、阿德、戴戴，還有兩位安靜讀書的 ----
+  // ---- 同學：阿哲（故事）、小美、小編、戴戴，還有兩位安靜讀書的 ----
   const uniform = (o) => ({ top: P.shirt, collar: '#2f3f63', pants: P.navy, ...o });
   const at = (r, c) => seats.find(s => s.r === r && s.c === c);
   const kids = [
@@ -5799,8 +5803,8 @@ function buildAfternoonClass() {
   const room = K.done([{ name: '阿哲', story: 'exam-cheating', head: new THREE.Vector3(zhe.s.x, 1.4, zhe.s.z + .55) }], new THREE.Vector3(.4, 2.35, 5.4), new THREE.Vector3(-.2, 1.35, -3.0));
   const spot = name => (SPOTS.sch || []).find(s => s.name === name);
   room.props = [
-    { name: '小美', tag: true, head: new THREE.Vector3(K2('mei').s.x, 1.4, K2('mei').s.z + .55), act: () => roomTalk('小美', ['明天就要考了……我的迴圈還是一直跑不停，電腦都快當掉了。']) },
-    { name: '阿德', tag: true, head: new THREE.Vector3(K2('de').s.x, 1.4, K2('de').s.z + .55), act: () => roomTalk('阿德', ['欸，你有看班上群組嗎？好像有人在傳什麼東西，大家都怪怪的。', '阿哲剛剛一直在看你，好像有話要跟你說。']) },
+    { name: '小美', tag: true, head: new THREE.Vector3(K2('mei').s.x, 1.4, K2('mei').s.z + .55), act: () => roomTalk('小美', ['明天就要考了……我的筆記還有好幾頁看不懂，頭都快爆炸了。']) },
+    { name: '小編', tag: true, head: new THREE.Vector3(K2('de').s.x, 1.4, K2('de').s.z + .55), act: () => roomTalk('小編', ['欸，你有看班上群組嗎？好像有人在傳什麼東西，大家都怪怪的。', '阿哲剛剛一直在看你，好像有話要跟你說。']) },
     { name: '戴戴', tag: true, head: new THREE.Vector3(K2('dai').s.x, 1.4, K2('dai').s.z + .55), act: () => roomTalk('戴戴', ['嗨！我是戴戴。我喜歡把聽到的好話抄在筆記本裡。', '島上的居民說的話，有很多是從我的筆記來的喔。', '不用緊張，考試也是一次學習，每一次學習都是奇蹟。']) },
     { name: '黑板', obj: true, head: new THREE.Vector3(1.4, 2.1, -4.3), act: () => openPanel(spot('黑板')) },
     { name: '時鐘', obj: true, head: new THREE.Vector3(3.45, 2.55, -4.3), act: () => openPanel(spot('時鐘')) },
