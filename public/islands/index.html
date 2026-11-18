@@ -36,8 +36,10 @@ button{font:inherit;color:inherit}
 .brand{position:fixed;top:16px;left:16px;width:286px;padding:14px 18px 14px;border-radius:18px;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow);z-index:5;box-sizing:border-box}
 .brand h1{margin:4px 0 0;font-size:30px;line-height:1.1;letter-spacing:1px;font-weight:900}
 .brand h1 small{display:block;font-size:14px;font-weight:700;color:var(--coral);letter-spacing:6px;margin-top:4px}
+.brand .tagline{margin:8px 0 0;font-size:13px;line-height:1.6;color:var(--ink);opacity:.78;letter-spacing:.5px}
+.brand .tagline span{display:block}
 .brand .lang{position:absolute;top:10px;right:10px;min-height:32px;min-width:44px;font:700 11px var(--mono);letter-spacing:1px}
-.tools{position:fixed;left:16px;top:132px;display:flex;gap:6px;padding:5px;border-radius:14px;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow);z-index:5}
+.tools{position:fixed;left:16px;top:154px;display:flex;gap:6px;padding:5px;border-radius:14px;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow);z-index:5}
 .tools .btn{flex-direction:column;gap:2px;font-size:11px;padding:4px 10px}
 
 /* 詳細卡片 */
@@ -184,7 +186,8 @@ body.side-open #log{right:350px}
   .brand h1{font-size:20px}
   .brand h1 small{display:inline;font-size:12px;letter-spacing:3px;margin-left:6px}
   .brand .eyebrow{display:none}
-  .tools{flex-direction:column;top:calc(70px + env(safe-area-inset-top,0px));left:10px}
+  .brand .tagline{margin-top:3px;font-size:11.5px;line-height:1.45}
+  .tools{flex-direction:column;top:calc(106px + env(safe-area-inset-top,0px));left:10px}
   .sheet{left:0!important;right:0!important;top:auto!important;bottom:0!important;width:auto!important;border-radius:22px 22px 0 0!important;padding-bottom:env(safe-area-inset-bottom,0px)}
   #card{height:var(--h,34%)}
   #side{height:var(--h,66%)}
@@ -405,6 +408,18 @@ body.miracle-on .css2d,body.miracle-on .map-bubble{opacity:0;transition:opacity 
 @media (prefers-reduced-motion:reduce){ .bd-book{animation:none} }
 /* 遊戲屋：一張張遊戲卡片，自動排版 */
 .pn-card.wide{width:min(860px,100%)}
+/* 家人的故事書架：一張一張故事卡，右上角是「新故事」或「看過了」 */
+.st-list{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.st-card{position:relative;display:block;width:100%;text-align:left;border:1px solid #ead9c2;border-radius:16px;background:#fffdf8;padding:16px 18px 15px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 3px 10px rgba(74,42,20,.08);transition:transform .2s,box-shadow .2s,border-color .2s}
+.st-card:hover,.st-card:focus-visible{transform:translateY(-2px);box-shadow:0 8px 20px rgba(74,42,20,.16);border-color:var(--coral);outline:none}
+.st-card b{display:block;font:900 19px/1.4 var(--serif);padding-right:84px}
+.st-card p{margin:6px 0 0;font:15px/1.7 var(--serif);color:#6b5e58}
+.st-badge{position:absolute;top:14px;right:14px;font:800 12px var(--sans);padding:4px 10px;border-radius:999px;background:var(--coral);color:#fff;letter-spacing:1px}
+.st-card.seen{background:#fbf6ee}
+.st-card.seen b{color:#5b504b}
+.st-card.seen .st-badge{background:transparent;color:#5f8a5b;box-shadow:inset 0 0 0 1.5px #8fae8b}
+.st-chat{margin-top:12px;width:100%;min-height:44px;border:0;border-radius:999px;background:var(--ink);color:var(--cream);font:700 15px var(--sans);cursor:pointer}
+.st-chat:hover{background:var(--coral)}
 .pn-arcade>p{margin:0 0 14px;line-height:1.7;font-family:var(--serif)}
 .ar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
 .ar-card{display:flex;flex-direction:column;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(74,42,20,.12)}
@@ -660,8 +675,9 @@ body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, bod
 <div id="stage"></div>
 
 <header class="brand">
-  <div class="eyebrow" data-en="LIFE ISLANDS · DEMO">人生小島 · 示範</div>
+  <div class="eyebrow" data-en="BLESSING WORLD ISLANDS">祝福世界島</div>
   <h1><span id="cityName">點滴在心頭教室</span></h1>
+  <p class="tagline"><span data-en="The world is a miracle waiting to be created;">世界是等待創造的奇蹟，</span><span data-en="change takes root in the little moments of everyday life.">改變是在生活的點點滴滴中落實</span></p>
   <button class="btn lang" id="langBtn" aria-label="切換語言">EN</button>
 </header>
 
@@ -734,11 +750,11 @@ body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, bod
 <div id="intro" hidden role="dialog" aria-modal="true" aria-labelledby="introTitle">
   <div class="box">
     <div class="eyebrow" data-en="HOW TO EXPLORE">怎麼逛</div>
-    <h2 id="introTitle" data-en="Three ways to explore">三步驟逛政策島</h2>
+    <h2 id="introTitle" data-en="Three steps to explore Blessing World Islands">三步驟逛祝福世界島</h2>
     <ol>
       <li><b>1</b><span data-en="Drag to move around like a map. Scroll or pinch to zoom. Right-drag or twist two fingers to turn.">像看地圖一樣拖曳就能移動，滾輪或兩指捏可以拉近拉遠；想轉方向，按住右鍵拖曳或兩指旋轉。</span></li>
-      <li><b>2</b><span data-en="Tap an island to step into its story, like “To School” or “To Work”.">點一座島，例如「上學去」「上班去」，就會走進那裡的故事。</span></li>
-      <li><b>3</b><span data-en="Make choices, collect blessing cards, then visit the classroom in the middle.">在故事裡做選擇、收集祝福卡，再回到中間的「點滴在心頭教室」看看。</span></li>
+      <li><b>2</b><span data-en="Every island has many stories waiting to meet you, and you can collect blessing cards in different places.">每個島有很多故事等著相遇，可以在不同地方蒐集到祝福卡。</span></li>
+      <li><b>3</b><span data-en="Receive and give: one day, you too will be a blessing who lights up someone else.">得到與給予，有一天你也是照亮別人的祝福者。</span></li>
     </ol>
     <button class="btn go" id="introGo" data-en="Start exploring">開始逛逛</button>
   </div>
@@ -772,7 +788,7 @@ body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, bod
   </div>
   <div class="lock" id="lockCard" hidden role="dialog" aria-modal="true" aria-labelledby="lockTitle">
     <div class="lock-card">
-      <div class="lock-eyebrow">人生小島</div>
+      <div class="lock-eyebrow">祝福世界島</div>
       <b id="lockTitle"></b>
       <p id="lockText"></p>
       <button class="lock-btn" id="lockBack">回到島上</button>
@@ -793,7 +809,7 @@ body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, bod
   <div class="bt" id="blessTree" hidden role="dialog" aria-modal="true" aria-labelledby="btTitle">
     <div class="bt-card">
       <div class="bt-head">
-        <div><span class="bt-eyebrow">人生小島・公園</span><b id="btTitle">祝福樹</b><p>為這些事情，送上一點祝福吧</p></div>
+        <div><span class="bt-eyebrow">祝福世界島・公園</span><b id="btTitle">祝福樹</b><p>為這些事情，送上一點祝福吧</p></div>
         <button class="btn" id="btClose" aria-label="關閉"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
       <div class="bt-body" id="btBody"></div>
@@ -843,10 +859,9 @@ const DATA = {
         { id:'cls4', model:'clock', name:'時間的鐘|Clock of Time', desc:'每一個選擇都算數。|Every choice counts.' }
       ]},
     { id:'hom', icon:'家', q:-1, r:0, name:'家裡|Home', color:'#f2b5c6', ground:'#f6e3dc', pattern:'speckle', tree:'maple',
-      scene:{ type:'story', meta:'家裡 · 2 個故事|Home · 2 stories', stories:[
-        { story:'mobile-game', meta:'學生時期 · 17 歲 · 你的房間|Student · age 17 · your room' },
-        { story:'stock-guru', meta:'樂齡組 · 66 歲 · 爸爸家|Senior · age 66 · Dad’s place' } ] },
-      summary:'晚上十一點的手遊排位賽，還有爸爸的投資群組。|An 11 p.m. ranked match, and Dad’s investment chat.',
+      scene:{ type:'story', meta:'家裡 · 1 個故事|Home · 1 story', stories:[
+        { story:'mobile-game', meta:'學生時期 · 17 歲 · 你的房間|Student · age 17 · your room' } ] },
+      summary:'晚上十一點的手遊排位賽。|An 11 p.m. ranked match.',
       items:[
         { id:'hom1', model:'house', name:'我家|Home', desc:'' },
         { id:'hom2', model:'playground', name:'社區公園|Park', desc:'' },
@@ -1151,6 +1166,8 @@ function applyStaticLang() {
 const $ = s => document.querySelector(s);
 const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+// 左上角的工具按鈕永遠排在標題框下面（標語換行、切換語言時也不會重疊）
+(() => { try { const b = document.querySelector('.brand'), t = document.querySelector('.tools'); if (!b || !t || !window.ResizeObserver) return; const f = () => { t.style.top = Math.round(b.getBoundingClientRect().bottom + 12) + 'px'; }; new ResizeObserver(f).observe(b); addEventListener('resize', f); f(); } catch (e) {} })();
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const mix = (a, b, t) => a + (b - a) * t;
@@ -2643,8 +2660,8 @@ function updateAnimals(dt) {
    要加新的卡：在下面照樣加一張就好，卡夾一頁放 9 張，會自動換頁
    ========================================================= */
 const BLESS = [
-  { id: 'miracle', ep: '奇蹟', src: '人生小島', date: '', short: ['每一次學習都是奇蹟'],
-    long: '第一次打開人生小島的那一刻，你收到了這張祝福卡。\n願你在每一次的學習裡，都看見奇蹟。' },
+  { id: 'miracle', ep: '奇蹟', src: '祝福世界島', date: '', short: ['每一次學習都是奇蹟'],
+    long: '第一次打開祝福世界島的那一刻，你收到了這張祝福卡。\n願你在每一次的學習裡，都看見奇蹟。' },
   { id: 'b01', ep: '第一回', date: '2022.3.9', short: ['知道做不到就是不知道'],
     long: '現在我們要學習關注的不是結果，重要的是過程。在經驗中學習修正，倘若最後的結果還是不好，那麼過程告訴我們什麼，是方向錯了嗎？還是我們的努力不夠？相信這樣的學習，你會發現錯會越來越少，對會越來越多。' },
   { id: 'b02', ep: '第二回', date: '2022.4.4', short: ['變是唯一不變的', '盡量讓自己變得快樂', '變得有愛心', '變得更愛所有的一切'],
@@ -2986,7 +3003,9 @@ function buildLabels() {
   }
   refreshLabelText();
 }
-function refreshLabelText() { islands.forEach(isl => { isl.label.el.querySelector('.nm').textContent = L(isl.d.name); isl.label.el.setAttribute('aria-label', L(isl.d.name)); isl.label.wFull = 0; }); }
+// 還沒開放的島（LOCKED 裡的），名字後面加「(建置中)」
+const islName = d => L(d.name) + (LOCKED[d.id] ? tr('(建置中)', ' (soon)') : '');
+function refreshLabelText() { islands.forEach(isl => { isl.label.el.querySelector('.nm').textContent = islName(isl.d); isl.label.el.setAttribute('aria-label', L(isl.d.name)); isl.label.wFull = 0; }); }
 function layoutLabels() {
   const W = innerWidth, H = innerHeight, placed = [];
   const panels = ['.brand', '.tools', '#card', '#side', '#log', '#hud', '#legend', '#timeBtn'].map(s => $(s)).filter(e => e && !e.hidden && e.getClientRects().length).map(e => e.getBoundingClientRect());
@@ -3304,7 +3323,7 @@ function showScene(isl, replay) {
   hideMarks(); hideTip(); $('#scDlg').hidden = false;
   if (LOCKED[isl.d.id]) {
     // 還沒開放：場景模糊，中間一個對話框擋住
-    $('#scDlg').hidden = true; setMain('');
+    $('#scDlg').hidden = true; setMain(''); $('#scDN').hidden = true; $('#scHint').hidden = true;
     $('#lockTitle').textContent = L(isl.d.name);
     $('#lockText').textContent = LOCKED[isl.d.id];
     $('#lockCard').hidden = false;
@@ -3313,6 +3332,10 @@ function showScene(isl, replay) {
     // 點滴在心頭教室：導師先說話，說完留在教室裡看看
     setMain(titleCard(tr('人生的起點', 'WHERE LIFE STARTS'), L(isl.d.name)));
     play(GAME.teacher.map(t => ({ who: t.who, text: t.text, kind: 'teacher' })), () => explore(isl));
+  } else if (SC.room && SC.room.npcs && SC.room.opening && !replay) {
+    // 有開場白的房間（家裡）：一進來先說幾段話，右上角的按鈕變成「跳過對話」，說完或跳過就自由看看
+    endLabel('跳過對話', 'Skip');
+    play(SC.room.opening.map(t => ({ who: NARR(), text: t })), () => explore(isl));
   } else if (SC.room && SC.room.npcs) {
     // 有人可以點的室內：先自由看看，點頭上有「！」的人才開始
     explore(isl);
@@ -3350,6 +3373,7 @@ function oneNpc(npcs, stories) {
 function showTip(text) { const t = $('#scTip'); t.textContent = text; t.hidden = false; }
 function hideTip() { $('#scTip').hidden = true; }
 function explore(isl) {
+  endLabel('結束對話', 'End chat');
   clearInterval(SC.typing); SC.typing = null; SC.waiting = false;
   $('#scDlg').hidden = true;
   $('#scHint').hidden = true; $('#scHint').setAttribute('aria-pressed', 'false');
@@ -3403,6 +3427,8 @@ function addProps(r, box) {
   }
 }
 // 結束對話：有「！」可以點的場景回到場景裡；沒有的話就回到島上
+// 對話框右上角那顆按鈕的字：平常是「結束對話」，開場白的時候是「跳過對話」
+function endLabel(zh, en) { const b = $('#scEnd'); b.dataset.zh = zh; b.dataset.en = en; b.textContent = tr(zh, en); }
 function endTalk() {
   if (SC.room && SC.room.npcs) explore(SC.isl); else exitScene();
 }
@@ -3626,6 +3652,10 @@ const SPOTS = {
   ]
 };
 const PANELS = {
+  stories: s => `<div class="st-list">${s.person.stories.map(e => {
+    const ch = GAME.chapters[e.story], seen = GS.done.has(e.story);
+    return `<button class="st-card${seen ? ' seen' : ''}" data-story="${esc(e.story)}"><span class="st-badge">${seen ? tr('✓ 看過了', '✓ Read') : tr('新故事', 'New')}</span><b>${esc(e.title || ch.title)}</b>${e.intro ? `<p>${esc(e.intro)}</p>` : ''}</button>`;
+  }).join('')}</div>${s.person.lines ? `<button class="st-chat" type="button">${tr(`跟${s.person.name}聊聊天`, `Chat with ${s.person.name}`)}</button>` : ''}`,
   arcade: s => `<div class="pn-arcade"><p>${esc(s.note)}</p><div class="ar-grid">${GAMES.map(g => `<article class="ar-card"><div class="ar-cover" style="--c:${g.color}" aria-hidden="true">${esc(g.cover)}</div><div class="ar-body"><b>${esc(g.name)}</b><small>${esc(g.tag)}</small><p>${esc(g.desc)}</p><button class="sc-btn primary" data-game="${g.id}">${tr('開始玩', 'Play')}</button></div></article>`).join('')}${Array.from({ length: Math.max(0, ARCADE_SLOTS - GAMES.length) }, () => `<article class="ar-card soon"><div class="ar-cover" aria-hidden="true">?</div><div class="ar-body"><b>${tr('新遊戲', 'New game')}</b><small>${tr('準備中', 'Coming soon')}</small></div></article>`).join('')}</div></div>`,
   board: s => `<div class="pn-board"><h3>${esc(s.title)}</h3><ul>${s.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul><p class="pn-doodle">${esc(s.doodle || '')}</p></div>`,
   clock: s => `<div class="pn-clock"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="92" class="c-face"/>${[...Array(12)].map((_, i) => { const a = i * Math.PI / 6; return `<line x1="${100 + Math.sin(a) * 78}" y1="${100 - Math.cos(a) * 78}" x2="${100 + Math.sin(a) * 88}" y2="${100 - Math.cos(a) * 88}" class="c-tick"/>`; }).join('')}<line id="cH" x1="100" y1="100" x2="100" y2="52" class="c-h"/><line id="cM" x1="100" y1="100" x2="100" y2="30" class="c-m"/><line id="cS" x1="100" y1="112" x2="100" y2="24" class="c-s"/><circle cx="100" cy="100" r="6" class="c-pin"/></svg><b id="cTxt"></b><p>${esc(s.note)}</p></div>`,
@@ -3644,6 +3674,11 @@ function openPanel(spot) {
   if (spot.panel === 'clock') { const tick = () => { const d = new Date(), h = d.getHours(), m = d.getMinutes(), sec = d.getSeconds(); const set = (id, deg) => { const el = $(id); if (el) el.setAttribute('transform', `rotate(${deg} 100 100)`); }; set('#cH', (h % 12) * 30 + m * .5); set('#cM', m * 6 + sec * .1); set('#cS', sec * 6); const t = $('#cTxt'); if (t) t.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`; }; tick(); panelTimer = setInterval(tick, 1000); }
   $('#scPanel .pn-card').classList.toggle('wide', spot.panel === 'arcade');
   if (spot.panel === 'arcade') $('#pnBody').querySelectorAll('[data-game]').forEach(b => b.onclick = () => GAMES.find(g => g.id === b.dataset.game).start());
+  if (spot.panel === 'stories') {
+    const p = spot.person;
+    $('#pnBody').querySelectorAll('.st-card').forEach(b => b.onclick = () => { closePanel(); startPersonStory(p, b.dataset.story); });
+    const chat = $('#pnBody .st-chat'); if (chat) chat.onclick = () => { closePanel(); roomTalk(p.name, p.lines); };
+  }
   if (spot.panel === 'shelf') $('#pnBody').querySelectorAll('.sh-book').forEach(b => b.onclick = () => {
     $('#pnBody').querySelectorAll('.sh-book').forEach(x => x.classList.toggle('out', x === b));
     const c = GAME.cards[b.dataset.card];
@@ -3670,14 +3705,37 @@ function addSpots(isl, box) {
    story 有填的會進那個故事；沒有的就說 lines 裡的話
    排在越後面的人站得越前面
    ========================================================= */
+// 一進家裡的開場白（三段，可以按「跳過對話」）
+const HOME_OPENING = [
+  '家，是我們此生改變我們的起點，那之後蛻變的方向你會怎麼選擇呢？',
+  '發自內心想改變的步伐，比配合環境的改變來得更踏實。',
+  '從故事中可以得到祝福卡，而你也可以將祝福卡送給你想要送的人'
+];
+// 家裡地板上的貓：喵星人，專門來給提示的
+const CAT_HINT = {
+  name: '喵星人',
+  lines: [
+    '人總要經歷了重大的變動，才會徹頭徹尾的蛻變，代價的多和寡就因人而異了',
+    '在學習祝福卡的過程，有跌倒過、想逃避、勇敢試著克服、還有感動，你生命的轉變在心中悄然而生',
+    '你可以在故事中做不同選擇得到不同的祝福卡，而現實中家人有他們各自的課題要學習，有時候時間未到，你可以在祝福島送他們得到的祝福卡，祝福他們總有一天會懂得的。(建置中)'
+  ]
+};
+// 家裡那位用光做成的家人
+const LIGHT_ONE = {
+  name: '那位重要的他/她/祂',
+  lines: ['我一直都在，在你看得見的地方，也在你看不見的地方。', '不管你選擇往哪裡走，心裡那盞燈，會一直為你亮著。']
+};
 const FAMILY = {
   w: 1214, h: 1295, view: [100, 110, 930, 1010],
   people: [
     { id: 'gpa', name: '爺爺', box: [118, 152, 285, 461], tag: [288, 152], lines: ['來，坐下來喝杯熱茶。今天報紙說，天氣要變冷了。', '爺爺的故事還在寫，之後再講給你聽。'] },
     { id: 'gma', name: '奶奶', box: [329, 234, 235, 378], tag: [465, 236], lines: ['乖孫，吃飽了沒？冰箱裡有奶奶滷的蛋喔。', '奶奶的故事還在寫，之後再來陪我聊天。'] },
-    { id: 'dad', name: '爸爸', box: [548, 151, 273, 661], tag: [692, 153], story: 'stock-guru', note: '你是爸爸。這一回，換你的爸爸——爺爺，被拉進了投資群組。' },
+    { id: 'dad', name: '爸爸', box: [548, 151, 273, 661], tag: [692, 153], lines: ['回來啦？今天過得怎麼樣？', '爸爸的故事還在寫，之後再來找我聊聊。'] },
     { id: 'mom', name: '媽媽', box: [776, 227, 237, 761], tag: [886, 230], lines: ['這束花是今天在市場買的，好看嗎？', '媽媽的故事還在寫，之後再來找我。'] },
-    { id: 'teen', name: '青少年', box: [301, 454, 500, 650], tag: [582, 470], story: 'mobile-game' },
+    // stories：這個人的故事書架。要新增故事，就多加一筆 { story: '故事代號', intro: '一句話介紹' }（title 可以另外取名，不填就用故事本來的名字）
+    { id: 'teen', name: '青少年', box: [301, 454, 500, 650], tag: [582, 470], stories: [
+      { story: 'mobile-game', intro: '' }
+    ] },
     { id: 'gl', name: '小朋友', box: [127, 731, 284, 364], tag: [270, 734], lines: ['你看！我的小兔子叫棉花糖！', '小朋友的故事還在寫，先陪我玩一下嘛～'] },
     { id: 'by', name: '小朋友', box: [763, 776, 233, 324], tag: [880, 779], lines: ['噗噗——我的小車車跑最快！', '小朋友的故事還在寫，先陪我玩車車吧！'] }
   ]
@@ -4121,7 +4179,7 @@ const artTalk = on => {
 const artDim = on => { const box = $('#scArt'); if (box) box.classList.toggle('dim', on && !$('#scene').classList.contains('split')); };
 // 有立體書插圖的地點用插圖；其他地點用 3D 室內
 // 還沒開放的地點：走進去會看到這句話（想開放時，把那一行刪掉就好）
-const LOCKED = { exam: '還沒到時候開放', bch: '還沒到時候開放' };
+const LOCKED = { exam: '還沒到時候開放', bch: '還沒到時候開放', st: '還沒到時候開放', wrk: '還沒到時候開放', fun: '還沒到時候開放' };
 const ROOMS = { sch: buildAfternoonClass, hom: buildFamilyHome, wrk: buildMorningOffice, bch: artRoom('bch'), st: buildBlueStreet, park: buildBlessPark, love: buildLoveFurnace, fun: buildAmuseRoom, exam: buildExamRoom, cls: buildClsRoom };
 const roomCache = {};
 // 街上的白天／晚上：一開始跟著真實時間，按上面的小按鈕可以換
@@ -6205,12 +6263,26 @@ function buildFamilyHome() {
   const mainL = new THREE.PointLight(0xffc98a, 7, 7, 1.4); mainL.position.set(TX, 2.45, TZ - .2); S.add(mainL);
 
   // ---- 貓（在地毯上睡覺）----
-  const cat = new THREE.Group(); cat.position.set(1.55, 0, -.75); cat.rotation.y = -.6; S.add(cat);
+  const cat = new THREE.Group(); cat.position.set(1.55, 0, -.75); cat.rotation.y = -1.75; cat.scale.setScalar(1.35); S.add(cat);
   const catM = new THREE.MeshStandardMaterial({ color: '#e8823a', roughness: .8 });
   const cb = new THREE.Mesh(new THREE.SphereGeometry(.2, 18, 12), catM); cb.scale.set(1.3, .6, 1); cb.position.y = .12; cb.castShadow = true; cat.add(cb);
   const ch = new THREE.Mesh(new THREE.SphereGeometry(.11, 14, 10), catM); ch.position.set(.22, .12, .08); cat.add(ch);
   for (const s of [-1, 1]) { const e = new THREE.Mesh(new THREE.ConeGeometry(.04, .07, 8), catM); e.position.set(.24 + s * .04, .23, .08); cat.add(e); }
   const tail = new THREE.Mesh(new THREE.TorusGeometry(.17, .03, 8, 16, Math.PI), catM); tail.rotation.x = Math.PI / 2; tail.position.set(-.05, .05, .05); cat.add(tail);
+  // 喵星人的五官：臉朝 +x。圓眼睛（會眨）＋亮點、粉紅鼻子、ω 嘴巴、白鬍鬚、耳朵裡的粉紅、白白的口鼻
+  const catFace = new THREE.Group(); catFace.position.copy(ch.position); cat.add(catFace);
+  const cfM = (c, basic) => basic ? new THREE.MeshBasicMaterial({ color: c }) : new THREE.MeshStandardMaterial({ color: c, roughness: .6 });
+  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(.05, 12, 10), cfM('#fff3e3')); muzzle.scale.set(.6, .7, 1.25); muzzle.position.set(.088, -.03, 0); catFace.add(muzzle);
+  const catEyes = [];
+  for (const sz of [-1, 1]) {
+    const e = new THREE.Mesh(new THREE.SphereGeometry(.02, 12, 10), cfM('#2b2220')); e.scale.set(.6, 1.15, 1); e.position.set(.098, .02, sz * .042); catFace.add(e); catEyes.push(e);
+    const hl = new THREE.Mesh(new THREE.SphereGeometry(.006, 8, 6), cfM('#ffffff', true)); hl.position.set(.11, .03, sz * .042 + .006); catFace.add(hl);
+    const ear = new THREE.Mesh(new THREE.ConeGeometry(.022, .04, 8), cfM('#f5a3a0')); ear.position.set(.03, .108, sz * .04); ear.rotation.z = -.15; catFace.add(ear);
+    const mouth = new THREE.Mesh(new THREE.TorusGeometry(.012, .003, 6, 12, Math.PI), cfM('#7a3b2e')); mouth.position.set(.118, -.05, sz * .012); mouth.rotation.set(0, Math.PI / 2, Math.PI); catFace.add(mouth);
+    for (const dy of [-.008, .008]) { const w = new THREE.Mesh(new THREE.BoxGeometry(.004, .003, .085), cfM('#ffffff', true)); w.position.set(.105, -.032 + dy, sz * .075); w.rotation.x = sz * dy * 18; catFace.add(w); }
+  }
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(.012, 10, 8), cfM('#e8828a')); nose.scale.set(.8, .7, 1.1); nose.position.set(.123, -.025, 0); catFace.add(nose);
+  let catBlink = 2;
 
   // ---- 一家人（照合影的位置）----
   const fam = [
@@ -6230,26 +6302,81 @@ function buildFamilyHome() {
     return { ...f, g, top, info: FAMILY.people.find(p => p.id === f.id) };
   });
 
+  // ---- 那位重要的他/她/祂：站在沙發右邊，身體是光做的（半透明暖白光＋背後的光暈＋往上飄的光點）----
+  const LX = 2.1, LZ = -2.35, LS = 1.8;
+  const light = chibi({ stand: true, top: '#fff', hair: '#fff', style: 'bob', pants: '#fff', skin: '#fff' });
+  // 光的身體：中間是柔和的奶油白，越靠近邊緣越亮、越金（像被光包住的輪廓），整個人慢慢呼吸
+  const lightM = new THREE.ShaderMaterial({
+    uniforms: { uT: { value: 0 }, uA: { value: .82 } }, transparent: true, depthWrite: true, toneMapped: false,
+    vertexShader: 'varying vec3 vN; varying vec3 vV; varying float vY; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); vY = (modelMatrix * vec4(position,1.0)).y; gl_Position = projectionMatrix * mv; }',
+    fragmentShader: 'uniform float uT; uniform float uA; varying vec3 vN; varying vec3 vV; varying float vY; void main(){ float fr = pow(1.0 - clamp(abs(dot(normalize(vN), normalize(vV))), 0.0, 1.0), 1.6); float sh = 0.5 + 0.5 * sin(vY * 9.0 - uT * 2.2); vec3 core = vec3(1.0, 0.96, 0.84); vec3 rim = vec3(1.0, 0.74, 0.32); vec3 c = mix(core, rim, fr) + vec3(0.06, 0.05, 0.0) * sh; gl_FragColor = vec4(c, uA * (0.55 + 0.45 * fr)); }'
+  });
+  light.traverse(o => { if (o.isMesh) { o.material = lightM; o.castShadow = false; o.receiveShadow = false; } });
+  // 沒有腳：把腿和鞋子拿掉（身體裡位置在腰下面的就是），改成坐在一個飄在空中的金色圓坐墊上
+  const lb = light.userData.body;
+  lb.children.filter(c => c.isMesh && c.position.y < 0).forEach(c => lb.remove(c));
+  const cushion = new THREE.Group(); cushion.position.y = .3; light.add(cushion);
+  const cuM = new THREE.MeshStandardMaterial({ color: '#c9772e', emissive: '#e0893a', emissiveIntensity: .22, roughness: .6 });
+  const cuEdge = new THREE.MeshStandardMaterial({ color: '#e2b95a', emissive: '#ffcf6a', emissiveIntensity: .4, roughness: .4, metalness: .3 });
+  const pad = new THREE.Mesh(new THREE.SphereGeometry(.24, 28, 16), cuM); pad.scale.set(1, .26, 1); cushion.add(pad);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(.225, .018, 8, 40), cuEdge); rim.rotation.x = Math.PI / 2; cushion.add(rim);
+  const knot = new THREE.Mesh(new THREE.SphereGeometry(.02, 10, 8), cuEdge); knot.position.y = .06; cushion.add(knot);
+  for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2 + Math.PI / 4, ts = new THREE.Mesh(new THREE.ConeGeometry(.018, .07, 8), cuEdge); ts.position.set(Math.cos(a) * .235, -.04, Math.sin(a) * .235); cushion.add(ts); }
+  light.position.set(LX, 0, LZ); light.scale.setScalar(LS); light.rotation.y = Math.atan2(0 - LX, 3.5 - LZ); S.add(light);
+  const lgTex = tex(128, 128, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, 'rgba(255,248,220,1)'); gr.addColorStop(.3, 'rgba(255,226,150,.6)'); gr.addColorStop(.65, 'rgba(255,200,110,.18)'); gr.addColorStop(1, 'rgba(255,190,90,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+  const lgSprite = (y, sc, o) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: lgTex, transparent: true, opacity: o, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); sp.position.set(LX, y, LZ - .05); sp.scale.set(sc, sc * 1.25, 1); S.add(sp); return sp; };
+  const lgBody = lgSprite(1.4, 1.7, .32), lgHead = lgSprite(1.85, .9, .38);
+  const lgPool = addM(new THREE.CircleGeometry(.75, 32).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: lgTex, transparent: true, opacity: .55, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }), LX, .015, LZ); lgPool.castShadow = false; lgPool.receiveShadow = false;
+  const lgL = new THREE.PointLight(0xffd9a0, 1.4, 3.5, 1.6); lgL.position.set(LX, 1.3, LZ + .4); S.add(lgL);
+  const lgN = 26, lgG = new THREE.BufferGeometry(), lgP = new Float32Array(lgN * 3), lgSeed = [];
+  for (let i = 0; i < lgN; i++) lgSeed.push([Math.random() * Math.PI * 2, .18 + Math.random() * .32, Math.random()]);
+  lgG.setAttribute('position', new THREE.BufferAttribute(lgP, 3));
+  const lgDots = new THREE.Points(lgG, new THREE.PointsMaterial({ color: '#fff0c0', size: .045, transparent: true, opacity: .9, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); S.add(lgDots);
+  const lightTop = 1.2 * LS;
+
   const room = K.done([], new THREE.Vector3(0, 2.35, 4.2), new THREE.Vector3(-.2, 1.0, -1.6));
   room.push = 1.0;
+  room.opening = HOME_OPENING;
   room.props = people.map(p => ({ name: p.info.name, tag: true, head: new THREE.Vector3(p.x, p.top + .12, p.z), act: () => homePick(p.info) }));
+  room.props.push({ name: LIGHT_ONE.name, tag: true, head: new THREE.Vector3(LX, lightTop + .12, LZ), act: () => roomTalk(LIGHT_ONE.name, LIGHT_ONE.lines) });
+  // 地板上的貓：喵星人，專門來給提示的，點了會說三段話
+  cat.updateMatrixWorld(true);
+  room.props.push({ name: CAT_HINT.name, tag: true, head: cat.localToWorld(new THREE.Vector3(.22, .34, .08)), act: () => roomTalk(CAT_HINT.name, CAT_HINT.lines) });
   room.tip = ['點家人頭上的名牌，選一位家人', 'Tap a name tag to pick a family member'];
   let lastT = 0;
   room.update = t => {
     const dt = Math.min(.1, Math.max(0, t - lastT)); lastT = t;
     people.forEach(p => chibiTick(p.g, t, dt));
+    chibiTick(light, t, dt);
+    light.position.y = Math.sin(t * 1.1) * .05; cushion.rotation.y = t * .25;
+    const pulse = .85 + Math.sin(t * 1.6) * .1 + Math.sin(t * 3.7) * .04;
+    lightM.uniforms.uT.value = t; lightM.uniforms.uA.value = .8 + Math.sin(t * 1.6) * .08; lgBody.material.opacity = .32 * pulse; lgHead.material.opacity = .38 * pulse; lgL.intensity = 1.4 * pulse; lgPool.material.opacity = .4 * pulse;
+    for (let i = 0; i < lgN; i++) { const [a, r0, ph] = lgSeed[i], k = (t * .18 + ph) % 1; lgP[i * 3] = LX + Math.cos(a + t * .4) * r0 * (1 - k * .4); lgP[i * 3 + 1] = .1 + k * 2.3; lgP[i * 3 + 2] = LZ + Math.sin(a + t * .4) * r0 * (1 - k * .4); }
+    lgG.attributes.position.needsUpdate = true; lgDots.material.opacity = .9;
     for (let i = 0; i < steamN; i++) { const k = (t * .25 + i / steamN) % 1; steamP[i * 3] = TX - .35 + Math.sin(t * 2 + i) * .03 * k; steamP[i * 3 + 1] = .66 + k * .45; steamP[i * 3 + 2] = TZ - .05 + Math.cos(t * 1.6 + i) * .03 * k; }
     steamG.attributes.position.needsUpdate = true; steam.material.opacity = .3;
     cb.scale.y = .6 + Math.sin(t * 1.6) * .03;
+    catBlink -= dt; const catClosed = catBlink < 0 && catBlink > -.14; if (catBlink < -.14) catBlink = 2.5 + Math.random() * 3;
+    for (const e of catEyes) e.scale.y = catClosed ? .15 : 1.15;
+    tail.rotation.z = Math.sin(t * 1.3) * .18;
     tvL.intensity = 1.5 + Math.sin(t * 5) * .15 + Math.sin(t * 13) * .1;
   };
   return room;
 }
 // 在 3D 家裡點家人：有故事的進故事，其他的聊兩句
 function homePick(p) {
+  if (p.stories) return openPanel({ name: tr(`${p.name}的故事`, `${p.name}'s stories`), panel: 'stories', person: p });
   const isl = SC.isl, entry = p.story && islStories(isl).find(e => e.story === p.story);
   if (entry) { SC.entry = entry; SC.ch = GAME.chapters[entry.story]; $('#scMeta').textContent = L(entry.meta); return startStory(SC.ch, entry.meta, p.note); }
   roomTalk(p.name, p.lines);
+}
+
+// 從家人的故事書架選了一個故事，就進那個故事
+function startPersonStory(p, id) {
+  const isl = SC.isl, entry = islStories(isl).find(e => e.story === id) || { story: id, meta: '' };
+  SC.entry = entry; SC.ch = GAME.chapters[id];
+  $('#scMeta').textContent = entry.meta ? L(entry.meta) : '';
+  startStory(SC.ch, entry.meta, (p.stories.find(e => e.story === id) || {}).note);
 }
 
 /* ---------- 家裡：客廳＋你的書桌 ---------- */
@@ -6753,7 +6880,7 @@ function refreshListHighlights() {
 function renderSide() {
   // 只放地點名稱，越簡單越好
   $('#sideList').innerHTML = islands.map(isl =>
-    `<button class="dest" data-island="${isl.i}" style="--c:${isl.d.color}"><b>${esc(L(isl.d.name))}</b></button>`).join('');
+    `<button class="dest" data-island="${isl.i}" style="--c:${isl.d.color}"><b>${esc(islName(isl.d))}</b></button>`).join('');
 }
 function syncSheets() { document.body.classList.toggle('sheet-open', !$('#card').hidden || !$('#side').hidden); }
 function syncSide() { syncSheets(); const open = !$('#side').hidden; $('#btnList').setAttribute('aria-pressed', open); document.body.classList.toggle('side-open', open && !isMobile); dirty = true; }
