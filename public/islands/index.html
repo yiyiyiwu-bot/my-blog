@@ -3383,7 +3383,7 @@ function explore(isl) {
   const npc = oneNpc(SC.room.npcs, stories);
   if (!npc) { if (SC.room.tip) showTip(tr(...SC.room.tip)); box.hidden = false; return; }
   const entry = npc.story ? stories.find(e => e.story === npc.story) : null;
-  const done = entry && GS.done.has(entry.story);
+  const done = npc.stories ? npc.stories.every(e => GS.done.has(e.story)) : entry && GS.done.has(entry.story);
   const more = art && (SPOTS[isl.d.id] || []).length ? tr('，發亮的小點也可以點點看', ', and try the glowing dots') : SC.room.tipMore ? tr(...SC.room.tipMore) : '';
   showTip(npc.pick ? tr('點「！」選一位家人', 'Tap “!” to pick a family member') : (entry ? tr('點「！」開始', 'Tap “!” to begin') : tr('點「！」聊聊', 'Tap “!” to chat')) + more);
   const b = document.createElement('button');
@@ -3392,6 +3392,7 @@ function explore(isl) {
   b.setAttribute('aria-label', npc.pick ? tr('選一位家人', 'Pick a family member') : entry ? tr('開始故事', 'Start the story') : tr(`跟${npc.name}聊聊`, `Talk to ${npc.name}`));
   b.onclick = () => {
     if (npc.pick) return openFamily(isl);
+    if (npc.stories) return openPanel({ name: npc.shelfName || tr(`${npc.name}的故事`, `${npc.name}'s stories`), panel: 'stories', person: npc });
     if (entry) {
       SC.entry = entry; SC.ch = GAME.chapters[entry.story];
       $('#scMeta').textContent = L(entry.meta);
@@ -5793,7 +5794,10 @@ function buildAfternoonClass() {
   const K2 = id => kids.find(k => k.id === id);
 
   const zhe = K2('zhe');
-  const room = K.done([{ name: '阿哲', story: 'exam-cheating', head: new THREE.Vector3(zhe.s.x, 1.4, zhe.s.z + .55) }], new THREE.Vector3(.4, 2.35, 5.4), new THREE.Vector3(-.2, 1.35, -3.0));
+  // 學校的故事書架：點阿哲頭上的「！」打開。要新增故事，就在 stories 多加一筆 { story: '故事代號', intro: '一句話介紹' }
+  const room = K.done([{ name: '阿哲', shelfName: '學校的故事', story: 'exam-cheating', stories: [
+    { story: 'exam-cheating', intro: '' }
+  ], head: new THREE.Vector3(zhe.s.x, 1.4, zhe.s.z + .55) }], new THREE.Vector3(.4, 2.35, 5.4), new THREE.Vector3(-.2, 1.35, -3.0));
   const spot = name => (SPOTS.sch || []).find(s => s.name === name);
   room.props = [
     { name: '小美', tag: true, head: new THREE.Vector3(K2('mei').s.x, 1.4, K2('mei').s.z + .55), act: () => roomTalk('小美', ['明天就要考了……我的筆記還有好幾頁看不懂，頭都快爆炸了。']) },
