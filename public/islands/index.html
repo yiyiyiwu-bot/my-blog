@@ -5373,11 +5373,16 @@ function buildConfessBeach() {
     for (let i = 0; i < 900; i++) { const y = r() * h * .5, a = .25 + r() * .75 * (1 - y / (h * .5)); g.fillStyle = `rgba(255,255,255,${a})`; const s = r() < .06 ? 2.4 : r() < .3 ? 1.6 : 1; g.fillRect(r() * w, y, s, s); }
   });
   addM(new THREE.SphereGeometry(70, 48, 24), new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide, fog: false, toneMapped: false }), 0, 0, 0).castShadow = false;
-  // 會閃的亮星
-  const starN = 70, starG = new THREE.BufferGeometry(), starP = new Float32Array(starN * 3);
-  { const r = mulberry32(5); for (let i = 0; i < starN; i++) { const a = (r() - .5) * Math.PI * 1.3, el = .12 + r() * .9; starP.set([Math.sin(a) * Math.cos(el) * 62, Math.sin(el) * 62, -Math.cos(a) * Math.cos(el) * 62], i * 3); } }
-  starG.setAttribute('position', new THREE.BufferAttribute(starP, 3));
-  const stars = new THREE.Points(starG, new THREE.PointsMaterial({ color: '#fff7e0', size: .5, transparent: true, opacity: .9, fog: false, depthWrite: false, toneMapped: false })); S.add(stars);
+  // 滿天星星：三層（很多小星星、一些中星星、少數很亮的大星星），顏色有白、淡藍、淡黃，各自一閃一閃
+  const dotTex = tex(64, 64, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.25, 'rgba(255,255,255,.85)'); gr.addColorStop(.55, 'rgba(255,255,255,.18)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+  const starCols = [[1, 1, 1], [.78, .86, 1], [1, .94, .78], [1, 1, 1], [.9, .93, 1]];
+  const starLayers = [[1800, .7, 11], [360, 1.15, 23], [70, 2.0, 37]].map(([n, size, seed]) => {
+    const g = new THREE.BufferGeometry(), p = new Float32Array(n * 3), c = new Float32Array(n * 3), base = new Float32Array(n), ph = new Float32Array(n), r = mulberry32(seed);
+    for (let i = 0; i < n; i++) { const a = (r() - .5) * Math.PI * .95, el = .02 + Math.pow(r(), 1.7) * 1.2; p.set([Math.sin(a) * Math.cos(el) * 64, Math.sin(el) * 64, -Math.cos(a) * Math.cos(el) * 64], i * 3); const col = starCols[Math.floor(r() * starCols.length)]; base[i] = .6 + r() * .4; ph[i] = r() * 30; c.set(col.map(v => v * base[i]), i * 3); }
+    g.setAttribute('position', new THREE.BufferAttribute(p, 3)); g.setAttribute('color', new THREE.BufferAttribute(c, 3));
+    const pts = new THREE.Points(g, new THREE.PointsMaterial({ map: dotTex, size, vertexColors: true, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, fog: false, depthWrite: false, toneMapped: false })); S.add(pts);
+    return { pts, g, c, base, ph, n, cols: Array.from({ length: n }, (_, i) => [c[i * 3] / base[i], c[i * 3 + 1] / base[i], c[i * 3 + 2] / base[i]]) };
+  });
   // 月亮：圓圓的、有一點點陰影的花紋，外面一圈光暈
   const moonTex = tex(256, 256, (g, w, h) => { const gr = g.createRadialGradient(w * .45, h * .42, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, '#fffdf0'); gr.addColorStop(.85, '#f4ecd0'); gr.addColorStop(1, '#e8dcb8'); g.fillStyle = gr; g.beginPath(); g.arc(w / 2, h / 2, w / 2 - 2, 0, 7); g.fill(); g.fillStyle = 'rgba(190,175,140,.25)'; for (const [x, y, rr] of [[.38, .4, .1], [.6, .55, .13], [.45, .68, .07], [.66, .32, .06]]) { g.beginPath(); g.arc(w * x, h * y, w * rr, 0, 7); g.fill(); } });
   const moon = addM(new THREE.CircleGeometry(2.2, 48), new THREE.MeshBasicMaterial({ map: moonTex, transparent: true, depthWrite: false, fog: false, toneMapped: false }), MOON.x, MOON.y, MOON.z); moon.castShadow = false; moon.lookAt(0, 2, 6);
@@ -5620,30 +5625,11 @@ function buildConfessBeach() {
   skyG.setAttribute('position', new THREE.BufferAttribute(skyP, 3));
   const skyDots = new THREE.Points(skyG, new THREE.PointsMaterial({ color: '#ffd98a', size: .09, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, toneMapped: false })); S.add(skyDots);
 
-  // ---- 夜晚的天空：極光（綠、粉紅、淡紫的光帶，像布一樣飄）、遠方慢慢升起的天燈 ----
-  const auroraM = new THREE.ShaderMaterial({
-    uniforms: { uT: { value: 0 }, uA: { value: 1 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false, toneMapped: false,
-    vertexShader: 'uniform float uT; varying vec2 vU; void main(){ vU = uv; vec3 p = position; p.z += sin(p.x * 0.18 + uT * 0.35) * 2.2 + sin(p.x * 0.07 - uT * 0.2) * 3.0; p.y += sin(p.x * 0.12 + uT * 0.25) * 0.8; gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0); }',
-    fragmentShader: [
-      'uniform float uT; uniform float uA; varying vec2 vU;',
-      'void main(){',
-      '  float fall = smoothstep(0.0, 0.18, vU.y) * pow(1.0 - vU.y, 1.6);',
-      '  float rays = 0.55 + 0.45 * sin(vU.x * 90.0 + sin(vU.x * 13.0 + uT * 0.6) * 4.0 + uT * 0.4);',
-      '  float band = 0.6 + 0.4 * sin(vU.x * 7.0 - uT * 0.3);',
-      '  vec3 green = vec3(0.25, 1.0, 0.6), pink = vec3(1.0, 0.45, 0.75), violet = vec3(0.6, 0.45, 1.0);',
-      '  vec3 c = mix(green, violet, smoothstep(0.25, 0.85, vU.y));',
-      '  c = mix(c, pink, smoothstep(0.55, 1.0, sin(vU.x * 4.0 + uT * 0.15) * 0.5 + 0.5) * 0.6);',
-      '  float edge = smoothstep(0.0, 0.08, vU.x) * smoothstep(1.0, 0.92, vU.x);',
-      '  gl_FragColor = vec4(c * fall * rays * band * edge * 1.15 * uA, 1.0);',
-      '}'].join('\n')
-  });
-  const auroras = [[-4, 9.5, -40, 70, 10, .08], [7, 12.5, -46, 60, 9, -.12]].map(([x, y, z, w, h, ry]) => { const m = addM(new THREE.PlaneGeometry(w, h, 120, 1), auroraM, x, y, z); m.rotation.set(-.12, ry, 0); m.castShadow = false; m.receiveShadow = false; return m; });
-  // 天燈：紙做的燈罩（下寬上窄）、裡面的火光、外面一圈暖暖的光暈
-  const lanternM = new THREE.MeshBasicMaterial({ color: '#ffb35a', transparent: true, opacity: .95, fog: false, toneMapped: false });
-  const makeLantern = () => { const g = new THREE.Group(); const body = new THREE.Mesh(new THREE.CylinderGeometry(.16, .12, .34, 10), lanternM.clone()); g.add(body); const glow = sprite('#ffb84a', 0, 0, 0, 1.4, .6, g); glow.material.fog = false; S.add(g); return { g, body, glow }; };
-  const lanterns = [];
-  for (let i = 0; i < 9; i++) { const L = makeLantern(); lanterns.push({ ...L, x: -14 + i * 3.4 + Math.random() * 1.5, z: -22 - Math.random() * 16, sp: .12 + Math.random() * .1, ph: Math.random(), sw: Math.random() * 7, sz: 1.5 + Math.random() * .8 }); }
-  const fireLantern = makeLantern(); fireLantern.g.visible = false;
+  // 藍眼淚：夜晚打上岸的浪邊，有一點一點藍色的光（跟著浪一起推上來、退下去）
+  const btN = 360, btG = new THREE.BufferGeometry(), btP = new Float32Array(btN * 3), btC = new Float32Array(btN * 3), btS = [];
+  for (let i = 0; i < btN; i++) btS.push({ x: (Math.random() - .5) * 26, dz: (Math.random() - .5) * .7, ph: Math.random() * 7, tw: 2 + Math.random() * 4 });
+  btG.setAttribute('position', new THREE.BufferAttribute(btP, 3)); btG.setAttribute('color', new THREE.BufferAttribute(btC, 3));
+  const blueTears = new THREE.Points(btG, new THREE.PointsMaterial({ size: .2, vertexColors: true, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); S.add(blueTears);
 
   // ---- 天亮的天空：被朝陽染成粉紅、金色的雲（慢慢飄）、在天上滑翔的海鷗 ----
   const cloudTex = tex(256, 128, (g, w, h) => {
@@ -5701,10 +5687,9 @@ function buildConfessBeach() {
   room.tip = ['點桌子寫一個懺悔瓶，也可以到岸邊撿起別人的懺悔瓶', 'Write a confession bottle at the table, or pick one up on the shore'];
 
   // 投入大海 / 焚燒給蒼天：done 會在動畫跑到一半的時候呼叫（讓文字接著出現）
-  room.onEnter = () => { room.dawn = null; room.anim = null; room.fireLantern = null; };
+  room.onEnter = () => { room.dawn = null; room.anim = null; };
   room.sendBottle = (share, done) => {
     room.dawn = { t0: performance.now() / 1000 + (reduced ? -99 : .8) };
-    if (!share) room.fireLantern = { t0: performance.now() / 1000 + 2.2 };
     if (reduced) { done(); return; }
     room.anim = { share, t0: performance.now() / 1000, done, called: false };
   };
@@ -5723,7 +5708,7 @@ function buildConfessBeach() {
     const sy = -2 + dk * 4.2; sun.position.y = sy; sunGlow.position.y = sy; sunGlow2.position.y = sy;
     sun.material.opacity = Math.min(1, dk * 1.6); sunGlow.material.opacity = dk * .75; sunGlow2.material.opacity = dk * .8;
     seaM.uniforms.uDawn.value = dk;
-    _fsrc.copy(MOON).lerp(sun.position, dk); placeFlare(_fsrc, .85 + dk * .35, t);
+    _fsrc.copy(sun.position); placeFlare(_fsrc, smooth(.3, 1, dk) * 1.2, t);
     seaM.uniforms.uMx.value = MOON.x + (SUN.x - MOON.x) * dk;
     seaM.uniforms.uFog.value.copy(NIGHT_C.seaFog).lerp(DAWN_C.seaFog, dk);
     S.background.copy(NIGHT_C.bg).lerp(DAWN_C.bg, dk); S.fog.color.copy(NIGHT_C.fog).lerp(DAWN_C.fog, dk);
@@ -5738,29 +5723,8 @@ function buildConfessBeach() {
         fw.petals.forEach(p => { p.m.rotation.z = (1 - bk) * 1.2; p.m.position.set(Math.cos(p.a) * .045 * (.4 + bk * .6), (1 - bk) * .03, Math.sin(p.a) * .045 * (.4 + bk * .6)); });
       }
     });
-    // 極光（天亮就淡掉）
-    auroraM.uniforms.uT.value = t; auroraM.uniforms.uA.value = 1 - dk;
-    auroras.forEach(m => m.visible = dk < .99);
-    // 天燈：慢慢往上飄、左右輕輕晃，飄到很高就從下面重新開始；天亮後變淡
-    lanterns.forEach(l => {
-      const k = (t * l.sp * .06 + l.ph) % 1;
-      l.g.position.set(l.x + Math.sin(t * .4 + l.sw) * .6, 1 + k * 18, l.z);
-      l.g.scale.setScalar(l.sz); l.g.rotation.z = Math.sin(t * .7 + l.sw) * .08;
-      const a = Math.min(1, k * 6) * (1 - Math.max(0, (k - .85) / .15)) * (1 - dk * .7);
-      l.body.material.opacity = .95 * a; l.glow.material.opacity = (.5 + Math.sin(t * 3 + l.sw) * .1) * a;
-    });
-    // 焚燒給蒼天：篝火升起一盞天燈，一路飄上天
-    if (room.fireLantern) {
-      const e = now - room.fireLantern.t0;
-      if (e > 14) { room.fireLantern = null; fireLantern.g.visible = false; }
-      else if (e > 0) {
-        fireLantern.g.visible = true;
-        fireLantern.g.position.set(FX + Math.sin(e * .8) * .4 + e * .25, 1 + e * .9 + e * e * .03, FZ - e * 1.6);
-        fireLantern.g.scale.setScalar(1.2);
-        const a = Math.min(1, e / .8) * (1 - Math.max(0, (e - 11) / 3));
-        fireLantern.body.material.opacity = .95 * a; fireLantern.glow.material.opacity = .7 * a;
-      }
-    }
+    // 藍眼淚
+    { const wave = Math.sin(t * .55); for (let i = 0; i < btN; i++) { const b = btS[i]; btP.set([b.x, .02, -3.05 + wave * .38 + b.dz], i * 3); const k = Math.max(0, Math.sin(t * b.tw + b.ph)) * (.35 + (wave * .5 + .5) * .65) * (1 - dk); btC.set([.25 * k, .9 * k, 1.0 * k], i * 3); } btG.attributes.position.needsUpdate = true; btG.attributes.color.needsUpdate = true; blueTears.visible = dk < .99; }
     // 雲和海鷗（天亮後才出現）
     clouds.forEach(c => { const x = ((c.x + t * c.v + 34) % 68) - 34; c.sp.position.set(x, c.y, c.z); c.sp.material.opacity = dk * .85; });
     const gk = room.dawn ? smooth(0, 1, (now - room.dawn.t0 - 3.5) / 3) : 0;
@@ -5814,8 +5778,13 @@ function buildConfessBeach() {
         }
       }
     }
-    foams.forEach((f, i) => { const k = Math.sin(t * .55 + f.ph); f.m.position.z = -3.15 + k * .38 + i * .12; f.m.material.opacity = .25 + (k * .5 + .5) * .45; f.m.material.map.offset.x += dt * .004 * (i % 2 ? 1 : -1); });
-    stars.material.opacity = (.65 + Math.sin(t * 1.7) * .2) * (1 - dk);
+    foams.forEach((f, i) => { const k = Math.sin(t * .55 + f.ph); f.m.material.color.setRGB(.55 + dk * .45, .95 + dk * .05, 1); f.m.position.z = -3.15 + k * .38 + i * .12; f.m.material.opacity = .25 + (k * .5 + .5) * .45; f.m.material.map.offset.x += dt * .004 * (i % 2 ? 1 : -1); });
+    starLayers.forEach((L, li) => {
+      L.pts.material.opacity = 1 - dk; L.pts.visible = dk < .99;
+      if (li === 0 && Math.floor(t * 20) % 2) return; // 小星星每兩格才更新一次就夠了
+      for (let i = 0; i < L.n; i++) { const k = L.base[i] * (.6 + .4 * Math.sin(t * (1.2 + (L.ph[i] % 3)) + L.ph[i])); const col = L.cols[i]; L.c[i * 3] = col[0] * k; L.c[i * 3 + 1] = col[1] * k; L.c[i * 3 + 2] = col[2] * k; }
+      L.g.attributes.color.needsUpdate = true;
+    });
     lighthouse.material.opacity = (.25 + Math.max(0, Math.sin(t * .9)) * .75) * (1 - dk * .8);
     // 流星
     if (dk >= .3) shoot.material.opacity = 0;
