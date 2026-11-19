@@ -5781,8 +5781,15 @@ function buildConfessBeach() {
     foams.forEach((f, i) => { const k = Math.sin(t * .55 + f.ph); f.m.material.color.setRGB(.55 + dk * .45, .95 + dk * .05, 1); f.m.position.z = -3.15 + k * .38 + i * .12; f.m.material.opacity = .25 + (k * .5 + .5) * .45; f.m.material.map.offset.x += dt * .004 * (i % 2 ? 1 : -1); });
     starLayers.forEach((L, li) => {
       L.pts.material.opacity = 1 - dk; L.pts.visible = dk < .99;
-      if (li === 0 && Math.floor(t * 20) % 2) return; // 小星星每兩格才更新一次就夠了
-      for (let i = 0; i < L.n; i++) { const k = L.base[i] * (.6 + .4 * Math.sin(t * (1.2 + (L.ph[i] % 3)) + L.ph[i])); const col = L.cols[i]; L.c[i * 3] = col[0] * k; L.c[i * 3 + 1] = col[1] * k; L.c[i * 3 + 2] = col[2] * k; }
+      // 閃爍：每顆星星用自己的速度忽明忽暗（暗的時候幾乎看不見），偶爾還會「叮」一下特別亮
+      for (let i = 0; i < L.n; i++) {
+        const ph = L.ph[i], sp = 1.5 + (ph % 4) * .9;
+        const w = .5 + .5 * Math.sin(t * sp + ph) * Math.sin(t * sp * .37 + ph * 1.7);
+        let k = L.base[i] * (.12 + 1.0 * w * w);
+        const sparkle = Math.sin(t * (.6 + (ph % 2) * .3) + ph * 3.1);
+        if (sparkle > .985) k *= 1 + (sparkle - .985) * 120;
+        const col = L.cols[i]; L.c[i * 3] = col[0] * k; L.c[i * 3 + 1] = col[1] * k; L.c[i * 3 + 2] = col[2] * k;
+      }
       L.g.attributes.color.needsUpdate = true;
     });
     lighthouse.material.opacity = (.25 + Math.max(0, Math.sin(t * .9)) * .75) * (1 - dk * .8);
