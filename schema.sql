@@ -37,3 +37,12 @@ CREATE TABLE IF NOT EXISTS bless_likes (
 );
 
 CREATE INDEX IF NOT EXISTS idx_bless_comments_event ON bless_comments(event_id);
+
+-- 懺悔瓶（祝福世界島的海邊）：選「分享」的才會存進來。worker 第一次用到時也會自動建立
+CREATE TABLE IF NOT EXISTS confess_bottles (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  body TEXT NOT NULL,
+  ip TEXT,
+  created_at INTEGER NOT NULL,
+  hidden INTEGER NOT NULL DEFAULT 0
+);

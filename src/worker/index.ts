@@ -244,6 +244,79 @@ async function handleBlessAdmin(request: Request, env: Env): Promise<Response> {
   return json({ ok: true, events: await blessEvents(env, '', true) });
 }
 
+/* ---------- 懺悔瓶（祝福世界島的海邊）：選「分享」的才會存進來，匿名；不分享的根本不會送到這裡 ---------- */
+const CONFESS_MIN_SECONDS_BETWEEN = 30;
+let confessTableReady: Promise<unknown> | null = null;
+
+function ensureConfessTable(env: Env): Promise<unknown> {
+  confessTableReady ||= env.DB.batch([
+    env.DB.prepare(
+      'CREATE TABLE IF NOT EXISTS confess_bottles (id INTEGER PRIMARY KEY AUTOINCREMENT, body TEXT NOT NULL, ip TEXT, created_at INTEGER NOT NULL, hidden INTEGER NOT NULL DEFAULT 0)'
+    ),
+  ]).catch((err) => {
+    confessTableReady = null;
+    throw err;
+  });
+  return confessTableReady;
+}
+
+// 撿瓶子：隨機給幾個（不會給出是誰寫的）
+async function handleConfessList(env: Env): Promise<Response> {
+  await ensureConfessTable(env);
+  const { results } = await env.DB.prepare(
+    'SELECT id, body, created_at FROM confess_bottles WHERE hidden = 0 ORDER BY RANDOM() LIMIT 8'
+  ).all();
+  return json({ bottles: results });
+}
+
+// 投入大海
+async function handleConfessPost(request: Request, env: Env): Promise<Response> {
+  await ensureConfessTable(env);
+  const data = await readJson(request);
+  if (!data) return json({ error: 'invalid json' }, 400);
+  const body = String(data.body || '').trim().slice(0, 500);
+  if (!body) return json({ error: '寫一點點也好' }, 400);
+  if (String(data.website || '').trim()) return json({ ok: true }); // 機器人填了隱藏欄位，假裝成功
+
+  const ip = request.headers.get('cf-connecting-ip') || '';
+  const now = Date.now();
+  if (ip) {
+    const recent = await env.DB.prepare('SELECT created_at FROM confess_bottles WHERE ip = ? ORDER BY created_at DESC LIMIT 1')
+      .bind(ip)
+      .first<{ created_at: number }>();
+    if (recent && now - recent.created_at < CONFESS_MIN_SECONDS_BETWEEN * 1000) {
+      return json({ error: '大海需要一點時間，請稍等一下再投' }, 429);
+    }
+  }
+  const res = await env.DB.prepare('INSERT INTO confess_bottles (body, ip, created_at, hidden) VALUES (?, ?, ?, 0)')
+    .bind(body, ip, now)
+    .run();
+  return json({ ok: true, bottle: { id: res.meta.last_row_id, body, created_at: now } });
+}
+
+// 管理：用審核密碼；list 看全部（含隱藏的）、hide 隱藏/顯示、delete 刪除
+async function handleConfessAdmin(request: Request, env: Env): Promise<Response> {
+  await ensureConfessTable(env);
+  const data = await readJson(request);
+  if (!data) return json({ error: 'invalid json' }, 400);
+  if (!checkModerateToken(String(data.token || ''), env)) return json({ error: 'unauthorized' }, 401);
+  const action = String(data.action || '');
+  const id = Number(data.id);
+  if (action === 'hide') {
+    if (!id) return json({ error: 'missing id' }, 400);
+    await env.DB.prepare('UPDATE confess_bottles SET hidden = ? WHERE id = ?').bind(data.hidden ? 1 : 0, id).run();
+  } else if (action === 'delete') {
+    if (!id) return json({ error: 'missing id' }, 400);
+    await env.DB.prepare('DELETE FROM confess_bottles WHERE id = ?').bind(id).run();
+  } else if (action !== 'list') {
+    return json({ error: 'unknown action' }, 400);
+  }
+  const { results } = await env.DB.prepare(
+    'SELECT id, body, created_at, hidden FROM confess_bottles ORDER BY created_at DESC LIMIT 500'
+  ).all();
+  return json({ ok: true, bottles: results });
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -252,6 +325,9 @@ export default {
     if (url.pathname === '/api/bless/like' && request.method === 'POST') return handleBlessLike(request, env);
     if (url.pathname === '/api/bless/comment' && request.method === 'POST') return handleBlessComment(request, env);
     if (url.pathname === '/api/bless/admin' && request.method === 'POST') return handleBlessAdmin(request, env);
+    if (url.pathname === '/api/confess' && request.method === 'GET') return handleConfessList(env);
+    if (url.pathname === '/api/confess' && request.method === 'POST') return handleConfessPost(request, env);
+    if (url.pathname === '/api/confess/admin' && request.method === 'POST') return handleConfessAdmin(request, env);
 
     if (url.pathname === '/api/comments' && request.method === 'GET') {
       return handleListComments(env, url);

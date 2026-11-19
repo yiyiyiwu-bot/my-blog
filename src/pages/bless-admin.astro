@@ -25,6 +25,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </form>
       <p class="ba-status" id="ba-status" role="status"></p>
       <ol class="ba-list" id="ba-list"></ol>
+
+      <h2 class="ba-section">懺悔瓶管理（海邊）</h2>
+      <p class="ba-note">這裡只有選「分享」、投入大海的懺悔瓶。不適合的可以先隱藏（大家撿不到），或直接刪除。</p>
+      <ol class="ba-list" id="cf-list"></ol>
     </div>
   </div>
 </BaseLayout>
@@ -58,6 +62,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .ba-comments b { color: #8a6420; margin-right: 6px; }
   .ba-comments small { color: #9b8a6b; display: block; }
   .ba-comments button { padding: 4px 10px; font-size: 13px; }
+  .ba-section { margin: 40px 0 4px; font-size: 22px; }
+  .ba-note { margin: 0 0 12px; color: #6b4c16; font-size: 14px; }
+  .cf-item p { margin: 0 0 6px; white-space: pre-wrap; line-height: 1.7; }
+  .cf-item.hidden { opacity: .6; }
 </style>
 
 <script>
@@ -134,10 +142,44 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
   }
 
+  // ---- 懺悔瓶 ----
+  interface Bottle { id: number; body: string; created_at: number; hidden: number }
+  async function cfCall(action: string, extra: Record<string, unknown> = {}) {
+    const res = await fetch('/api/confess/admin', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ token, action, ...extra }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) { logout(); throw new Error('unauthorized'); }
+    if (!res.ok) throw new Error(data.error || '出錯了');
+    cfRender(data.bottles || []);
+  }
+  function cfRender(bottles: Bottle[]) {
+    const list = $('cf-list');
+    list.innerHTML = '';
+    if (!bottles.length) { list.appendChild(el('li', 'ba-card', '海裡還沒有懺悔瓶。')); return; }
+    for (const bt of bottles) {
+      const li = el('li', 'ba-card cf-item' + (bt.hidden ? ' hidden' : ''));
+      const head = el('div', 'ba-event-head');
+      head.append(el('span', 'ba-pill', new Date(bt.created_at).toLocaleString('zh-TW')));
+      if (bt.hidden) head.append(el('span', 'ba-pill', '隱藏中（大家撿不到）'));
+      const actions = el('div', 'ba-actions');
+      const hide = el('button', 'ghost', bt.hidden ? '重新顯示' : '先隱藏'); hide.type = 'button';
+      const del = el('button', 'danger', '刪除'); del.type = 'button';
+      hide.addEventListener('click', async () => { await cfCall('hide', { id: bt.id, hidden: !bt.hidden }); say(bt.hidden ? '懺悔瓶已重新顯示' : '懺悔瓶已隱藏'); });
+      del.addEventListener('click', async () => { if (!confirm('確定要刪除這個懺悔瓶嗎？刪了不能復原。')) return; await cfCall('delete', { id: bt.id }); say('懺悔瓶已刪除'); });
+      actions.append(hide, del);
+      li.append(head, el('p', '', bt.body), actions);
+      list.appendChild(li);
+    }
+  }
+
   async function login(t: string) {
     token = t;
     try {
       await call('list');
+      await cfCall('list');
       sessionStorage.setItem(TOKEN_KEY, t);
       $('ba-login').hidden = true;
       $('ba-content').hidden = false;

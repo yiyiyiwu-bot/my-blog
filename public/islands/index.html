@@ -411,6 +411,34 @@ body.miracle-on .css2d,body.miracle-on .map-bubble{opacity:0;transition:opacity 
 @media (max-width:700px){ .bd-pages{grid-template-columns:1fr} .bd-rings{display:none} .bd-left{padding:12px} .bd-grid{gap:8px} .bd-right{padding:16px 18px} .bn-short{font-size:17px} }
 @media (prefers-reduced-motion:reduce){ .bd-book{animation:none} }
 /* 遊戲屋：一張張遊戲卡片，自動排版 */
+/* 海邊・懺悔瓶：寫瓶子、讀瓶子的小視窗（夜晚的海，奶油色的信紙，深藍和金色） */
+.cf{position:absolute;inset:0;z-index:8;display:grid;place-items:center;padding:16px;box-sizing:border-box;background:radial-gradient(80% 70% at 50% 45%,rgba(40,60,130,.3),rgba(4,7,24,.74));backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.cf-card{position:relative;width:min(520px,100%);max-height:calc(100% - 24px);overflow:auto;box-sizing:border-box;padding:24px 24px 20px;border-radius:20px;background:linear-gradient(180deg,#fdf7e8,#f2e4c4);color:#3b2f22;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 0 0 1px rgba(160,120,60,.28);animation:cardIn .45s cubic-bezier(.2,.9,.3,1.15) both}
+.cf-card::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;border-radius:20px 20px 0 0;background:linear-gradient(90deg,#2f3f6b,#e2b95a,#2f3f6b)}
+.cf-eyebrow{font:800 12px var(--sans);letter-spacing:3px;color:#8a6a2e}
+.cf-title{display:block;margin:4px 0 14px;font:900 25px var(--serif);letter-spacing:2px;color:#2a2440}
+.cf-ask{margin:0 0 10px;font:800 16px/1.6 var(--serif);color:#3b2f22}
+.cf-choice{display:flex;gap:10px;margin-bottom:8px}
+.cf-choice button{flex:1;min-height:46px;border-radius:999px;border:1.5px solid #c9a35a;background:#fffaf0;color:#5a4426;font:800 17px var(--sans);letter-spacing:4px;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .15s}
+.cf-choice button:hover{transform:translateY(-1px)}
+.cf-choice button[aria-pressed="true"]{background:#2f3f6b;border-color:#2f3f6b;color:#fff}
+.cf-choice #cfNo[aria-pressed="true"]{background:#b5532e;border-color:#b5532e}
+.cf-note{margin:0 0 10px;min-height:1.7em;font:14px/1.7 var(--serif);color:#7a6040}
+.cf-card textarea{width:100%;box-sizing:border-box;border:0;border-radius:10px;padding:2px 12px;background:repeating-linear-gradient(transparent 0 33px,#e6d3ad 33px 34px) #fffdf6;background-attachment:local;resize:vertical;font:400 17px/34px var(--serif);color:#3b2f22;min-height:172px}
+.cf-card textarea:focus{outline:2px dashed #c9a35a;outline-offset:3px}
+.cf-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px;font:700 12px var(--sans);color:#9a8060}
+.cf-err{color:#b0402e}
+.cf-send{display:block;width:100%;margin-top:12px;min-height:50px;border:0;border-radius:999px;background:linear-gradient(135deg,#3b5190,#22305a);color:#fff;font:900 17px var(--sans);letter-spacing:3px;cursor:pointer;box-shadow:0 6px 18px rgba(30,40,90,.3)}
+.cf-send.burn{background:linear-gradient(135deg,#f2a64a,#c4502c);box-shadow:0 6px 18px rgba(190,80,30,.3)}
+.cf-send:disabled{background:#cbbd9f;box-shadow:none;cursor:default;letter-spacing:1px}
+.cf-body{margin:4px 0 10px;padding:14px 16px;border-radius:12px;background:repeating-linear-gradient(transparent 0 33px,#e6d3ad 33px 34px) #fffdf6;font:400 17px/34px var(--serif);color:#3b2f22;white-space:pre-wrap;word-break:break-word;min-height:102px}
+.cf-body.empty{color:#8a7458;text-align:center;display:grid;place-items:center}
+.cf-date{font:700 12px var(--sans);color:#9a8060;text-align:right}
+.cf-gentle{margin:12px 0 0;font:13px/1.6 var(--serif);color:#8a7458;text-align:center}
+.cf-row{display:flex;gap:10px;margin-top:14px}
+.cf-btn{flex:1;min-height:46px;border-radius:999px;border:1.5px solid #c9a35a;background:#fffaf0;color:#5a4426;font:800 15px var(--sans);cursor:pointer}
+.cf-btn.dark{background:#2f3f6b;border-color:#2f3f6b;color:#fff}
+.cf-msg p{text-shadow:0 0 18px rgba(255,220,150,.95),0 0 46px rgba(120,150,255,.75),0 2px 4px rgba(0,0,0,.5)}
 .pn-card.wide{width:min(860px,100%)}
 /* 家人的故事書架：一張一張故事卡，右上角是「新故事」或「看過了」 */
 .st-list{display:flex;flex-direction:column;gap:10px;margin-top:4px}
@@ -810,6 +838,38 @@ body.in-scene .follow-card, body.in-scene .map-bubble, body.in-scene .brand, bod
     </div>
   </div>
   <div class="love-msg" id="loveMsg" hidden aria-live="polite"><p>用愛燃燒後，<br>將自身化為<em>清淨機</em>，<br>淨化這個世界。</p></div>
+  <div class="cf" id="cfWrite" hidden role="dialog" aria-modal="true" aria-labelledby="cfTitle">
+    <div class="cf-card">
+      <button class="btn ll-close" id="cfClose" aria-label="關閉"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="cf-eyebrow">海邊・懺悔瓶</div>
+      <b class="cf-title" id="cfTitle">寫一個懺悔瓶</b>
+      <p class="cf-ask">你要分享懺悔瓶讓人可以閱讀嗎？</p>
+      <div class="cf-choice" role="group" aria-label="要不要分享">
+        <button type="button" id="cfYes" aria-pressed="false">是</button>
+        <button type="button" id="cfNo" aria-pressed="false">否</button>
+      </div>
+      <p class="cf-note" id="cfNote" aria-live="polite"></p>
+      <textarea id="cfText" maxlength="500" rows="6" placeholder="我想懺悔的是……" aria-label="懺悔瓶的內容"></textarea>
+      <input class="bt-hp" id="cfHp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="cf-meta"><span class="cf-err" id="cfErr" role="status"></span><span id="cfCount">0 / 500</span></div>
+      <button class="cf-send" id="cfSend" disabled>先選擇要不要分享</button>
+    </div>
+  </div>
+  <div class="cf" id="cfRead" hidden role="dialog" aria-modal="true" aria-labelledby="cfReadTitle">
+    <div class="cf-card cf-scroll">
+      <button class="btn ll-close" id="cfReadClose" aria-label="關閉"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="cf-eyebrow">海邊・懺悔瓶</div>
+      <b class="cf-title" id="cfReadTitle">撿到一個懺悔瓶</b>
+      <p class="cf-body" id="cfReadBody"></p>
+      <div class="cf-date" id="cfReadDate"></div>
+      <p class="cf-gentle">讀到的心事，請溫柔地放在心裡。</p>
+      <div class="cf-row">
+        <button type="button" class="cf-btn" id="cfAgain">再撿一個</button>
+        <button type="button" class="cf-btn dark" id="cfBack">放回大海</button>
+      </div>
+    </div>
+  </div>
+  <div class="love-msg cf-msg" id="cfMsg" hidden aria-live="polite"><p></p></div>
   <div class="bt" id="blessTree" hidden role="dialog" aria-modal="true" aria-labelledby="btTitle">
     <div class="bt-card">
       <div class="bt-head">
@@ -895,8 +955,8 @@ const DATA = {
       ]},
     // 餐廳先拿掉；海邊搬到原本餐廳的位置，才接得到其他島
     { id:'bch', icon:'海', q:0, r:1, name:'海邊|Beach', color:'#9fd6d8', ground:'#f0deb0', pattern:'sand', tree:'palm', beach:true,
-      scene:{ type:'soon', meta:'準備中|Coming soon' },
-      summary:'沙灘、海灘傘和一波一波的浪。故事還在寫。|Sand, umbrellas and rolling waves. The story is still being written.',
+      scene:{ type:'soon', meta:'夜晚的海邊 · 懺悔瓶|Night beach · Confession bottles' },
+      summary:'夜晚的海邊，篝火旁可以寫一個懺悔瓶，投入大海，或焚燒給蒼天。|A night beach where you can write a confession bottle by the fire.',
       items:[
         { id:'bch1', model:'beachhut', name:'海邊小屋|Beach Hut', desc:'' },
         { id:'bch2', model:'umbrella', name:'海灘傘|Beach Umbrella', desc:'' },
@@ -1295,6 +1355,12 @@ function init() {
   initBinder();
   $('#btClose').onclick = closeBlessTree;
   $('#llClose').onclick = closeLoveLetter;
+  // 海邊的懺悔瓶
+  $('#cfClose').onclick = closeConfess; $('#cfReadClose').onclick = closeConfess; $('#cfBack').onclick = closeConfess;
+  $('#cfYes').onclick = () => cfSetShare(true); $('#cfNo').onclick = () => cfSetShare(false);
+  $('#cfText').addEventListener('input', () => { cfCount(); $('#cfErr').textContent = ''; });
+  $('#cfSend').onclick = sendConfess; $('#cfAgain').onclick = cfNext;
+  for (const id of ['cfWrite', 'cfRead']) $('#' + id).addEventListener('click', e => { if (e.target.id === id) closeConfess(); });
   $('#lockBack').onclick = () => exitScene();
   $('#llSend').onclick = sendLoveLetter;
   $('#loveLetter').addEventListener('click', e => { if (e.target.id === 'loveLetter') closeLoveLetter(); });
@@ -3132,6 +3198,7 @@ function bindPointer() {
       if (e.key === 'Escape' && !$('#binder').hidden) { closeBinder(); return; }
       if (e.key === 'Escape' && !$('#blessTree').hidden) { closeBlessTree(); return; }
       if (e.key === 'Escape' && !$('#loveLetter').hidden) { closeLoveLetter(); return; }
+      if (e.key === 'Escape' && (!$('#cfWrite').hidden || !$('#cfRead').hidden)) { closeConfess(); return; }
       if (e.key === 'Escape' && !$('#famPick').hidden) { closeFamily(); explore(SC.isl); return; }
       if (e.key === 'Escape') { if (!$('#scDlg').hidden && SC.room && SC.room.npcs) endTalk(); else exitScene(); }
       else if ((e.key === 'Enter' || e.key === ' ') && !(e.target.closest && e.target.closest('button'))) { e.preventDefault(); advance(); }
@@ -3297,6 +3364,7 @@ function showScene(isl, replay) {
   const ch = entry ? GAME.chapters[entry.story] : null;
   SC.entry = entry; SC.ch = ch;
   SC.room = getRoom(isl);
+  if (SC.room && SC.room.onEnter) SC.room.onEnter();
   // 手機直放時，有設定 portraitLook 的房間一開始先稍微轉向主角
   if (!replay && SC.room && SC.room.portraitLook && innerWidth < innerHeight) SC.lookX = SC.room.portraitLook;
   document.body.classList.toggle('in-room', !!SC.room);
@@ -3567,7 +3635,7 @@ function initScene() {
   $('#scPanel').addEventListener('click', e => { if (e.target.id === 'scPanel') closePanel(); });
   $('#scene').addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { SC.px = e.clientX / innerWidth - .5; SC.py = e.clientY / innerHeight - .5; } });
   // 3D 房間裡按住拖曳轉頭看看；從按鈕、對話框、小視窗開始的不算
-  const lookable = e => SC.room && !SC.room.art && !e.target.closest('button, input, textarea, a, .sc-dlg, .sc-panel, .binder, .fam-pick, .bt, .ll, .sc-actions, .sc-choices');
+  const lookable = e => SC.room && !SC.room.art && !e.target.closest('button, input, textarea, a, .sc-dlg, .sc-panel, .binder, .fam-pick, .bt, .ll, .cf, .sc-actions, .sc-choices');
   $('#scene').addEventListener('pointerdown', e => {
     if (!lookable(e) || (e.pointerType === 'mouse' && e.button !== 0)) return;
     SC.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: 0 };
@@ -3684,7 +3752,7 @@ function openPanel(spot) {
   });
   setTimeout(() => $('#pnClose').focus({ preventScroll: true }), 30);
 }
-function closePanel() { clearInterval(panelTimer); $('#scPanel').hidden = true; closeFamily(); closeBinder(); closeBlessTree(); closeLoveLetter(); $('#lockCard').hidden = true; }
+function closePanel() { clearInterval(panelTimer); $('#scPanel').hidden = true; closeFamily(); closeBinder(); closeBlessTree(); closeLoveLetter(); closeConfess(); $('#lockCard').hidden = true; }
 function addSpots(isl, box) {
   for (const spot of SPOTS[isl.d.id] || []) {
     const b = document.createElement('button');
@@ -4177,8 +4245,8 @@ const artTalk = on => {
 const artDim = on => { const box = $('#scArt'); if (box) box.classList.toggle('dim', on && !$('#scene').classList.contains('split')); };
 // 有立體書插圖的地點用插圖；其他地點用 3D 室內
 // 還沒開放的地點：走進去會看到這句話（想開放時，把那一行刪掉就好）
-const LOCKED = { exam: '還沒到時候開放', bch: '還沒到時候開放', st: '還沒到時候開放', wrk: '還沒到時候開放', fun: '還沒到時候開放' };
-const ROOMS = { sch: buildAfternoonClass, hom: buildFamilyHome, wrk: buildMorningOffice, bch: artRoom('bch'), st: buildBlueStreet, park: buildBlessPark, love: buildLoveFurnace, fun: buildAmuseRoom, exam: buildExamRoom, cls: buildClsRoom };
+const LOCKED = { exam: '還沒到時候開放', st: '還沒到時候開放', wrk: '還沒到時候開放', fun: '還沒到時候開放' };
+const ROOMS = { sch: buildAfternoonClass, hom: buildFamilyHome, wrk: buildMorningOffice, bch: buildConfessBeach, st: buildBlueStreet, park: buildBlessPark, love: buildLoveFurnace, fun: buildAmuseRoom, exam: buildExamRoom, cls: buildClsRoom };
 const roomCache = {};
 // 街上的白天／晚上：一開始跟著真實時間，按上面的小按鈕可以換
 let streetNightPick = null;
@@ -5272,6 +5340,637 @@ function sendLoveLetter() {
       play([{ who: NARR(), text: '你的信，被愛輕輕地燒掉了。' }, { who: '守爐人', text: '用愛燃燒後，將自身化為清淨機，淨化這個世界。' }], () => explore(SC.isl));
     }, 3600);
   });
+}
+
+/* ---------- 海邊（3D）：夜晚的懺悔瓶海灘 ----------
+   設計：深夜的海邊，滿天星星和一輪月亮，月光在海面鋪成一條亮亮的路；
+   左邊是篝火（石頭圍成一圈、木柴、火焰、往上飄的火星），旁邊一根漂流木當椅子；
+   中間有一個人站在岸邊看海（背對我們）；右邊是寫懺悔瓶的漂流木桌（油燈、紙、墨水、空瓶子、一箱瓶子）；
+   岸邊有被浪打上來、微微發光的懺悔瓶（點了可以撿起來讀）；右邊岸上站著提燈的懺悔瓶守護者。
+   投入大海：瓶子劃一道弧線落進海裡，濺起水花，慢慢漂向遠方；焚燒給蒼天：信紙飛進篝火，火燒得更旺，火星一路飄上天 */
+function buildConfessBeach() {
+  const P = { sand: '#c9b38e', wet: '#8f7f66', wood: '#7a5638', wood2: '#5e4029', stone: '#6f6a66', navy: '#2f3f6b', gold: '#e2b95a', cream: '#f3ead6' };
+  const K = roomKit({ walls: false, bg: '#0b1030', sky: 0x8a9ae0, ground: 0x6a6478, hemi: 1.0, keyColor: 0xc8d4ff, keyI: 1.3, keyPos: new THREE.Vector3(5, 10, -8), fill: false, seed: 71 });
+  const b = K.b, S = K.S;
+  S.traverse(o => { if (o.isDirectionalLight) Object.assign(o.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, far: 40 }); });
+  S.fog = new THREE.Fog('#141a3e', 16, 60);
+  const tex = (w, h, draw, rep = false) => canvasTex(w, h, draw, rep);
+  const glowM = (c, o = {}) => new THREE.MeshBasicMaterial({ color: c, toneMapped: false, ...o });
+  const addM = (geo, mat, x, y, z, parent = S) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; parent.add(m); return m; };
+  const glowTex = tex(128, 128, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.25, 'rgba(255,255,255,.55)'); gr.addColorStop(.6, 'rgba(255,255,255,.12)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+  const sprite = (c, x, y, z, s, o = 1, parent = S) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: c, transparent: true, opacity: o, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); sp.position.set(x, y, z); sp.scale.set(s, s, 1); parent.add(sp); return sp; };
+  const MOON = new THREE.Vector3(4.5, 9.5, -52);
+
+  // ---- 天空：深藍到靛紫，地平線一點點紫光；滿天星星和淡淡的銀河 ----
+  const skyTex = tex(2048, 1024, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, 0, h);
+    gr.addColorStop(0, '#05081c'); gr.addColorStop(.3, '#0d1438'); gr.addColorStop(.46, '#1e2558'); gr.addColorStop(.5, '#3a3470'); gr.addColorStop(.53, '#22285a'); gr.addColorStop(1, '#0b1030');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    const r = mulberry32(23);
+    g.save(); g.translate(w * .55, h * .1); g.rotate(.35);
+    for (let i = 0; i < 1400; i++) { const x = (r() - .5) * w * .9, y = (r() - .5) * 120 * (1 + r()); g.fillStyle = `rgba(200,210,255,${.04 + r() * .08})`; g.beginPath(); g.arc(x, y, 1 + r() * 3, 0, 7); g.fill(); }
+    g.restore();
+    for (let i = 0; i < 900; i++) { const y = r() * h * .5, a = .25 + r() * .75 * (1 - y / (h * .5)); g.fillStyle = `rgba(255,255,255,${a})`; const s = r() < .06 ? 2.4 : r() < .3 ? 1.6 : 1; g.fillRect(r() * w, y, s, s); }
+  });
+  addM(new THREE.SphereGeometry(70, 48, 24), new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide, fog: false, toneMapped: false }), 0, 0, 0).castShadow = false;
+  // 會閃的亮星
+  const starN = 70, starG = new THREE.BufferGeometry(), starP = new Float32Array(starN * 3);
+  { const r = mulberry32(5); for (let i = 0; i < starN; i++) { const a = (r() - .5) * Math.PI * 1.3, el = .12 + r() * .9; starP.set([Math.sin(a) * Math.cos(el) * 62, Math.sin(el) * 62, -Math.cos(a) * Math.cos(el) * 62], i * 3); } }
+  starG.setAttribute('position', new THREE.BufferAttribute(starP, 3));
+  const stars = new THREE.Points(starG, new THREE.PointsMaterial({ color: '#fff7e0', size: .5, transparent: true, opacity: .9, fog: false, depthWrite: false, toneMapped: false })); S.add(stars);
+  // 月亮：圓圓的、有一點點陰影的花紋，外面一圈光暈
+  const moonTex = tex(256, 256, (g, w, h) => { const gr = g.createRadialGradient(w * .45, h * .42, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, '#fffdf0'); gr.addColorStop(.85, '#f4ecd0'); gr.addColorStop(1, '#e8dcb8'); g.fillStyle = gr; g.beginPath(); g.arc(w / 2, h / 2, w / 2 - 2, 0, 7); g.fill(); g.fillStyle = 'rgba(190,175,140,.25)'; for (const [x, y, rr] of [[.38, .4, .1], [.6, .55, .13], [.45, .68, .07], [.66, .32, .06]]) { g.beginPath(); g.arc(w * x, h * y, w * rr, 0, 7); g.fill(); } });
+  const moon = addM(new THREE.CircleGeometry(2.2, 48), new THREE.MeshBasicMaterial({ map: moonTex, transparent: true, depthWrite: false, fog: false, toneMapped: false }), MOON.x, MOON.y, MOON.z); moon.castShadow = false; moon.lookAt(0, 2, 6);
+  sprite('#cdd8ff', MOON.x, MOON.y, MOON.z + .5, 16, .55).material.fog = false;
+  sprite('#fff3d0', MOON.x, MOON.y, MOON.z + .6, 7, .5).material.fog = false;
+  // 流星：偶爾從天上劃過
+  const shootTex = tex(256, 16, (g, w, h) => { const gr = g.createLinearGradient(0, 0, w, 0); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(1, 'rgba(255,255,255,1)'); g.fillStyle = gr; g.fillRect(0, h / 2 - 2, w, 4); });
+  const shoot = addM(new THREE.PlaneGeometry(5, .12), new THREE.MeshBasicMaterial({ map: shootTex, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, toneMapped: false }), 0, 16, -50); shoot.castShadow = false;
+
+  // ---- 天亮了：送出懺悔瓶之後，天空慢慢換成清晨（一層黎明的天空淡入、月亮和星星淡出、太陽從海平面升起） ----
+  const dawnTex = tex(1024, 512, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, 0, h);
+    gr.addColorStop(0, '#5f8fc8'); gr.addColorStop(.28, '#93b6dc'); gr.addColorStop(.42, '#e8c6c0'); gr.addColorStop(.49, '#ffd2a0'); gr.addColorStop(.52, '#ffe2b8'); gr.addColorStop(.56, '#d9b6a4'); gr.addColorStop(1, '#b49a8c');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    g.fillStyle = 'rgba(255,240,225,.55)'; for (const [cx, cy, sc] of [[160, 150, 1], [420, 110, .8], [760, 170, 1.2], [930, 120, .7]]) for (const [dx, dy, rr] of [[0, 0, 30], [34, -8, 24], [64, 2, 20], [-28, 5, 20]]) { g.beginPath(); g.ellipse(cx + dx * sc, cy + dy * sc, rr * sc * 1.8, rr * sc * .55, 0, 0, 7); g.fill(); }
+  });
+  const dawnSky = addM(new THREE.SphereGeometry(68, 48, 24), new THREE.MeshBasicMaterial({ map: dawnTex, side: THREE.BackSide, transparent: true, opacity: 0, depthWrite: false, fog: false, toneMapped: false }), 0, 0, 0); dawnSky.castShadow = false; dawnSky.renderOrder = -10; // 先畫黎明的天空，月亮、太陽、小島再畫在上面
+  const SUN = new THREE.Vector3(-4.5, 0, -52);
+  const sun = addM(new THREE.CircleGeometry(2.4, 48), new THREE.MeshBasicMaterial({ color: '#fff1c8', transparent: true, opacity: 0, depthWrite: false, fog: false, toneMapped: false }), SUN.x, -2, SUN.z); sun.castShadow = false; sun.lookAt(0, 2, 6);
+  const sunGlow = sprite('#ffc27a', SUN.x, -2, SUN.z + .5, 26, 0); sunGlow.material.fog = false;
+  const sunGlow2 = sprite('#fff0c0', SUN.x, -2, SUN.z + .6, 9, 0); sunGlow2.material.fog = false;
+  const moonMats = [moon.material];
+  S.children.forEach(o => { if (o.isSprite && o.position.x === MOON.x && o.position.y === MOON.y) moonMats.push(o.material); }); // 月亮的兩圈光暈
+  const moonBase = moonMats.map(m => m.opacity);
+  let hemiL = null, keyL = null; S.traverse(o => { if (o.isHemisphereLight) hemiL = o; if (o.isDirectionalLight) keyL = o; });
+  const NIGHT_C = { bg: new THREE.Color('#0b1030'), fog: new THREE.Color('#141a3e'), seaFog: new THREE.Color('#1c2252'), hemiSky: hemiL.color.clone(), hemiGround: hemiL.groundColor.clone(), key: keyL.color.clone(), keyPos: keyL.position.clone() };
+  // 天亮後從前面斜斜照過來的暖陽（太陽在海的那一邊，只靠它的話沙灘會背光變暗，所以補一道從我們這邊照過去的陽光）
+  const sunFill = new THREE.DirectionalLight(0xfff0d6, 0); sunFill.position.set(-4, 9, 9); sunFill.target.position.set(0, 0, -1); S.add(sunFill, sunFill.target);
+  const DAWN_C = { bg: new THREE.Color('#d9b6a4'), fog: new THREE.Color('#d8b8b0'), seaFog: new THREE.Color('#e6c2ae'), hemiSky: new THREE.Color('#fff2e0'), hemiGround: new THREE.Color('#d8c4ae'), key: new THREE.Color('#ffd2a0'), keyPos: new THREE.Vector3(-6, 5, -10) };
+
+  // ---- 重生的清晨（天亮之後才出現）：彩虹、愛焚爐那種玫瑰金的光、從海面升起的愛心光點、鯨魚 ----
+  // 彩虹：太陽在左邊，彩虹掛在右邊的天空
+  const rainTex = tex(512, 512, (g, w, h) => {
+    const cols = ['rgba(255,80,80,', 'rgba(255,160,60,', 'rgba(255,230,90,', 'rgba(110,210,110,', 'rgba(80,170,255,', 'rgba(120,110,230,', 'rgba(190,110,220,'];
+    const R = w / 2, r0 = R * .78, bw = R * .028;
+    for (let i = 0; i < cols.length; i++) { const r = r0 + (cols.length - 1 - i) * bw; const gr = g.createRadialGradient(R, R, r - bw * 1.2, R, R, r + bw * 1.2); gr.addColorStop(0, cols[i] + '0)'); gr.addColorStop(.5, cols[i] + '.9)'); gr.addColorStop(1, cols[i] + '0)'); g.fillStyle = gr; g.beginPath(); g.arc(R, R, r + bw * 1.2, 0, 7); g.arc(R, R, Math.max(0, r - bw * 1.2), 0, 7, true); g.fill(); }
+  });
+  const rainbow = addM(new THREE.PlaneGeometry(44, 44), new THREE.MeshBasicMaterial({ map: rainTex, transparent: true, opacity: 0, depthWrite: false, fog: false, toneMapped: false }), 13, -2, -50); rainbow.castShadow = false; rainbow.lookAt(0, 2, 6);
+  // 玫瑰金的光芒：從太陽放射出去，慢慢轉
+  const rayTex = tex(64, 512, (g, w, h) => { const gr = g.createLinearGradient(0, h, 0, 0); gr.addColorStop(0, 'rgba(255,255,255,.95)'); gr.addColorStop(.4, 'rgba(255,255,255,.35)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; const xg = g.createLinearGradient(0, 0, w, 0); g.fillRect(0, 0, w, h); g.globalCompositeOperation = 'destination-in'; xg.addColorStop(0, 'rgba(0,0,0,0)'); xg.addColorStop(.5, 'rgba(0,0,0,1)'); xg.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = xg; g.fillRect(0, 0, w, h); });
+  const rays = new THREE.Group(); rays.position.set(SUN.x, 2.2, SUN.z + 1); rays.lookAt(0, 2, 6); S.add(rays);
+  const rayCols = ['#ffb3c1', '#ffd27a', '#ff8fa3', '#ffe2a8'];
+  const rayList = [];
+  for (let i = 0; i < 14; i++) { const len = 26 + (i % 3) * 8, wd = 2.2 + (i % 4) * .9; const geo = new THREE.PlaneGeometry(wd, len); geo.translate(0, len / 2, 0); const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: rayTex, color: rayCols[i % 4], transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false, toneMapped: false })); m.rotation.z = i / 14 * Math.PI * 2; rays.add(m); rayList.push({ m, ph: i * 1.3 }); }
+  const roseGlow = sprite('#ff9fb2', SUN.x, 2, SUN.z + .7, 40, 0); roseGlow.material.fog = false;
+  // 愛心形狀的光點：從海面和岸邊慢慢升起（重生）
+  const loveHeartTex = tex(128, 128, (g, w, h) => { const heart = (s, col, blur) => { g.save(); g.shadowColor = col; g.shadowBlur = blur; g.fillStyle = col; g.beginPath(); const x = w / 2, y = h / 2 + s * .1; g.moveTo(x, y + s * .5); g.bezierCurveTo(x - s, y - s * .15, x - s * .55, y - s, x, y - s * .45); g.bezierCurveTo(x + s * .55, y - s, x + s, y - s * .15, x, y + s * .5); g.fill(); g.restore(); }; heart(40, 'rgba(255,255,255,.85)', 20); heart(30, '#ffffff', 4); });
+  const loveCols = ['#ff5f86', '#ffb43a', '#ff8fa8', '#ff6f91', '#ffc85a'];
+  const lifts = [];
+  for (let i = 0; i < 42; i++) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: loveHeartTex, color: loveCols[i % 5], transparent: true, opacity: 0, depthWrite: false, toneMapped: false })); S.add(sp); lifts.push({ sp, x: (Math.random() - .5) * 22, z: -3 - Math.random() * 16, sp2: .25 + Math.random() * .35, ph: Math.random(), sz: .18 + Math.random() * .3, wob: Math.random() * 7 }); }
+
+  // 鯨魚：深藍色的背、淺色的肚子；天亮之後在遠方的海面躍出水面、噴水
+  const whale = new THREE.Group(); S.add(whale);
+  const wBody = new THREE.Group(); whale.add(wBody);
+  const wTop = new THREE.MeshStandardMaterial({ color: '#35557e', roughness: .5, metalness: .1 });
+  const wBelly = new THREE.MeshStandardMaterial({ color: '#d8e2ea', roughness: .6 });
+  const wb = new THREE.Mesh(new THREE.SphereGeometry(1, 28, 18), wTop); wb.scale.set(.62, .55, 2.1); wBody.add(wb);
+  const wbl = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 14), wBelly); wbl.scale.set(.56, .42, 1.9); wbl.position.set(0, -.16, .08); wBody.add(wbl);
+  const wstock = new THREE.Mesh(new THREE.ConeGeometry(.34, 1.5, 16), wTop); wstock.rotation.x = -Math.PI / 2; wstock.position.z = -2.4; wBody.add(wstock);
+  for (const s of [-1, 1]) {
+    const fl = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 10), wTop); fl.scale.set(.75, .06, .32); fl.position.set(s * .55, 0, -3.15); fl.rotation.y = s * .45; wBody.add(fl);
+    const pf = new THREE.Mesh(new THREE.SphereGeometry(1, 14, 10), wTop); pf.scale.set(.6, .05, .22); pf.position.set(s * .6, -.25, .6); pf.rotation.set(0, s * -.6, s * -.5); wBody.add(pf);
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(.05, 10, 8), new THREE.MeshBasicMaterial({ color: '#1a2230' })); eye.position.set(s * .5, -.05, 1.35); wBody.add(eye);
+  }
+  for (let k = 0; k < 6; k++) { const gv = new THREE.Mesh(new THREE.BoxGeometry(.5 - k * .03, .012, .012), wBelly); gv.position.set(0, -.5, 1.2 - k * .16); wBody.add(gv); }
+  whale.scale.setScalar(.9); whale.visible = false;
+  const WH = new THREE.Vector3(-6.5, 0, -17);
+  const spN = 40, spG = new THREE.BufferGeometry(), spP = new Float32Array(spN * 3), spV = [];
+  for (let i = 0; i < spN; i++) spV.push([(Math.random() - .5) * .5, 2.2 + Math.random() * 1.6, (Math.random() - .5) * .5, Math.random() * .5]);
+  spG.setAttribute('position', new THREE.BufferAttribute(spP, 3));
+  const spout = new THREE.Points(spG, new THREE.PointsMaterial({ color: '#ffffff', size: .12, transparent: true, opacity: 0, depthWrite: false, toneMapped: false })); S.add(spout);
+  const wRings = [0, 1].map(() => { const m = addM(new THREE.RingGeometry(.6, .78, 40).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0, depthWrite: false, toneMapped: false, side: THREE.DoubleSide }), 0, .02, 0); m.castShadow = false; m.visible = false; return m; });
+  const wDropN = 30, wDropG = new THREE.BufferGeometry(), wDropP = new Float32Array(wDropN * 3), wDropV = [];
+  for (let i = 0; i < wDropN; i++) { const a = Math.random() * 7, v = 1 + Math.random() * 2; wDropV.push([Math.cos(a) * v * .6, 2.5 + Math.random() * 2.5, Math.sin(a) * v * .6]); }
+  wDropG.setAttribute('position', new THREE.BufferAttribute(wDropP, 3));
+  const wDrops = new THREE.Points(wDropG, new THREE.PointsMaterial({ color: '#f2f7ff', size: .14, transparent: true, opacity: 0, depthWrite: false, toneMapped: false })); S.add(wDrops);
+
+  // ---- 遠方：左邊小島的剪影、右邊礁石上的燈塔（燈會慢慢亮、暗） ----
+  const isleTex = tex(1024, 128, (g, w, h) => { g.fillStyle = '#0a0e26'; g.beginPath(); g.moveTo(0, h); for (let x = 0; x <= w; x += 8) { const y = h * (.55 - .4 * Math.exp(-((x - w * .3) ** 2) / 30000) - .25 * Math.exp(-((x - w * .62) ** 2) / 12000)) + Math.sin(x * .05) * 2; g.lineTo(x, y); } g.lineTo(w, h); g.fill(); });
+  addM(new THREE.PlaneGeometry(30, 3.6), new THREE.MeshBasicMaterial({ map: isleTex, transparent: true, depthWrite: false, fog: false, toneMapped: false }), -16, .9, -58).castShadow = false;
+  b.ico(15, -.2, -34, 1.6, '#24263a'); b.ico(16.3, -.4, -33.4, 1.1, '#2c2d42');
+  b.cyl(15.2, .9, -34, .32, 2.6, '#e9e4da'); b.cyl(15.2, 2.0, -34, .33, .35, '#b5483a'); b.cyl(15.2, 3.5, -34, .26, .3, '#2a2a3a');
+  const lighthouse = sprite('#ffe6a0', 15.2, 3.65, -33.8, 2.2, .9);
+
+  // ---- 沙灘：細細的沙紋；靠海那一段比較濕、比較深色 ----
+  const sandTex = tex(512, 512, (g, w, h) => {
+    g.fillStyle = '#f6f1e6'; g.fillRect(0, 0, w, h);
+    const r = mulberry32(8); for (let i = 0; i < 9000; i++) { g.fillStyle = r() < .5 ? 'rgba(255,255,255,.35)' : 'rgba(170,155,130,.10)'; g.fillRect(r() * w, r() * h, 2, 2); }
+    for (let i = 0; i < 260; i++) { g.fillStyle = 'rgba(255,255,255,.9)'; g.fillRect(r() * w, r() * h, 1.5, 1.5); }
+    g.strokeStyle = 'rgba(170,150,120,.10)'; g.lineWidth = 2; for (let y = 10; y < h; y += 22) { g.beginPath(); for (let x = 0; x <= w; x += 16) g.lineTo(x, y + Math.sin(x * .03 + y) * 4); g.stroke(); }
+  }, true);
+  sandTex.repeat.set(10, 4);
+  addM(new THREE.PlaneGeometry(70, 14).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ map: sandTex, roughness: 1 }), 0, 0, 3.6).castShadow = false;
+  const wetTex = tex(512, 64, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, 'rgba(150,145,140,.0)'); gr.addColorStop(1, 'rgba(120,128,140,.5)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+  addM(new THREE.PlaneGeometry(70, 1.6).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ map: wetTex, transparent: true, roughness: .35, metalness: .2, depthWrite: false }), 0, .004, -2.6).castShadow = false;
+
+  // ---- 海：月光照出來的一條路、慢慢起伏的浪紋、遠方跟天空融在一起 ----
+  const seaM = new THREE.ShaderMaterial({
+    uniforms: { uT: { value: 0 }, uMx: { value: MOON.x }, uMd: { value: -MOON.z }, uFog: { value: new THREE.Color('#1c2252') }, uDawn: { value: 0 } },
+    vertexShader: 'varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position,1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }',
+    fragmentShader: [
+      'uniform float uT; uniform float uMx; uniform float uMd; uniform vec3 uFog; uniform float uDawn; varying vec3 vW;',
+      'float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }',
+      'void main(){',
+      '  float d = max(0.0, -vW.z - 3.0);',
+      '  vec3 nearC = vec3(0.09,0.21,0.38), deepC = vec3(0.04,0.09,0.22);',
+      '  nearC = mix(nearC, vec3(0.30,0.66,0.74), uDawn); deepC = mix(deepC, vec3(0.38,0.58,0.80), uDawn);',
+      '  vec3 c = mix(nearC, deepC, smoothstep(0.0, 30.0, d));',
+      '  float w1 = sin(vW.z * 2.6 + uT * 1.1 + sin(vW.x * 0.6 + uT * 0.3) * 1.6);',
+      '  float w2 = sin(vW.z * 5.3 - uT * 1.7 + vW.x * 0.9);',
+      '  c += mix(vec3(0.06,0.10,0.16), vec3(0.14,0.18,0.16), uDawn) * (w1 * 0.5 + 0.5) * (1.0 - smoothstep(0.0, 25.0, d)) * 0.8;',
+      '  c = mix(c, vec3(0.95,0.72,0.70), uDawn * smoothstep(8.0, 40.0, d) * 0.45);',
+      '  vec2 gc = floor(vec2(vW.x * 11.0, vW.z * 4.0 + uT * 0.4));',
+      '  c += vec3(0.85,0.92,1.0) * step(0.965, h(gc)) * (0.5 + 0.5 * sin(uT * 5.0 + h(gc + 7.7) * 40.0)) * (0.10 + uDawn * 0.18) * (1.0 - smoothstep(10.0, 45.0, d));',
+      '  float px = vW.x - uMx * clamp((d + 3.0) / uMd, 0.0, 1.0);',
+      '  float wid = 0.25 + d * 0.035;',
+      '  float path = exp(-px * px / (wid * wid)) * (0.35 + 0.65 * smoothstep(0.0, 6.0, d));',
+      '  vec2 cell = floor(vec2(vW.x * 7.0, vW.z * 2.2 + uT * 0.6));',
+      '  float sp = step(0.86, h(cell)) * (0.5 + 0.5 * sin(uT * 4.0 + h(cell + 3.1) * 30.0));',
+      '  c += mix(vec3(1.0,0.92,0.72), vec3(1.0,0.78,0.5), uDawn) * path * (0.16 + 0.12 * (w2 * 0.5 + 0.5) + sp * 0.9) * (1.0 + uDawn * 0.6);',
+      '  c = mix(c, uFog, smoothstep(22.0, 62.0, d));',
+      '  gl_FragColor = vec4(c, 1.0);',
+      '}'].join('\n'),
+    fog: false, toneMapped: false
+  });
+  addM(new THREE.PlaneGeometry(160, 90, 1, 1).rotateX(-Math.PI / 2), seaM, 0, -.015, -48).castShadow = false;
+  // 打上岸的白浪：三條，會前後推、淡入淡出
+  const foamTex = tex(1024, 64, (g, w, h) => { const r = mulberry32(3); for (let i = 0; i < 1600; i++) { const x = r() * w, y = h * (.35 + r() * .4); g.fillStyle = `rgba(235,242,255,${.15 + r() * .5})`; g.beginPath(); g.arc(x, y, 1 + r() * 3, 0, 7); g.fill(); } const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, 'rgba(220,232,255,0)'); gr.addColorStop(.6, 'rgba(220,232,255,.35)'); gr.addColorStop(1, 'rgba(220,232,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); }, true);
+  const foams = [0, 1, 2].map(i => { const t2 = foamTex.clone(); t2.needsUpdate = true; t2.repeat.set(3, 1); t2.offset.x = i * .37; const m = addM(new THREE.PlaneGeometry(70, .7).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: t2, transparent: true, opacity: .6, depthWrite: false, toneMapped: false }), 0, .012 + i * .002, -3.1); m.castShadow = false; m.receiveShadow = false; return { m, ph: i * 2.1 }; });
+
+  // ---- 沙灘上的小東西：石頭、貝殼、海草、漂流木 ----
+  const r = mulberry32(17);
+  for (let i = 0; i < 14; i++) { const x = (r() - .5) * 13, z = -1.8 + r() * 6.5; if (Math.abs(x - 2) < 1.4 && Math.abs(z - .9) < 1.1) continue; if (Math.abs(x + 2) < 1.1 && Math.abs(z - .5) < 1.1) continue; b.ico(x, .02, z, .06 + r() * .1, r() < .5 ? '#7c766e' : '#9a8f80'); }
+  for (let i = 0; i < 10; i++) { const x = (r() - .5) * 11, z = -2.2 + r() * 5; b.sph(x, .015, z, .03 + r() * .02, ['#f3e6d8', '#f2c9b8', '#e8dcc8'][i % 3]); }
+  for (const [x, z] of [[-5.6, .2], [-6.2, 2.3], [5.8, 1.2], [6.4, -.4], [-4.8, 3.6], [5.2, 3.4]]) for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2; const g2 = addM(new THREE.ConeGeometry(.04, .55 + r() * .3, 5), new THREE.MeshStandardMaterial({ color: k % 2 ? '#3f5a3a' : '#4d6a44', roughness: 1 }), x + Math.cos(a) * .08, .25, z + Math.sin(a) * .08); g2.rotation.set(Math.sin(a) * .35, 0, Math.cos(a) * .35); }
+  // 海邊的草：天亮之後開花（每叢草上長出幾朵小花，花瓣慢慢張開）
+  const tufts = [[-5.6, .2], [-6.2, 2.3], [5.8, 1.2], [6.4, -.4], [-4.8, 3.6], [5.2, 3.4], [-3.6, -1.6], [3.0, 3.3], [-3.3, 2.2], [-3.9, .4], [3.6, -.6], [3.6, 2.0], [-2.3, 3.5], [2.7, 3.4], [-2.4, -2.2], [1.4, -2.3]];
+  for (const [x, z] of tufts.slice(6)) for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2; const g2 = addM(new THREE.ConeGeometry(.035, .45 + r() * .25, 5), new THREE.MeshStandardMaterial({ color: k % 2 ? '#3f5a3a' : '#4d6a44', roughness: 1 }), x + Math.cos(a) * .07, .2, z + Math.sin(a) * .07); g2.rotation.set(Math.sin(a) * .35, 0, Math.cos(a) * .35); }
+  const petalCols = ['#ff8fb3', '#ffffff', '#ffd25a', '#f7a8d8', '#ff9f7a'];
+  const petalG = new THREE.SphereGeometry(.05, 10, 6), centerG = new THREE.SphereGeometry(.025, 8, 6);
+  const centerM = new THREE.MeshStandardMaterial({ color: '#ffcf3a', emissive: '#ffb020', emissiveIntensity: .35, roughness: .6 });
+  const flowers = [];
+  tufts.forEach(([x, z], ti) => {
+    for (let k = 0; k < 4; k++) {
+      const a = k / 4 * Math.PI * 2 + ti, rr = .12 + (k % 2) * .1, col = petalCols[(ti + k) % petalCols.length];
+      const fl = new THREE.Group(); fl.position.set(x + Math.cos(a) * rr, .42 + (k % 3) * .1 + r() * .1, z + Math.sin(a) * rr); fl.rotation.set(.85 + r() * .35, 0, (r() - .5) * .6); S.add(fl);
+      const pm = new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: .12, roughness: .7 });
+      const petals = [];
+      for (let p = 0; p < 5; p++) { const pa = p / 5 * Math.PI * 2; const pt = new THREE.Mesh(petalG, pm); pt.scale.set(1, .25, .55); pt.position.set(Math.cos(pa) * .045, 0, Math.sin(pa) * .045); pt.rotation.y = -pa; fl.add(pt); petals.push({ m: pt, a: pa }); }
+      fl.add(new THREE.Mesh(centerG, centerM));
+      fl.scale.setScalar(.001); fl.visible = false;
+      flowers.push({ fl, petals, delay: r() * 2.5, sz: 1.3 + r() * .6 });
+    }
+  });
+  // 篝火旁的漂流木椅子
+  const FX = -1.9, FZ = .45;
+  const logM = new THREE.MeshStandardMaterial({ color: '#8a7058', roughness: .95 });
+  const bench = addM(new THREE.CylinderGeometry(.16, .18, 1.7, 12), logM, FX - .15, .16, FZ - 1.0); bench.rotation.set(0, -.25, Math.PI / 2);
+  addM(new THREE.CylinderGeometry(.04, .05, .5, 6), logM, FX - .95, .3, FZ - .7).rotation.z = .6;
+
+  // ---- 篝火：石頭圍一圈、交叉的木柴、會跳的火焰、往上飄的火星、照亮四周的火光 ----
+  for (let i = 0; i < 11; i++) { const a = i / 11 * Math.PI * 2; b.ico(FX + Math.cos(a) * .42, .04, FZ + Math.sin(a) * .42, .09 + (i % 3) * .015, i % 2 ? P.stone : '#7d7772'); }
+  const charM = new THREE.MeshStandardMaterial({ color: '#3a2a20', roughness: 1, emissive: '#5a1a08', emissiveIntensity: .6 });
+  for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI; const lg = addM(new THREE.CylinderGeometry(.05, .06, .7, 8), charM, FX, .12, FZ); lg.rotation.set(Math.PI / 2 - .5, a, 0); }
+  addM(new THREE.CircleGeometry(.3, 20).rotateX(-Math.PI / 2), glowM('#ff7a2a', { transparent: true, opacity: .8 }), FX, .02, FZ).castShadow = false;
+  const flameCols = ['#ffc65a', '#ff9a30', '#ff6a1e', '#e8481a'];
+  const flames = [];
+  for (let i = 0; i < 12; i++) { const m = addM(new THREE.ConeGeometry(.11, .42, 8), glowM(flameCols[i % 4], { transparent: true, opacity: .5, blending: THREE.AdditiveBlending, depthWrite: false }), FX, .2, FZ); m.castShadow = false; m.receiveShadow = false; flames.push({ m, off: i / 12, sp: .8 + (i % 5) * .15, x: Math.cos(i * 2.4) * .14, z: Math.sin(i * 2.4) * .14, sz: .7 + (i % 3) * .25 }); }
+  const fireGlow = sprite('#ff9a4a', FX, .45, FZ, 2.6, .55);
+  const fireL = new THREE.PointLight(0xff8c3a, 7, 8, 1.5); fireL.position.set(FX, .7, FZ); fireL.castShadow = true; fireL.shadow.mapSize.set(512, 512); S.add(fireL);
+  const emN = 60, emG = new THREE.BufferGeometry(), emP = new Float32Array(emN * 3), emS = [];
+  for (let i = 0; i < emN; i++) emS.push({ ph: Math.random(), sp: .25 + Math.random() * .35, a: Math.random() * 7, rad: .05 + Math.random() * .25, hi: 1 + Math.random() * 1.2 });
+  emG.setAttribute('position', new THREE.BufferAttribute(emP, 3));
+  const embers = new THREE.Points(emG, new THREE.PointsMaterial({ color: '#ffb35a', size: .05, transparent: true, opacity: .95, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); S.add(embers);
+
+  // ---- 寫懺悔瓶的桌子：漂流木桌、油燈、攤開的信紙、墨水、羽毛筆、空瓶子，旁邊一箱瓶子和一塊小木牌 ----
+  const TX = 1.85, TZ = .7;
+  const woodM = new THREE.MeshStandardMaterial({ color: P.wood, roughness: .85 });
+  addM(new THREE.BoxGeometry(1.35, .07, .78), woodM, TX, .74, TZ);
+  for (const [dx, dz] of [[-.56, -.3], [.56, -.3], [-.56, .3], [.56, .3]]) addM(new THREE.CylinderGeometry(.04, .05, .72, 8), woodM, TX + dx, .36, TZ + dz);
+  const paperTex = tex(256, 192, (g, w, h) => { g.fillStyle = '#f6edd8'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(150,120,80,.35)'; for (let y = 30; y < h; y += 22) { g.beginPath(); g.moveTo(16, y); g.lineTo(w - 16, y); g.stroke(); } g.strokeStyle = 'rgba(40,40,70,.55)'; g.lineWidth = 2; for (let y = 26, i = 0; i < 3; y += 22, i++) { g.beginPath(); for (let x = 20; x < w - 40 - i * 30; x += 6) g.lineTo(x, y + Math.sin(x * .4) * 2); g.stroke(); } });
+  const deskPaper = addM(new THREE.PlaneGeometry(.42, .31).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ map: paperTex, roughness: .9 }), TX - .18, .78, TZ + .06); deskPaper.rotation.y = .12; deskPaper.castShadow = false;
+  b.cyl(TX + .2, .775, TZ + .16, .045, .07, '#1e2440'); b.cyl(TX + .2, .845, TZ + .16, .025, .015, '#2b2f50');
+  const quill = addM(new THREE.ConeGeometry(.02, .32, 6), new THREE.MeshStandardMaterial({ color: '#f2efe6', roughness: .7 }), TX + .2, .9, TZ + .12); quill.rotation.set(.5, 0, -.5);
+  const glassM = new THREE.MeshStandardMaterial({ color: '#bfe6e0', transparent: true, opacity: .42, roughness: .08, metalness: .15, depthWrite: false });
+  const corkM = new THREE.MeshStandardMaterial({ color: '#a77d52', roughness: .9 });
+  const bottleMesh = (scale = 1, withScroll = true) => {
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(.06, .065, .2, 16), glassM); body.position.y = .1; g.add(body);
+    const sh = new THREE.Mesh(new THREE.SphereGeometry(.06, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), glassM); sh.position.y = .2; g.add(sh);
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(.024, .03, .08, 12), glassM); neck.position.y = .28; g.add(neck);
+    const cork = new THREE.Mesh(new THREE.CylinderGeometry(.026, .024, .04, 10), corkM); cork.position.y = .335; g.add(cork);
+    if (withScroll) { const sc = new THREE.Mesh(new THREE.CylinderGeometry(.022, .022, .15, 10), new THREE.MeshStandardMaterial({ color: '#f1e3c0', roughness: .9 })); sc.position.y = .1; g.add(sc); const rib = new THREE.Mesh(new THREE.TorusGeometry(.024, .005, 6, 14), new THREE.MeshStandardMaterial({ color: '#b5483a' })); rib.rotation.x = Math.PI / 2; rib.position.y = .1; g.add(rib); }
+    g.scale.setScalar(scale); return g;
+  };
+  for (const [dx, dz, ry] of [[-.5, -.22, 0], [-.38, -.28, .4]]) { const bt = bottleMesh(1, false); bt.position.set(TX + dx, .775, TZ + dz); bt.rotation.y = ry; S.add(bt); }
+  const lay = bottleMesh(1, false); lay.position.set(TX + .45, .835, TZ - .18); lay.rotation.set(0, .3, Math.PI / 2); S.add(lay);
+  // 油燈
+  b.cyl(TX - .48, .775, TZ + .22, .07, .03, '#3b2a20'); b.cyl(TX - .48, .995, TZ + .22, .05, .025, '#3b2a20');
+  addM(new THREE.CylinderGeometry(.055, .065, .19, 12, 1, true), new THREE.MeshStandardMaterial({ color: '#fff1d0', transparent: true, opacity: .35, side: THREE.DoubleSide, depthWrite: false }), TX - .48, .9, TZ + .22).castShadow = false;
+  const lampCore = addM(new THREE.SphereGeometry(.03, 10, 8), glowM('#ffd58a'), TX - .48, .88, TZ + .22); lampCore.castShadow = false;
+  const lampGlow = sprite('#ffc46b', TX - .48, .9, TZ + .22, .9, .7);
+  const lampL = new THREE.PointLight(0xffc070, 2.2, 3.5, 1.8); lampL.position.set(TX - .48, 1.0, TZ + .22); S.add(lampL);
+  // 一箱空瓶子
+  b.box(TX + 1.0, 0, TZ + .15, .52, .3, .4, '#8a6a46'); b.box(TX + 1.0, .3, TZ - .04, .52, .02, .02, '#6b4f33'); b.box(TX + 1.0, .3, TZ + .34, .52, .02, .02, '#6b4f33');
+  for (let i = 0; i < 4; i++) { const bt = bottleMesh(.9, false); bt.position.set(TX + .86 + (i % 2) * .26, .2, TZ + .05 + Math.floor(i / 2) * .2); bt.rotation.z = (i - 1.5) * .06; S.add(bt); }
+  // 小木牌：懺悔瓶
+  const signTex = tex(256, 96, (g, w, h) => { g.fillStyle = '#8f6a45'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(60,40,20,.35)'; for (let y = 12; y < h; y += 14) { g.beginPath(); g.moveTo(0, y); g.bezierCurveTo(w * .3, y + 3, w * .6, y - 3, w, y); g.stroke(); } g.fillStyle = '#fbf1dc'; g.font = '900 44px "Noto Serif TC", serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('懺悔瓶', w / 2, h / 2 + 2); });
+  b.cyl(TX + .95, 0, TZ - .45, .03, 1.1, P.wood2);
+  const sign = addM(new THREE.PlaneGeometry(.62, .23), new THREE.MeshStandardMaterial({ map: signTex, roughness: .9, side: THREE.DoubleSide }), TX + .95, 1.0, TZ - .42); sign.rotation.y = -.35;
+
+  // ---- 岸邊被浪打上來的懺悔瓶：半埋在沙裡，裡面有一點點光 ----
+  const RX = -1.15, RZ = -2.75;
+  const shoreBottles = [[0, 0, .6, .3], [.42, -.25, -.4, -.5], [-.38, -.12, 1.2, .2]].map(([dx, dz, ry, rz], i) => {
+    const bt = bottleMesh(1.15); bt.position.set(RX + dx, .02, RZ + dz); bt.rotation.set(0, ry, Math.PI / 2 + rz * .3); S.add(bt);
+    const sp = sprite('#ffe2a0', RX + dx, .12, RZ + dz, .9, .8); return { sp, ph: i * 1.7 };
+  });
+
+  // ---- 人：岸邊看海的人（背對我們）、提燈的懺悔瓶守護者 ----
+  const watcher = chibi({ stand: true, top: '#8a9cc4', collar: '#eef2fa', hair: '#3b2e28', style: 'short', pants: '#4d5878' });
+  watcher.position.set(.35, 0, -2.15); watcher.scale.setScalar(1.7); watcher.rotation.y = Math.PI + .12; S.add(watcher);
+  const GX = 4.3, GZ = -2.1, GS = 1.72;
+  const guardian = chibi({ stand: true, top: P.navy, trim: P.gold, collar: '#e9dcc0', hair: '#ece6dc', style: 'long', hold: 'lantern', pants: '#26314f' });
+  guardian.position.set(GX, 0, GZ); guardian.scale.setScalar(GS); guardian.rotation.y = Math.atan2(0 - GX, 6.8 - GZ); S.add(guardian);
+  sprite('#ffcf7a', GX, .02, GZ, 1.4, .25);
+
+  // ---- 動畫用的東西（平常藏起來）：飛出去的瓶子、水花、要燒掉的信紙、飛上天的光點 ----
+  const flyBottle = bottleMesh(1.6); flyBottle.visible = false; S.add(flyBottle);
+  const flyGlow = sprite("#ffe6a8", 0, 0, 0, 1.1, 0);
+  const ringM = () => new THREE.MeshBasicMaterial({ color: '#dfeaff', transparent: true, opacity: 0, depthWrite: false, toneMapped: false, side: THREE.DoubleSide });
+  const rings = [0, 1, 2].map(() => { const m = addM(new THREE.RingGeometry(.2, .26, 40).rotateX(-Math.PI / 2), ringM(), 0, .01, 0); m.castShadow = false; m.visible = false; return m; });
+  const dropN = 24, dropG = new THREE.BufferGeometry(), dropP = new Float32Array(dropN * 3), dropV = [];
+  dropG.setAttribute('position', new THREE.BufferAttribute(dropP, 3));
+  const drops = new THREE.Points(dropG, new THREE.PointsMaterial({ color: '#e8f0ff', size: .07, transparent: true, opacity: 0, depthWrite: false, toneMapped: false })); S.add(drops);
+  const burnTex = tex(256, 320, (g, w, h) => { g.fillStyle = '#f6edd8'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(40,40,70,.6)'; g.lineWidth = 3; for (let y = 40; y < h - 20; y += 30) { g.beginPath(); for (let x = 24; x < w - 24 - (y % 60); x += 7) g.lineTo(x, y + Math.sin(x * .35 + y) * 2.5); g.stroke(); } });
+  const paperM = new THREE.MeshStandardMaterial({ map: burnTex, side: THREE.DoubleSide, roughness: .9, emissive: '#ff6a1a', emissiveIntensity: 0, transparent: true });
+  const flyPaper = addM(new THREE.PlaneGeometry(.36, .45), paperM, 0, 0, 0); flyPaper.visible = false; flyPaper.castShadow = false;
+  const skyN = 50, skyG = new THREE.BufferGeometry(), skyP = new Float32Array(skyN * 3), skyS = [];
+  for (let i = 0; i < skyN; i++) skyS.push({ a: Math.random() * 7, rad: Math.random() * .5, sp: .6 + Math.random() * .9, dl: Math.random() * .8, wob: Math.random() * 7 });
+  skyG.setAttribute('position', new THREE.BufferAttribute(skyP, 3));
+  const skyDots = new THREE.Points(skyG, new THREE.PointsMaterial({ color: '#ffd98a', size: .09, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, toneMapped: false })); S.add(skyDots);
+
+  // ---- 夜晚的天空：極光（綠、粉紅、淡紫的光帶，像布一樣飄）、遠方慢慢升起的天燈 ----
+  const auroraM = new THREE.ShaderMaterial({
+    uniforms: { uT: { value: 0 }, uA: { value: 1 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false, toneMapped: false,
+    vertexShader: 'uniform float uT; varying vec2 vU; void main(){ vU = uv; vec3 p = position; p.z += sin(p.x * 0.18 + uT * 0.35) * 2.2 + sin(p.x * 0.07 - uT * 0.2) * 3.0; p.y += sin(p.x * 0.12 + uT * 0.25) * 0.8; gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0); }',
+    fragmentShader: [
+      'uniform float uT; uniform float uA; varying vec2 vU;',
+      'void main(){',
+      '  float fall = smoothstep(0.0, 0.18, vU.y) * pow(1.0 - vU.y, 1.6);',
+      '  float rays = 0.55 + 0.45 * sin(vU.x * 90.0 + sin(vU.x * 13.0 + uT * 0.6) * 4.0 + uT * 0.4);',
+      '  float band = 0.6 + 0.4 * sin(vU.x * 7.0 - uT * 0.3);',
+      '  vec3 green = vec3(0.25, 1.0, 0.6), pink = vec3(1.0, 0.45, 0.75), violet = vec3(0.6, 0.45, 1.0);',
+      '  vec3 c = mix(green, violet, smoothstep(0.25, 0.85, vU.y));',
+      '  c = mix(c, pink, smoothstep(0.55, 1.0, sin(vU.x * 4.0 + uT * 0.15) * 0.5 + 0.5) * 0.6);',
+      '  float edge = smoothstep(0.0, 0.08, vU.x) * smoothstep(1.0, 0.92, vU.x);',
+      '  gl_FragColor = vec4(c * fall * rays * band * edge * 1.15 * uA, 1.0);',
+      '}'].join('\n')
+  });
+  const auroras = [[-4, 9.5, -40, 70, 10, .08], [7, 12.5, -46, 60, 9, -.12]].map(([x, y, z, w, h, ry]) => { const m = addM(new THREE.PlaneGeometry(w, h, 120, 1), auroraM, x, y, z); m.rotation.set(-.12, ry, 0); m.castShadow = false; m.receiveShadow = false; return m; });
+  // 天燈：紙做的燈罩（下寬上窄）、裡面的火光、外面一圈暖暖的光暈
+  const lanternM = new THREE.MeshBasicMaterial({ color: '#ffb35a', transparent: true, opacity: .95, fog: false, toneMapped: false });
+  const makeLantern = () => { const g = new THREE.Group(); const body = new THREE.Mesh(new THREE.CylinderGeometry(.16, .12, .34, 10), lanternM.clone()); g.add(body); const glow = sprite('#ffb84a', 0, 0, 0, 1.4, .6, g); glow.material.fog = false; S.add(g); return { g, body, glow }; };
+  const lanterns = [];
+  for (let i = 0; i < 9; i++) { const L = makeLantern(); lanterns.push({ ...L, x: -14 + i * 3.4 + Math.random() * 1.5, z: -22 - Math.random() * 16, sp: .12 + Math.random() * .1, ph: Math.random(), sw: Math.random() * 7, sz: 1.5 + Math.random() * .8 }); }
+  const fireLantern = makeLantern(); fireLantern.g.visible = false;
+
+  // ---- 天亮的天空：被朝陽染成粉紅、金色的雲（慢慢飄）、在天上滑翔的海鷗 ----
+  const cloudTex = tex(256, 128, (g, w, h) => {
+    const puff = (x, y, rr, a) => { const gr = g.createRadialGradient(x, y, 0, x, y, rr); gr.addColorStop(0, `rgba(255,255,255,${a})`); gr.addColorStop(.6, `rgba(255,255,255,${a * .6})`); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.beginPath(); g.arc(x, y, rr, 0, 7); g.fill(); };
+    for (const [x, y, rr] of [[70, 78, 40], [112, 60, 50], [158, 70, 42], [196, 82, 32], [130, 88, 46], [92, 92, 34]]) puff(x, y, rr, .95);
+    g.globalCompositeOperation = 'source-atop'; const sh = g.createLinearGradient(0, 30, 0, h); sh.addColorStop(0, 'rgba(255,255,255,0)'); sh.addColorStop(1, 'rgba(150,90,110,.45)'); g.fillStyle = sh; g.fillRect(0, 0, w, h);
+  });
+  const cloudCols = ['#ffb4a0', '#ffc98a', '#f7a3bd', '#ffd2b0', '#ffae8c'];
+  const clouds = [];
+  for (let i = 0; i < 9; i++) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: cloudTex, color: cloudCols[i % 5], transparent: true, opacity: 0, depthWrite: false, fog: false, toneMapped: false })); const s2 = 9 + Math.random() * 8; sp.scale.set(s2, s2 * .5, 1); sp.renderOrder = -5; S.add(sp); clouds.push({ sp, x: -30 + i * 7.5 + Math.random() * 3, y: 4.5 + Math.random() * 8, z: -38 - Math.random() * 8, v: .15 + Math.random() * .2 }); }
+  // 海鷗：白色身體、兩片會拍動的翅膀（尖端灰色）
+  const gullM = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: .8, side: THREE.DoubleSide });
+  const gullTip = new THREE.MeshStandardMaterial({ color: '#5a6270', roughness: .8, side: THREE.DoubleSide });
+  const gulls = [];
+  for (let i = 0; i < 6; i++) {
+    const g = new THREE.Group(); const body = new THREE.Mesh(new THREE.SphereGeometry(.12, 10, 8), gullM); body.scale.set(.6, .55, 1.6); g.add(body);
+    const wings = [-1, 1].map(s => { const piv = new THREE.Group(); piv.position.set(s * .05, .02, 0); const w = new THREE.Mesh(new THREE.BoxGeometry(.5, .015, .16), gullM); w.position.x = s * .25; const tip = new THREE.Mesh(new THREE.BoxGeometry(.16, .016, .1), gullTip); tip.position.x = s * .55; piv.add(w, tip); g.add(piv); return { piv, s }; });
+    g.visible = false; S.add(g);
+    gulls.push({ g, wings, cx: -6 + i * 2.6, cy: 4 + (i % 3) * 1.4, cz: -10 - (i % 2) * 5, r: 2 + Math.random() * 2.5, sp: .25 + Math.random() * .2, ph: Math.random() * 7, flap: 5 + Math.random() * 3, sz: .9 + Math.random() * .5 });
+  }
+
+  // ---- 炫光：月亮（天亮後是太陽）的十字星芒，和鏡頭裡一串彩色的光圈（跟著光源和畫面中心連成一條線） ----
+  const starTex = tex(256, 256, (g, w, h) => {
+    const c = w / 2; g.translate(c, c);
+    const core = g.createRadialGradient(0, 0, 0, 0, 0, c * .5); core.addColorStop(0, 'rgba(255,255,255,1)'); core.addColorStop(.3, 'rgba(255,255,255,.5)'); core.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = core; g.beginPath(); g.arc(0, 0, c * .5, 0, 7); g.fill();
+    for (let i = 0; i < 8; i++) { g.save(); g.rotate(i * Math.PI / 4); const len = i % 2 ? c * .55 : c * .98, wd = i % 2 ? 3 : 5; const gr = g.createLinearGradient(0, 0, len, 0); gr.addColorStop(0, 'rgba(255,255,255,.95)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.beginPath(); g.moveTo(0, -wd); g.lineTo(len, 0); g.lineTo(0, wd); g.fill(); g.restore(); }
+  });
+  const ringTex = tex(128, 128, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, w * .3, w / 2, h / 2, w / 2); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(.75, 'rgba(255,255,255,.55)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+  const hexTex = tex(128, 128, (g, w, h) => { g.translate(w / 2, h / 2); g.beginPath(); for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; g.lineTo(Math.cos(a) * w * .45, Math.sin(a) * w * .45); } g.closePath(); const gr = g.createRadialGradient(0, 0, 0, 0, 0, w * .45); gr.addColorStop(0, 'rgba(255,255,255,.25)'); gr.addColorStop(.85, 'rgba(255,255,255,.5)'); gr.addColorStop(1, 'rgba(255,255,255,.15)'); g.fillStyle = gr; g.fill(); });
+  const flareMat = (map, color) => new THREE.SpriteMaterial({ map, color, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, fog: false, toneMapped: false });
+  const burst = new THREE.Sprite(flareMat(starTex, '#ffffff')); burst.renderOrder = 20; S.add(burst);
+  // [沿著線的位置（0 是光源、1 是畫面中心、2 是另一邊）, 大小, 圖, 顏色, 亮度]
+  const flareDef = [[.35, .5, hexTex, '#9fd8ff', .35], [.62, .22, ringTex, '#ffd48a', .5], [.9, .9, ringTex, '#b8a8ff', .25], [1.18, .32, hexTex, '#a8ffcf', .3], [1.45, .6, hexTex, '#ffb0c8', .28], [1.7, .18, ringTex, '#fff0b0', .5], [1.95, 1.3, ringTex, '#9fc8ff', .16]];
+  const flares = flareDef.map(([k, sz, map, col, o]) => { const sp = new THREE.Sprite(flareMat(map, col)); sp.renderOrder = 20; S.add(sp); return { sp, k, sz, o }; });
+  const _fv = new THREE.Vector3(), _fw = new THREE.Vector3(), _fsrc = new THREE.Vector3();
+  // 每一格畫面呼叫一次：src 是光源的位置，power 是亮度
+  const placeFlare = (src, power, t) => {
+    const cam = room.cam; _fv.copy(src).project(cam);
+    const onScreen = _fv.z < 1 && Math.abs(_fv.x) < 1.25 && Math.abs(_fv.y) < 1.25;
+    const fade = onScreen ? power * (1 - Math.min(1, Math.hypot(_fv.x, _fv.y) / 1.6) * .5) : 0;
+    const sx = _fv.x, sy = _fv.y;
+    const at = (nx, ny, out) => { out.set(nx, ny, .5).unproject(cam); return out.sub(cam.position).normalize().multiplyScalar(4).add(cam.position); };
+    at(sx, sy, _fw); burst.position.copy(_fw); burst.scale.setScalar(1.45 + Math.sin(t * 1.3) * .07); burst.material.opacity = fade * .75; burst.material.rotation = t * .03;
+    flares.forEach(f => { at(sx * (1 - f.k), sy * (1 - f.k), _fw); f.sp.position.copy(_fw); f.sp.scale.setScalar(f.sz); f.sp.material.opacity = fade * f.o; });
+  };
+
+  const room = K.done([], new THREE.Vector3(0, 2.2, 6.8), new THREE.Vector3(0, .8, -3));
+  room.push = 1.2;
+  room.props = [
+    { name: '寫一個懺悔瓶', tag: true, head: new THREE.Vector3(TX - .1, 1.3, TZ), act: () => openConfessWrite() },
+    { name: '撿起懺悔瓶', tag: true, head: new THREE.Vector3(RX, .62, RZ), act: () => openConfessRead() },
+    { name: CONFESS_GUARDIAN.name, tag: true, head: new THREE.Vector3(GX, 1.2 * GS + .12, GZ), act: () => roomTalk(CONFESS_GUARDIAN.name, CONFESS_GUARDIAN.lines) }
+  ];
+  room.tip = ['點桌子寫一個懺悔瓶，也可以到岸邊撿起別人的懺悔瓶', 'Write a confession bottle at the table, or pick one up on the shore'];
+
+  // 投入大海 / 焚燒給蒼天：done 會在動畫跑到一半的時候呼叫（讓文字接著出現）
+  room.onEnter = () => { room.dawn = null; room.anim = null; room.fireLantern = null; };
+  room.sendBottle = (share, done) => {
+    room.dawn = { t0: performance.now() / 1000 + (reduced ? -99 : .8) };
+    if (!share) room.fireLantern = { t0: performance.now() / 1000 + 2.2 };
+    if (reduced) { done(); return; }
+    room.anim = { share, t0: performance.now() / 1000, done, called: false };
+  };
+  const bez = (a, m, c, p) => a.clone().multiplyScalar((1 - p) * (1 - p)).add(m.clone().multiplyScalar(2 * (1 - p) * p)).add(c.clone().multiplyScalar(p * p));
+  const LAND = new THREE.Vector3(2.5, 0, -7.2);
+  let lastT = 0, nextShoot = 6;
+  room.update = t => {
+    const dt = Math.min(.1, Math.max(0, t - lastT)); lastT = t;
+    const now = performance.now() / 1000;
+    chibiTick(watcher, t, dt); chibiTick(guardian, t, dt);
+    seaM.uniforms.uT.value = t;
+    // 天亮的程度 dk：0 是夜晚，1 是清晨（送出後大約 7 秒慢慢亮起來）
+    const dk = room.dawn ? smooth(0, 1, (now - room.dawn.t0) / 7) : 0;
+    dawnSky.material.opacity = dk;
+    moonMats.forEach((m, i) => { m.opacity = moonBase[i] * (1 - dk); });
+    const sy = -2 + dk * 4.2; sun.position.y = sy; sunGlow.position.y = sy; sunGlow2.position.y = sy;
+    sun.material.opacity = Math.min(1, dk * 1.6); sunGlow.material.opacity = dk * .75; sunGlow2.material.opacity = dk * .8;
+    seaM.uniforms.uDawn.value = dk;
+    _fsrc.copy(MOON).lerp(sun.position, dk); placeFlare(_fsrc, .85 + dk * .35, t);
+    seaM.uniforms.uMx.value = MOON.x + (SUN.x - MOON.x) * dk;
+    seaM.uniforms.uFog.value.copy(NIGHT_C.seaFog).lerp(DAWN_C.seaFog, dk);
+    S.background.copy(NIGHT_C.bg).lerp(DAWN_C.bg, dk); S.fog.color.copy(NIGHT_C.fog).lerp(DAWN_C.fog, dk);
+    hemiL.intensity = 1.0 + dk * 1.3; sunFill.intensity = dk * 2.2; hemiL.color.copy(NIGHT_C.hemiSky).lerp(DAWN_C.hemiSky, dk); hemiL.groundColor.copy(NIGHT_C.hemiGround).lerp(DAWN_C.hemiGround, dk);
+    keyL.intensity = 1.3 + dk * 1.7; keyL.color.copy(NIGHT_C.key).lerp(DAWN_C.key, dk); keyL.position.copy(NIGHT_C.keyPos).lerp(DAWN_C.keyPos, dk);
+    // 花：天亮之後一朵一朵開
+    flowers.forEach(fw => {
+      const bk = room.dawn ? smooth(0, 1, (now - room.dawn.t0 - 2.5 - fw.delay) / 2.2) : 0;
+      fw.fl.visible = bk > 0;
+      if (bk > 0) {
+        fw.fl.scale.setScalar(fw.sz * (.3 + bk * .7) * (1 + Math.sin(t * 1.5 + fw.delay * 3) * .03));
+        fw.petals.forEach(p => { p.m.rotation.z = (1 - bk) * 1.2; p.m.position.set(Math.cos(p.a) * .045 * (.4 + bk * .6), (1 - bk) * .03, Math.sin(p.a) * .045 * (.4 + bk * .6)); });
+      }
+    });
+    // 極光（天亮就淡掉）
+    auroraM.uniforms.uT.value = t; auroraM.uniforms.uA.value = 1 - dk;
+    auroras.forEach(m => m.visible = dk < .99);
+    // 天燈：慢慢往上飄、左右輕輕晃，飄到很高就從下面重新開始；天亮後變淡
+    lanterns.forEach(l => {
+      const k = (t * l.sp * .06 + l.ph) % 1;
+      l.g.position.set(l.x + Math.sin(t * .4 + l.sw) * .6, 1 + k * 18, l.z);
+      l.g.scale.setScalar(l.sz); l.g.rotation.z = Math.sin(t * .7 + l.sw) * .08;
+      const a = Math.min(1, k * 6) * (1 - Math.max(0, (k - .85) / .15)) * (1 - dk * .7);
+      l.body.material.opacity = .95 * a; l.glow.material.opacity = (.5 + Math.sin(t * 3 + l.sw) * .1) * a;
+    });
+    // 焚燒給蒼天：篝火升起一盞天燈，一路飄上天
+    if (room.fireLantern) {
+      const e = now - room.fireLantern.t0;
+      if (e > 14) { room.fireLantern = null; fireLantern.g.visible = false; }
+      else if (e > 0) {
+        fireLantern.g.visible = true;
+        fireLantern.g.position.set(FX + Math.sin(e * .8) * .4 + e * .25, 1 + e * .9 + e * e * .03, FZ - e * 1.6);
+        fireLantern.g.scale.setScalar(1.2);
+        const a = Math.min(1, e / .8) * (1 - Math.max(0, (e - 11) / 3));
+        fireLantern.body.material.opacity = .95 * a; fireLantern.glow.material.opacity = .7 * a;
+      }
+    }
+    // 雲和海鷗（天亮後才出現）
+    clouds.forEach(c => { const x = ((c.x + t * c.v + 34) % 68) - 34; c.sp.position.set(x, c.y, c.z); c.sp.material.opacity = dk * .85; });
+    const gk = room.dawn ? smooth(0, 1, (now - room.dawn.t0 - 3.5) / 3) : 0;
+    gulls.forEach(gl => {
+      gl.g.visible = gk > 0;
+      if (gk <= 0) return;
+      const a = t * gl.sp + gl.ph;
+      gl.g.position.set(gl.cx + Math.cos(a) * gl.r, gl.cy + Math.sin(a * 2) * .3, gl.cz + Math.sin(a) * gl.r * .5);
+      gl.g.rotation.set(0, Math.atan2(-Math.sin(a), Math.cos(a) * .5), Math.sin(a) * .25);
+      gl.g.scale.setScalar(gl.sz * gk);
+      const fl = Math.sin(t * gl.flap + gl.ph) * .55 * (Math.sin(t * .5 + gl.ph) > -.3 ? 1 : .15);
+      gl.wings.forEach(w => { w.piv.rotation.z = w.s * fl; });
+    });
+    // 重生的清晨：天亮到一半之後，彩虹、玫瑰金的光、愛心光點、鯨魚慢慢出現
+    const rk = room.dawn ? smooth(0, 1, (now - room.dawn.t0 - 3) / 5) : 0;
+    rainbow.material.opacity = rk * .55;
+    rays.rotation.z = t * .02;
+    rayList.forEach(r => { r.m.material.opacity = rk * (.05 + (Math.sin(t * .6 + r.ph) * .5 + .5) * .07); });
+    roseGlow.material.opacity = rk * .32;
+    lifts.forEach(l => {
+      const k = (t * l.sp2 * .25 + l.ph) % 1;
+      l.sp.position.set(l.x + Math.sin(t * .8 + l.wob) * .4, .05 + k * 7, l.z);
+      l.sp.scale.setScalar(l.sz * (1 + k * .6));
+      l.sp.material.opacity = rk * Math.sin(k * Math.PI) * .85;
+    });
+    // 鯨魚：每 14 秒一輪——躍出水面（2.4 秒）→ 落水濺起水花 → 在水面游一下、噴水 → 潛下去
+    whale.visible = false; spout.material.opacity = 0; wDrops.material.opacity = 0; wRings.forEach(m => m.visible = false);
+    if (rk > .05) {
+      const cyc = ((now - room.dawn.t0 - 4) % 14 + 14) % 14;
+      const wx = WH.x + ((now - room.dawn.t0 - 4) * .25) % 9;
+      if (cyc < 2.4) {
+        const p = cyc / 2.4;
+        whale.visible = true;
+        whale.position.set(wx + p * 3, -1.6 + Math.sin(p * Math.PI) * 3.2, WH.z);
+        whale.rotation.set(0, Math.PI / 2, 0); wBody.rotation.set(0, 0, 0);
+        whale.rotateX(-(1.1 - p * 2.2)); whale.rotateZ(Math.sin(p * Math.PI) * .6);
+      } else if (cyc < 4.2) {
+        const e2 = cyc - 2.4;
+        wRings.forEach((m, i) => { const k = (e2 - i * .3) / 1.4; if (k > 0 && k < 1) { m.visible = true; m.position.set(wx + 3, .03, WH.z); m.scale.setScalar(1 + k * 4); m.material.opacity = (1 - k) * .8; } });
+        for (let i = 0; i < wDropN; i++) { const v = wDropV[i]; wDropP.set([wx + 3 + v[0] * e2, Math.max(0, v[1] * e2 - 4.9 * e2 * e2), WH.z + v[2] * e2], i * 3); }
+        wDropG.attributes.position.needsUpdate = true; wDrops.material.opacity = Math.max(0, 1 - e2 / 1.5);
+      } else if (cyc > 6 && cyc < 11) {
+        const p = (cyc - 6) / 5;
+        whale.visible = true;
+        whale.position.set(wx + 3.5 + p * 2.5, -.42 + Math.sin(p * Math.PI) * .12 - (p > .82 ? (p - .82) * 6 : 0), WH.z - .5);
+        whale.rotation.set(0, Math.PI / 2, 0); whale.rotateX(p > .82 ? (p - .82) * 2.5 : Math.sin(t * 1.2) * .03);
+        if (cyc > 7 && cyc < 9.5) {
+          const e3 = (cyc - 7) % 1.25, bx = whale.position.x + .9, bz = whale.position.z;
+          for (let i = 0; i < spN; i++) { const v = spV[i], tt = Math.max(0, e3 - v[3] * .4); spP.set([bx + v[0] * tt, .3 + v[1] * tt - 2.4 * tt * tt, bz + v[2] * tt], i * 3); }
+          spG.attributes.position.needsUpdate = true; spout.material.opacity = Math.sin(Math.min(1, e3 / 1.25) * Math.PI) * .9;
+        }
+      }
+    }
+    foams.forEach((f, i) => { const k = Math.sin(t * .55 + f.ph); f.m.position.z = -3.15 + k * .38 + i * .12; f.m.material.opacity = .25 + (k * .5 + .5) * .45; f.m.material.map.offset.x += dt * .004 * (i % 2 ? 1 : -1); });
+    stars.material.opacity = (.65 + Math.sin(t * 1.7) * .2) * (1 - dk);
+    lighthouse.material.opacity = (.25 + Math.max(0, Math.sin(t * .9)) * .75) * (1 - dk * .8);
+    // 流星
+    if (dk >= .3) shoot.material.opacity = 0;
+    else if (t > nextShoot) { const k = (t - nextShoot) / 1.1; if (k >= 1) { nextShoot = t + 8 + Math.random() * 10; shoot.material.opacity = 0; } else { if (k < .02) { shoot.userData.x = -14 + Math.random() * 20; shoot.userData.y = 15 + Math.random() * 7; } shoot.position.set(shoot.userData.x + k * 9, shoot.userData.y - k * 4.5, -50); shoot.rotation.z = -.46; shoot.material.opacity = Math.sin(k * Math.PI) * .9; } }
+    // 篝火
+    const A = room.anim, burnBoost = A && !A.share ? Math.max(0, Math.min(1, (now - A.t0 - 1.3) / .4)) * Math.max(0, 1 - (now - A.t0 - 2.2) / 2.2) : 0;
+    flames.forEach(f => {
+      const k = (t * .9 * f.sp + f.off) % 1, s = f.sz * Math.sin(k * Math.PI) * (1 + burnBoost * 1.2);
+      f.m.position.set(FX + f.x * (1 - k) + Math.sin(t * 3 + f.off * 9) * .03, .12 + k * (.55 + burnBoost * .5), FZ + f.z * (1 - k));
+      f.m.scale.set(Math.max(.001, s), Math.max(.001, s * (1.1 + burnBoost * .5)), Math.max(.001, s));
+      f.m.material.opacity = Math.min(.6, Math.sin(k * Math.PI) * .8);
+    });
+    const flick = Math.sin(t * 7.3) * .8 + Math.sin(t * 13.1) * .5 + Math.sin(t * 23) * .3;
+    fireL.intensity = 7 + flick + burnBoost * 14; fireGlow.material.opacity = .5 + flick * .04 + burnBoost * .35; fireGlow.scale.setScalar(2.6 + burnBoost * 1.6);
+    for (let i = 0; i < emN; i++) { const e = emS[i], k = (t * e.sp + e.ph) % 1, hi = e.hi * (1 + burnBoost * 2.5); emP.set([FX + Math.cos(e.a + t * .8) * e.rad * (1 + k) + Math.sin(t * 2 + i) * .05 * k, .25 + k * hi, FZ + Math.sin(e.a + t * .8) * e.rad * (1 + k)], i * 3); }
+    emG.attributes.position.needsUpdate = true; embers.material.size = .05 + burnBoost * .03;
+    lampCore.scale.setScalar(1 + Math.sin(t * 9) * .08); lampL.intensity = 2.2 + Math.sin(t * 9) * .2; lampGlow.material.opacity = .65 + Math.sin(t * 9) * .05;
+    shoreBottles.forEach(s => { s.sp.material.opacity = .5 + (Math.sin(t * 1.4 + s.ph) * .5 + .5) * .5; });
+    // 動畫
+    flyBottle.visible = false; flyGlow.material.opacity = 0; flyPaper.visible = false; rings.forEach(m => m.visible = false); drops.material.opacity = 0; skyDots.material.opacity = 0;
+    if (A) {
+      const e = now - A.t0, cam = room.cam;
+      const start = cam.position.clone().add(new THREE.Vector3(.35, -.75, -1.3));
+      if (A.share) {
+        // 投入大海：1.5 秒飛出去 → 落水濺起水花 → 漂向遠方
+        if (e < 1.5) {
+          const p = e / 1.5;
+          const mid = start.clone().lerp(LAND, .5).add(new THREE.Vector3(0, 2.6, 0));
+          flyBottle.position.copy(bez(start, mid, LAND, p));
+          flyBottle.rotation.set(p * 9, 0, p * 5); flyBottle.visible = true;
+          flyGlow.position.copy(flyBottle.position); flyGlow.material.opacity = .6;
+        } else {
+          const e2 = e - 1.5;
+          if (e2 < 1.6) rings.forEach((m, i) => { const k = (e2 - i * .25) / 1.3; if (k > 0 && k < 1) { m.visible = true; m.position.set(LAND.x, .02, LAND.z); m.scale.setScalar(1 + k * 6); m.material.opacity = (1 - k) * .7; } });
+          if (e2 < .02 && !A.splashed) { A.splashed = true; for (let i = 0; i < dropN; i++) { const a = Math.random() * 7, v = .8 + Math.random() * 1.4; dropV[i] = [Math.cos(a) * v * .5, 2 + Math.random() * 2.2, Math.sin(a) * v * .5]; } }
+          if (e2 < 1.2) { for (let i = 0; i < dropN; i++) { const v = dropV[i] || [0, 0, 0]; dropP.set([LAND.x + v[0] * e2, Math.max(0, v[1] * e2 - 4.9 * e2 * e2), LAND.z + v[2] * e2], i * 3); } dropG.attributes.position.needsUpdate = true; drops.material.opacity = Math.max(0, 1 - e2 / 1.2); }
+          const drift = Math.min(1, e2 / 6);
+          flyBottle.visible = drift < 1; flyBottle.position.set(LAND.x + drift * 2.5, .04 + Math.sin(t * 2.2) * .05, LAND.z - drift * 14); flyBottle.rotation.set(Math.PI / 2 + Math.sin(t * 1.6) * .25, drift * 2, Math.sin(t * 1.3) * .3);
+          flyGlow.position.copy(flyBottle.position).add(new THREE.Vector3(0, .1, 0)); flyGlow.material.opacity = (1 - drift) * .7; flyGlow.scale.setScalar(.9 + Math.sin(t * 3) * .1);
+          if (e2 > .9 && !A.called) { A.called = true; A.done(); }
+          if (drift >= 1) room.anim = null;
+        }
+      } else {
+        // 焚燒給蒼天：1.3 秒信紙飛到火上 → 燒起來、縮小 → 光點一路飄上天
+        const top = new THREE.Vector3(FX, .95, FZ);
+        if (e < 1.3) {
+          const p = e / 1.3, mid = start.clone().lerp(top, .5).add(new THREE.Vector3(0, .9, 0));
+          flyPaper.position.copy(bez(start, mid, top, p)); flyPaper.rotation.set(Math.sin(p * 6) * .4, p * 4, Math.sin(p * 5) * .3);
+          flyPaper.visible = true; flyPaper.scale.setScalar(1); paperM.emissiveIntensity = 0; paperM.color.setRGB(1, 1, 1); paperM.opacity = 1;
+        } else if (e < 3.0) {
+          const k = (e - 1.3) / 1.7;
+          flyPaper.visible = true; flyPaper.position.set(FX + Math.sin(t * 3) * .05, .95 + k * .5, FZ); flyPaper.rotation.y += dt * 2;
+          flyPaper.scale.set(Math.max(.01, 1 - k * .9), Math.max(.01, 1 - k), 1);
+          paperM.emissiveIntensity = .4 + k * 1.6; paperM.color.setRGB(1 - k * .75, 1 - k * .85, 1 - k * .9); paperM.opacity = 1 - k * .7;
+        }
+        if (e > 1.4) {
+          for (let i = 0; i < skyN; i++) { const s = skyS[i], k = Math.max(0, (e - 1.4 - s.dl) * s.sp * .35); skyP.set([FX + Math.cos(s.a) * s.rad + Math.sin(t * 1.5 + s.wob) * .3 * k, 1.0 + k * 9, FZ + Math.sin(s.a) * s.rad - k * 4], i * 3); }
+          skyG.attributes.position.needsUpdate = true; skyDots.material.opacity = Math.max(0, Math.min(1, (e - 1.4) * 2)) * Math.max(0, 1 - (e - 5) / 2);
+        }
+        if (e > 2.4 && !A.called) { A.called = true; A.done(); }
+        if (e > 7) room.anim = null;
+      }
+    }
+  };
+  return room;
+}
+// 懺悔瓶守護者說的話
+const CONFESS_GUARDIAN = {
+  name: '懺悔瓶守護者',
+  lines: [
+    '導師在好久好久前說過\n從懺悔開始，好多年後才慢慢理解為什麼',
+    '記得懺悔後，後不再造',
+    '有時候沒辦法一次改，但記得別放棄，總有一天會成功的'
+  ]
+};
+
+/* ---------- 懺悔瓶：寫、投入大海或焚燒給蒼天、撿起來讀 ----------
+   分享（是）的會匿名存到網站的資料庫，讓別人撿到；不分享（否）的不會存在任何地方，只在畫面上燒掉 */
+const CF = { share: null, list: [], seen: new Set(), mine: [], sending: false };
+function openConfessWrite() {
+  CF.share = null; cfSetShare(null);
+  $('#cfText').value = ''; $('#cfErr').textContent = ''; cfCount();
+  $('#cfWrite').hidden = false;
+  setTimeout(() => $('#cfYes').focus({ preventScroll: true }), 50);
+}
+function closeConfess() { $('#cfWrite').hidden = true; $('#cfRead').hidden = true; }
+function cfSetShare(v) {
+  CF.share = v;
+  $('#cfYes').setAttribute('aria-pressed', String(v === true));
+  $('#cfNo').setAttribute('aria-pressed', String(v === false));
+  $('#cfNote').textContent = v === true ? '會匿名放進瓶子、投入大海。別人有機會撿到、讀到，但不會知道是誰寫的。'
+    : v === false ? '只有你知道。寫完之後，會在篝火裡燒掉，交給蒼天，不會被保存。' : '';
+  const btn = $('#cfSend');
+  btn.disabled = v === null;
+  btn.classList.toggle('burn', v === false);
+  btn.textContent = v === true ? '投入大海' : v === false ? '焚燒給蒼天' : '先選擇要不要分享';
+}
+function cfCount() { $('#cfCount').textContent = `${$('#cfText').value.length} / 500`; }
+async function sendConfess() {
+  if (CF.sending) return;
+  const text = $('#cfText').value.trim();
+  if (CF.share === null) { $('#cfErr').textContent = '先選擇要不要分享'; return; }
+  if (!text) { $('#cfErr').textContent = '寫一點點也好'; return; }
+  const share = CF.share;
+  if (share) {
+    CF.sending = true; $('#cfSend').disabled = true; $('#cfErr').textContent = '';
+    try {
+      const r = await fetch('/api/confess', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ body: text, website: $('#cfHp').value }) });
+      const d = await r.json().catch(() => null);
+      if (!d) throw new Error('offline'); // 不是網站的資料庫回的（例如預覽頁），當成連不到
+      if (!r.ok) { CF.sending = false; $('#cfSend').disabled = false; $('#cfErr').textContent = d.error || '現在投不進大海，請稍後再試'; return; }
+      if (d.bottle) CF.seen.add(d.bottle.id);
+    } catch (e) {
+      // 連不到網站的資料庫（例如預覽頁）：先放在這次的記憶裡，自己還撿得到
+      CF.mine.push({ id: 'local' + Date.now(), body: text, created_at: Date.now(), local: true });
+    }
+    CF.sending = false;
+  }
+  $('#cfText').value = '';
+  closeConfess(); hideTip(); hideMarks();
+  SC.room.sendBottle(share, () => {
+    const m = $('#cfMsg');
+    m.querySelector('p').innerHTML = share ? '你的懺悔瓶，<br>已經交給<em>大海</em>了。' : '你的懺悔，<br>化成了光，<br>交給<em>蒼天</em>。';
+    m.hidden = false; m.classList.remove('on'); void m.offsetWidth; m.classList.add('on');
+    setTimeout(() => {
+      m.hidden = true;
+      $('#scDlg').hidden = false;
+      play([{ who: NARR(), text: share ? '瓶子漂向遠方，總有一天，會被需要它的人撿起來。' : '火光把你寫下的字，一個一個帶上了天空。' }], () => explore(SC.isl));
+    }, 3600);
+  });
+}
+async function openConfessRead() {
+  $('#cfRead').hidden = false;
+  cfShow(null, '海浪把瓶子推上岸……');
+  try {
+    const r = await fetch('/api/confess', { cache: 'no-store' });
+    const d = await r.json();
+    if (Array.isArray(d.bottles)) CF.list = d.bottles;
+  } catch (e) { /* 連不到資料庫就只讀這次自己投的 */ }
+  cfNext();
+}
+function cfNext() {
+  const pool = CF.list.concat(CF.mine);
+  let fresh = pool.filter(x => !CF.seen.has(x.id));
+  if (!fresh.length && pool.length) { CF.seen.clear(); fresh = pool; }
+  if (!fresh.length) { cfShow(null, '海面很平靜，今天還沒有漂上岸的懺悔瓶。'); return; }
+  const x = fresh[Math.floor(Math.random() * fresh.length)];
+  CF.seen.add(x.id); cfShow(x);
+}
+function cfShow(x, empty) {
+  $('#cfReadBody').textContent = x ? x.body : empty;
+  $('#cfReadBody').classList.toggle('empty', !x);
+  const d = x && new Date(x.created_at);
+  $('#cfReadDate').textContent = x ? `${d.getFullYear()} 年 ${d.getMonth() + 1} 月 ${d.getDate()} 日 漂上岸的懺悔瓶` : '';
+  $('#cfAgain').hidden = !x;
 }
 
 /* ---------- 街上（3D）：雨後的藍調時刻 ----------
